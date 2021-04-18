@@ -16,7 +16,7 @@ public class GameTest1 {
     private final Random rng = new Random(seed);
     @Test
     void PlayWorks(){
-    	//Hello
+    	//Hello World
         Player player1 = new TestPlayer(seed, ChMap.routes());
         Player player2 = new TestPlayer(seed, ChMap.routes());
         Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
