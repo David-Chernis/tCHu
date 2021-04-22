@@ -13,6 +13,7 @@ import ch.epfl.tchu.SortedBag;
  * Is used to represent a deck of tickets or a deck of cards in the game.
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
+ * @param <C extends Comparable<C>> represents what type of object the deck will consist of.
  */
 public final class Deck<C extends Comparable<C>> {
 
