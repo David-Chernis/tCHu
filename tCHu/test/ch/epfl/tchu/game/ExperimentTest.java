@@ -8,7 +8,7 @@ public class ExperimentTest {
     @Test
     void experimentTest() {
         
-        System.out.println(Card.LOCOMOTIVE.color());
+        //System.out.println(Card.LOCOMOTIVE.color());
         
     }
 }

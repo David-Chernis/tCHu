@@ -21,8 +21,8 @@ import ch.epfl.tchu.game.Ticket;
 
 public final class Serdes {
     public static final Serde<Integer> intSerde = Serde.of(
-            (i) -> String.valueOf(i) ,
-            (i) -> Integer.parseInt(i));
+            (i) -> Integer.toString(i) ,
+            Integer::parseInt);
     
     public static final Serde<String> stringSerde = Serde.of(
             (i) -> Base64.getEncoder().encodeToString(i.getBytes(StandardCharsets.UTF_8)) ,
@@ -50,6 +50,9 @@ public final class Serdes {
             
             (i) -> {
                 List<String> tempList = Arrays.asList(i.split(Pattern.quote(";"), -1));
+                System.out.println(cardListSerde.deserialize(tempList.get(0)));
+                System.out.println(intSerde.deserialize(tempList.get(1)));
+                System.out.println(intSerde.deserialize(tempList.get(2)));
                 return new PublicCardState(
                         cardListSerde.deserialize(tempList.get(0)), 
                         intSerde.deserialize(tempList.get(1)), 
@@ -80,6 +83,9 @@ public final class Serdes {
             
             (i) -> {
                 List<String> tempList = Arrays.asList(i.split(Pattern.quote(";"), -1));
+                System.out.println(ticketBagSerde.deserialize(tempList.get(0)));
+                System.out.println(cardBagSerde.deserialize(tempList.get(1)));
+                System.out.println(routeListSerde.deserialize(tempList.get(2)));
                 return new PlayerState(
                         ticketBagSerde.deserialize(tempList.get(0)), 
                         cardBagSerde.deserialize(tempList.get(1)), 
@@ -98,13 +104,15 @@ public final class Serdes {
             , 
             
             (i) -> {
-                List<String> tempList = Arrays.asList(i.split(Pattern.quote(";"), -1));
+                List<String> tempList = Arrays.asList(i.split(Pattern.quote(":"), -1));
                 Map<PlayerId, PublicPlayerState> playerStates = Map.of(
                         PlayerId.PLAYER_1,
                         publicPlayerStateSerde.deserialize(tempList.get(3)),
                         PlayerId.PLAYER_2,
                         publicPlayerStateSerde.deserialize(tempList.get(4)));
-                
+                System.out.println("wagons: " + intSerde.deserialize(tempList.get(0)).intValue());
+                System.out.println("playerId: " +playerIdSerde.deserialize(tempList.get(2)));
+                System.out.println("lastPlayer " +playerIdSerde.deserialize(tempList.get(5)));
                 return new PublicGameState(
                         intSerde.deserialize(tempList.get(0)).intValue(),
                         publicCardStateSerde.deserialize(tempList.get(1)),

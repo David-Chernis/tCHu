@@ -41,10 +41,16 @@ public interface Serde<T> {
 	public static <T> Serde<T> of(Function<T, String> serialization, Function<String, T> deserialization){
 		return new Serde<T>() {
 			public String serialize(T deserialized) {
+			    if(deserialized == null) {
+                    return "";
+                }
 				return serialization.apply(deserialized);
 			}
 
 			public T deserialize(String serialized) {
+			    if(serialized.equals("")) {
+			        return null;
+			    }
 				return deserialization.apply(serialized);
 			}
 		};
@@ -63,11 +69,17 @@ public interface Serde<T> {
 	public static <T> Serde<T> oneOf(List<T> allEnumValues){
 		return new Serde<T>() {
 			public String serialize(T deserialized) {
+			    if(deserialized == null) {
+			        return "";
+			    }
 				Integer integerRepresentation = allEnumValues.indexOf(deserialized);
 				return integerRepresentation.toString();
 			}
 
 			public T deserialize(String serialized) {
+			    if(serialized.equals("")) {
+			        return null;
+			    }
 				return allEnumValues.get(Integer.parseInt(serialized));
 			}
 		};
@@ -88,6 +100,9 @@ public interface Serde<T> {
 	public static <T> Serde<List<T>> listOf(Serde<T> tSerde, char separator){
 		return new Serde<List<T>>() {
 			public String serialize(List<T> deserialized) {
+			    if(deserialized == null) {
+                    return "";
+                }
 			    List<String> newList = new ArrayList<>();
 			    
 			    for(int i = 0; i < deserialized.size(); i++) {
@@ -103,7 +118,10 @@ public interface Serde<T> {
 			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
                 List<T> newList = new ArrayList<T>();
                 for(int i = 0; i < oldList.size(); i++) {
-                    newList.add(tSerde.deserialize(oldList.get(i)));
+                    if(!(oldList.get(i).equals(""))) {
+                        newList.add(tSerde.deserialize(oldList.get(i)));
+                    }
+                    
                 }
                 
                 return newList;
