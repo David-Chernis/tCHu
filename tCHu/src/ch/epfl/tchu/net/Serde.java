@@ -1,7 +1,10 @@
 package ch.epfl.tchu.net;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import ch.epfl.tchu.SortedBag;
 
@@ -71,20 +74,35 @@ public interface Serde<T> {
 	}
 	
 	/**
-	 * 
-	 * @param <T>
-	 * @param oldSerde
-	 * @param separator
-	 * @return
+	 * Returns a Serde that can (de)serialize a list of enumerable or enumerable-like values using a serde that can 
+	 * (de)serialize each element individually and a separator to designate their placement in the list.
+	 * @param <T> the Object type to be (de)serialized.
+	 * @param tSerde (Serde<T>): the Serde used to (de)serialize each of the individual elements of a list
+	 * @param separator (char): a character that is used as a separator for the individual elements of the list.
+	 * @return (<T> Serde<List<T>>): returns a Serde that can seralize a list of given enumerable or enumerable-like values using a given separator.
 	 */
-	public static <T> Serde<List<T>> listOf(Serde<T> oldSerde, char separator){
+	public static <T> Serde<List<T>> listOf(Serde<T> tSerde, char separator){
 		return new Serde<List<T>>() {
 			public String serialize(List<T> deserialized) {
-				return null;
+			    List<String> newList = new ArrayList<>();
+			    
+			    for(int i = 0; i < deserialized.size(); i++) {
+			        newList.add(tSerde.serialize(deserialized.get(i)));
+			    }
+			    
+			    return String.join(String.valueOf(separator), newList);
+				
 			}
 
 			public List<T> deserialize(String serialized) {
-				return null;
+			    
+			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
+                List<T> newList = new ArrayList<T>();
+                for(int i = 0; i < oldList.size(); i++) {
+                    newList.add(tSerde.deserialize(oldList.get(i)));
+                }
+                
+                return newList;
 			}
 		};
 	}
@@ -96,14 +114,26 @@ public interface Serde<T> {
 	 * @param separator
 	 * @return
 	 */
-	public static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(SortedBag<T> values, char separator){
+	public static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> tSerde, char separator){
 		return new Serde<SortedBag<T>>() {
 			public String serialize(SortedBag<T> deserialized) {
-				return null;
+			    List<String> newList = new ArrayList<>();
+                List<T> bagList = deserialized.toList();
+                for(int i = 0; i < bagList.size(); i++) {
+                    newList.add(tSerde.serialize(bagList.get(i)));
+                }
+                
+                return String.join(String.valueOf(separator), newList);
 			}
 
 			public SortedBag<T> deserialize(String serialized) {
-				return null;
+			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
+                List<T> newList = new ArrayList<T>();
+                for(int i = 0; i < oldList.size(); i++) {
+                    newList.add(tSerde.deserialize(oldList.get(i)));
+                }
+                
+                return SortedBag.of(newList);
 			}
 		};
 	}
