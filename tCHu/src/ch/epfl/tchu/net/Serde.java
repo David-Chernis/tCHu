@@ -74,12 +74,16 @@ public interface Serde<T> {
 	}
 	
 	/**
-	 * Returns a Serde that can (de)serialize a list of enumerable or enumerable-like values using a serde that can 
-	 * (de)serialize each element individually and a separator to designate their placement in the list.
+	 * Returns a Serde that can (de)serialize a list of a given type of Objects using a serde that can (de)serialize
+	 * each element individually and a separator to separate each individual Object in its serialized version.
 	 * @param <T> the Object type to be (de)serialized.
-	 * @param tSerde (Serde<T>): the Serde used to (de)serialize each of the individual elements of a list
-	 * @param separator (char): a character that is used as a separator for the individual elements of the list.
-	 * @return (<T> Serde<List<T>>): returns a Serde that can seralize a list of given enumerable or enumerable-like values using a given separator.
+	 * @param tSerde (Serde<T>): the Serde used to (de)serialize each of the individual elements of type T of the
+	 * list.
+	 * @param separator (char): a character that is used as a separator for the individual elements of the list in
+	 * its serialized form.
+	 * @return (<T> Serde<List<T>>): a Serde that can (de)serialize a list of a given type of Objects using a serde
+	 * that can (de)serialize each element individually and a separator to separate each individual Object in its
+	 * serialized version.
 	 */
 	public static <T> Serde<List<T>> listOf(Serde<T> tSerde, char separator){
 		return new Serde<List<T>>() {
@@ -108,11 +112,17 @@ public interface Serde<T> {
 	}
 	
 	/**
-	 * 
-	 * @param <T>
-	 * @param values
-	 * @param separator
-	 * @return
+	 * Returns a Serde that can (de)serialize a SortedBag of a given type of Objects using a serde that can
+	 * (de)serialize each element individually and a separator to separate each individual Object in its serialized
+	 * version.
+	 * @param <T> the Object type to be (de)serialized.
+	 * @param tSerde (Serde<T>): the Serde used to (de)serialize each of the individual elements of type T of the
+	 * list.
+	 * @param separator (char): a character that is used as a separator for the individual elements of the list in
+	 * its serialized form.
+	 * @return (<T> Serde<SortedBag<T>>): a SortedBag that can (de)serialize a list of a given type of Objects using
+	 * a serde that can (de)serialize each element individually and a separator to separate each individual Object in
+	 * its serialized version.
 	 */
 	public static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> tSerde, char separator){
 		return new Serde<SortedBag<T>>() {
