@@ -8,6 +8,7 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.gui.Info;
 
 @SuppressWarnings("unused")
