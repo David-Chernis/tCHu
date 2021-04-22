@@ -39,7 +39,6 @@ class TrailTest {
     @Test
     void trailLongestWorksWithEmptyRoutes() {
         var longest = Trail.longest(List.of());
-        System.out.println(longest);
         assertEquals(0, longest.length());
         assertNull(longest.station1());
         assertNull(longest.station2());
@@ -54,7 +53,6 @@ class TrailTest {
                 chRoutes.GEN_YVE_1,
                 chRoutes.IT3_LUG_1);
         var longest = Trail.longest(routes);
-        System.out.println(longest);
         assertEquals(6, longest.length());
         if (longest.station1().equals(chRoutes.GEN))
             assertEquals(longest.station2(), chRoutes.YVE);
@@ -77,7 +75,6 @@ class TrailTest {
                 chRoutes.MAR_SIO_1,
                 chRoutes.LAU_MAR_1);
         var longest = Trail.longest(routes);
-        System.out.println(longest);
         assertEquals(23, longest.length());
     }
 
@@ -92,7 +89,6 @@ class TrailTest {
                 chRoutes.BER_INT_1,
                 chRoutes.BER_LUC_1);
         var longest = Trail.longest(routes);
-        System.out.println(longest);
         assertEquals(17, longest.length());
     }
 
@@ -112,7 +108,6 @@ class TrailTest {
                 chRoutes.OLT_ZUR_1,
                 chRoutes.BAD_ZUR_1);
         var longest = Trail.longest(routes);
-        System.out.println(longest);
         assertEquals(23, longest.length());
     }
 
@@ -178,9 +173,6 @@ class TrailTest {
         var longestR = Trail.longest(routesR);
         var longestG = Trail.longest(routesG);
         var longestB = Trail.longest(routesB);
-        System.out.println(longestR);
-        System.out.println(longestG);
-        System.out.println(longestB);
         assertEquals(28, longestR.length());
         assertEquals(21, longestG.length());
         assertEquals(17, longestB.length());
