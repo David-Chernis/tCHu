@@ -3,11 +3,20 @@ package ch.epfl.tchu.net;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
+import ch.epfl.tchu.game.PlayerId;
+import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.game.Ticket;
+import ch.epfl.tchu.game.Player.TurnKind;
 import ch.epfl.test.TestRandomizer;
 
 public class SerdeTest {
@@ -20,28 +29,105 @@ public class SerdeTest {
         return sb.toString();
     }
 	
+    private static final Serde<Integer> intSerde = Serde.of(
+            (i) -> String.valueOf(i) ,
+            (i) -> Integer.parseInt(i));
+    
+    private static final Serde<String> stringSerde = Serde.of(
+            (i) -> Base64.getEncoder().encodeToString(i.getBytes(StandardCharsets.UTF_8)) ,
+            (i) -> new String (Base64.getDecoder().decode(i.getBytes(StandardCharsets.UTF_8))));
+    
+    private static final Serde<PlayerId> playerIdSerde = Serde.oneOf(PlayerId.ALL);
+    private static final Serde<TurnKind> turnKindSerde = Serde.oneOf(TurnKind.ALL);
+    private static final Serde<Card> cardSerde = Serde.oneOf(Card.ALL);
+    private static final Serde<Route> routeSerde = Serde.oneOf(ChMap.routes());
+    private static final Serde<Ticket> ticketSerde = Serde.oneOf(ChMap.tickets());
+    
+    private static final Serde<List<String>> stringListSerde = Serde.listOf(stringSerde, ',');
+    private static final Serde<List<Card>> cardListSerde = Serde.listOf(cardSerde, ',');
+    private static final Serde<List<Route>> routeListSerde = Serde.listOf(routeSerde, ',');
+    private static final Serde<SortedBag<Card>> cardBagSerde = Serde.bagOf(cardSerde, ',');
+    private static final Serde<SortedBag<Ticket>> ticketBagSerde = Serde.bagOf(ticketSerde, ',');
+    
 	@Test
 	void ofWorks() {
-		Serde<Integer> intSerde = Serde.of(
-	            (i) -> String.valueOf(i) ,
-	            (i) -> Integer.parseInt(i));
-	    
-	    Serde<String> stringSerde = Serde.of(
-	            (i) -> Base64.getEncoder().encodeToString(i.getBytes(StandardCharsets.UTF_8)) ,
-	            (i) -> new String (Base64.getDecoder().decode(i.getBytes(StandardCharsets.UTF_8))));
-	    
 	    for(int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
 	    	int deserializedInt = TestRandomizer.newRandom().nextInt();
 	    	String serializedInt = String.valueOf(deserializedInt);
 	    	assertEquals(serializedInt, intSerde.serialize(deserializedInt));
 	    	assertEquals(deserializedInt, intSerde.deserialize(serializedInt).intValue());
 	    	
-	    	String deserializedString = "bruh";
-	    			//randomName(new Random(), (new Random()).nextInt(10));
+	    	String deserializedString = randomName(new Random(), (new Random()).nextInt(10));
 	    	String serializedString = Base64.getEncoder().encodeToString(deserializedString.getBytes(StandardCharsets.UTF_8));
 	    	assertEquals(serializedString, stringSerde.serialize(deserializedString));
-	    	assertEquals(deserializedString, stringSerde.deserialize(deserializedString));
+	    	assertEquals(deserializedString, stringSerde.deserialize(serializedString));
 	    }
-	   
+	}
+	
+	@Test
+	void oneOfWorks() {
+	    for(PlayerId pid : PlayerId.ALL) {
+	    	String serialized = String.valueOf(pid.ordinal());
+	    	assertEquals(serialized, playerIdSerde.serialize(pid));
+	    	assertEquals(pid, playerIdSerde.deserialize(serialized));
+	    }
+	    
+	    for(TurnKind tk : TurnKind.ALL) {
+	    	String serialized = String.valueOf(tk.ordinal());
+	    	assertEquals(serialized, turnKindSerde.serialize(tk));
+	    	assertEquals(tk, turnKindSerde.deserialize(serialized));
+	    }
+	    
+	    for(Card c : Card.ALL) {
+	    	String serialized = String.valueOf(c.ordinal());
+	    	assertEquals(serialized, cardSerde.serialize(c));
+	    	assertEquals(c, cardSerde.deserialize(serialized));
+	    }
+	    
+	    for(Route r : ChMap.routes()) {
+	    	String serialized = String.valueOf(ChMap.routes().indexOf(r));
+	    	assertEquals(serialized, routeSerde.serialize(r));
+	    	assertEquals(r, routeSerde.deserialize(serialized));
+	    }
+	    
+	    for(Ticket t : ChMap.tickets()) {
+	    	String serialized = String.valueOf(ChMap.tickets().indexOf(t));
+	    	assertEquals(serialized, ticketSerde.serialize(t));
+	    	assertEquals(t, ticketSerde.deserialize(serialized));
+	    }
+	}
+	
+	@Test
+	void listOfWorks() {
+		Random rng = TestRandomizer.newRandom();
+		for(int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+	    	int listSize = TestRandomizer.newRandom().nextInt(10);
+	    	
+	    	List<String> deserializedStringList = new ArrayList<String>();
+	    	List<Card> deserializedCardList = new ArrayList<Card>();
+	    	List<Route> deserializedRouteList = new ArrayList<Route>();
+	    	
+	    	for(int j = 0; j < listSize; j++) {
+	    		deserializedStringList.add(randomName(rng, rng.nextInt(10)));
+	    		deserializedCardList.add(Card.ALL.get(rng.nextInt(Card.COUNT)));
+	    		deserializedRouteList.add(ChMap.routes().get(rng.nextInt(ChMap.routes().size())));
+	    	}
+	    	
+	    	String serializedStringList = stringListSerde.serialize(deserializedStringList);
+	    	String serializedCardList = cardListSerde.serialize(deserializedCardList);
+	    	String serializedRouteList = routeListSerde.serialize(deserializedRouteList);
+	    	
+	    	assertEquals(serializedStringList, stringListSerde.serialize(deserializedStringList));
+	    	assertEquals(serializedCardList, cardListSerde.serialize(deserializedCardList));
+	    	assertEquals(serializedRouteList, routeListSerde.serialize(deserializedRouteList));
+	    	
+	    	assertEquals(deserializedStringList, stringListSerde.deserialize(serializedStringList));
+	    	assertEquals(deserializedCardList, cardListSerde.deserialize(serializedCardList));
+	    	assertEquals(deserializedRouteList, routeListSerde.deserialize(serializedRouteList));
+	    }
+		List<Card> ds = List.of(null, Card.VIOLET, Card.BLUE);
+		String ss = cardListSerde.serialize(ds);
+		assertEquals(ss, ",1,2");
+		assertEquals(cardListSerde.deserialize(ss), List.of(null, Card.VIOLET, Card.BLUE));
 	}
 }
