@@ -36,8 +36,11 @@ public class SerdeTest {
 	    	assertEquals(serializedInt, intSerde.serialize(deserializedInt));
 	    	assertEquals(deserializedInt, intSerde.deserialize(serializedInt).intValue());
 	    	
-	    	String deserializedString = randomName(new Random(), (new Random()).nextInt(10));
-	    	
+	    	String deserializedString = "bruh";
+	    			//randomName(new Random(), (new Random()).nextInt(10));
+	    	String serializedString = Base64.getEncoder().encodeToString(deserializedString.getBytes(StandardCharsets.UTF_8));
+	    	assertEquals(serializedString, stringSerde.serialize(deserializedString));
+	    	assertEquals(deserializedString, stringSerde.deserialize(deserializedString));
 	    }
 	   
 	}
