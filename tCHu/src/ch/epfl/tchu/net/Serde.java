@@ -32,7 +32,8 @@ public interface Serde<T> {
 	 * @param <T> the Object type that will be (de)serialized with the given functions.
 	 * @param serialization (Function<T, String>): the serialization function.
 	 * @param deserialization (Function<T, String>): the deserialization function.
-	 * @return
+	 * @return (Serde<T>): the corresponding Serde based on the given serialization and deserialization
+	 * functions.
 	 */
 	public static <T> Serde<T> of(Function<T, String> serialization, Function<String, T> deserialization){
 		return new Serde<T>() {
