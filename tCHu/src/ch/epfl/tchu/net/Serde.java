@@ -48,9 +48,9 @@ public interface Serde<T> {
 			}
 
 			public T deserialize(String serialized) {
-			    if(serialized.equals("")) {
-			        return null;
-			    }
+			    if(serialized.isEmpty()) {
+                    return null;
+                }
 				return deserialization.apply(serialized);
 			}
 		};
@@ -77,7 +77,7 @@ public interface Serde<T> {
 			}
 
 			public T deserialize(String serialized) {
-			    if(serialized.equals("")) {
+			    if(serialized.isEmpty()) {
 			        return null;
 			    }
 				return allEnumValues.get(Integer.parseInt(serialized));
@@ -114,14 +114,10 @@ public interface Serde<T> {
 			}
 
 			public List<T> deserialize(String serialized) {
-			    
 			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
                 List<T> newList = new ArrayList<T>();
                 for(int i = 0; i < oldList.size(); i++) {
-                    if(!(oldList.get(i).equals(""))) {
-                        newList.add(tSerde.deserialize(oldList.get(i)));
-                    }
-                    
+                    newList.add(tSerde.deserialize(oldList.get(i)));
                 }
                 
                 return newList;
@@ -145,6 +141,9 @@ public interface Serde<T> {
 	public static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> tSerde, char separator){
 		return new Serde<SortedBag<T>>() {
 			public String serialize(SortedBag<T> deserialized) {
+			    if(deserialized == null) {
+			        return "";
+			    }
 			    List<String> newList = new ArrayList<>();
                 List<T> bagList = deserialized.toList();
                 for(int i = 0; i < bagList.size(); i++) {
