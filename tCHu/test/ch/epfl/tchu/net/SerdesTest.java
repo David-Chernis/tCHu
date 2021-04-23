@@ -2,8 +2,6 @@ package ch.epfl.tchu.net;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -21,12 +19,12 @@ import ch.epfl.tchu.game.PublicCardState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.PublicPlayerState;
 import ch.epfl.tchu.game.Route;
-import ch.epfl.test.TestRandomizer;
 
 public class SerdesTest {
     
     private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
-    private static String randomName(Random rng, int length) {
+    @SuppressWarnings("unused")
+	private static String randomName(Random rng, int length) {
         var sb = new StringBuilder();
         for (int i = 0; i < length; i++)
             sb.append(alphabet.charAt(rng.nextInt(alphabet.length())));
@@ -43,6 +41,7 @@ public class SerdesTest {
           PLAYER_2, new PublicPlayerState(20, 21, List.of()));
         PublicGameState gs = new PublicGameState(40, cs, PLAYER_2, ps, null);
         assertEquals("40:6,7,2,0,6;30;31:1:10;11;0,1:20;21;:" , Serdes.publicGameStateSerde.serialize(gs));
-        PublicGameState gsNew = Serdes.publicGameStateSerde.deserialize("40:6,7,2,0,6;30;31:1:10;11;0,1:20;21;:");
+        @SuppressWarnings("unused")
+		PublicGameState gsNew = Serdes.publicGameStateSerde.deserialize("40:6,7,2,0,6;30;31:1:10;11;0,1:20;21;:");
     }
 }

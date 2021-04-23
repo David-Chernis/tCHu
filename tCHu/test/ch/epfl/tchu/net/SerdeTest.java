@@ -73,45 +73,30 @@ public class SerdeTest {
 	    	assertEquals(serialized, playerIdSerde.serialize(pid));
 	    	assertEquals(pid, playerIdSerde.deserialize(serialized));
 	    }
-	    //Special null case for PlayerId
-	    assertEquals("", playerIdSerde.serialize(null));
-    	assertEquals(null, playerIdSerde.deserialize(""));
 	    
 	    for(TurnKind tk : TurnKind.ALL) {
 	    	String serialized = String.valueOf(tk.ordinal());
 	    	assertEquals(serialized, turnKindSerde.serialize(tk));
 	    	assertEquals(tk, turnKindSerde.deserialize(serialized));
 	    }
-	    //Special null case for TurnKind
-	    assertEquals("", turnKindSerde.serialize(null));
-    	assertEquals(null, turnKindSerde.deserialize(""));
 	    
 	    for(Card c : Card.ALL) {
 	    	String serialized = String.valueOf(c.ordinal());
 	    	assertEquals(serialized, cardSerde.serialize(c));
 	    	assertEquals(c, cardSerde.deserialize(serialized));
 	    }
-	    //Special null case for Card
-	    assertEquals("", cardSerde.serialize(null));
-    	assertEquals(null, cardSerde.deserialize(""));
 	    
 	    for(Route r : ChMap.routes()) {
 	    	String serialized = String.valueOf(ChMap.routes().indexOf(r));
 	    	assertEquals(serialized, routeSerde.serialize(r));
 	    	assertEquals(r, routeSerde.deserialize(serialized));
 	    }
-	    //Special null case for Route
-	    assertEquals("", routeSerde.serialize(null));
-    	assertEquals(null, routeSerde.deserialize(""));
 	    
 	    for(Ticket t : ChMap.tickets()) {
 	    	String serialized = String.valueOf(ChMap.tickets().indexOf(t));
 	    	assertEquals(serialized, ticketSerde.serialize(t));
 	    	assertEquals(t, ticketSerde.deserialize(serialized));
 	    }
-	    //Special null case for Ticket
-	    assertEquals("", ticketSerde.serialize(null));
-    	assertEquals(null, ticketSerde.deserialize(""));
 	}
 	
 	@Test
@@ -148,12 +133,6 @@ public class SerdeTest {
 	    	assertEquals(deserializedRouteList, routeListSerde.deserialize(serializedRouteList));
 	    	assertEquals(deserializedTicketList, ticketListSerde.deserialize(serializedTicketList));
 	    }
-		
-		//Special case null value test
-		List<Card> ds = List.of(null, Card.VIOLET, Card.BLUE);
-		String ss = cardListSerde.serialize(ds);
-		assertEquals(ss, ",1,2");
-		assertEquals(cardListSerde.deserialize(ss), List.of(null, Card.VIOLET, Card.BLUE));
 	}
 	
 	@Test
@@ -184,16 +163,9 @@ public class SerdeTest {
 	    	assertEquals(serializedCardBag, cardBagSerde.serialize(deserializedCardBag));
 	    	assertEquals(serializedTicketBag, ticketBagSerde.serialize(deserializedTicketBag));
 	    	
-	    	assertEquals(deserializedStringBag, stringListSerde.deserialize(serializedStringBag));
-	    	assertEquals(deserializedCardBag, cardListSerde.deserialize(serializedCardBag));
+	    	assertEquals(deserializedStringBag, stringBagSerde.deserialize(serializedStringBag));
+	    	assertEquals(deserializedCardBag, cardBagSerde.deserialize(serializedCardBag));
 	    	assertEquals(deserializedTicketBag, ticketBagSerde.deserialize(serializedTicketBag));
 	    }
-		
-		//Special case null value test
-		List<Card> ds = List.of(null, Card.VIOLET, Card.BLUE);
-		SortedBag<Card> dssb = SortedBag.of(ds);
-		String ss = cardBagSerde.serialize(dssb);
-		assertEquals(ss, ",1,2");
-		assertEquals(cardBagSerde.deserialize(ss), SortedBag.of(List.of(null, Card.VIOLET, Card.BLUE)));
 	}
 }
