@@ -41,16 +41,10 @@ public interface Serde<T> {
 	public static <T> Serde<T> of(Function<T, String> serialization, Function<String, T> deserialization){
 		return new Serde<T>() {
 			public String serialize(T deserialized) {
-			    if(deserialized == null) {
-                    return "";
-                }
 				return serialization.apply(deserialized);
 			}
 
 			public T deserialize(String serialized) {
-			    if(serialized.isEmpty()) {
-                    return null;
-                }
 				return deserialization.apply(serialized);
 			}
 		};
@@ -69,17 +63,11 @@ public interface Serde<T> {
 	public static <T> Serde<T> oneOf(List<T> allEnumValues){
 		return new Serde<T>() {
 			public String serialize(T deserialized) {
-			    if(deserialized == null) {
-			        return "";
-			    }
 				Integer integerRepresentation = allEnumValues.indexOf(deserialized);
 				return integerRepresentation.toString();
 			}
 
 			public T deserialize(String serialized) {
-			    if(serialized.isEmpty()) {
-			        return null;
-			    }
 				return allEnumValues.get(Integer.parseInt(serialized));
 			}
 		};
@@ -100,9 +88,9 @@ public interface Serde<T> {
 	public static <T> Serde<List<T>> listOf(Serde<T> tSerde, char separator){
 		return new Serde<List<T>>() {
 			public String serialize(List<T> deserialized) {
-			    if(deserialized == null) {
-                    return "";
-                }
+			    if(deserialized.isEmpty()) {
+			        return "";
+			    }
 			    List<String> newList = new ArrayList<>();
 			    
 			    for(int i = 0; i < deserialized.size(); i++) {
@@ -114,6 +102,9 @@ public interface Serde<T> {
 			}
 
 			public List<T> deserialize(String serialized) {
+			    if(serialized.equals("")) {
+			        return List.of();
+			    }
 			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
                 List<T> newList = new ArrayList<T>();
                 for(int i = 0; i < oldList.size(); i++) {
@@ -140,27 +131,15 @@ public interface Serde<T> {
 	 */
 	public static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> tSerde, char separator){
 		return new Serde<SortedBag<T>>() {
-			public String serialize(SortedBag<T> deserialized) {
-			    if(deserialized == null) {
-			        return "";
-			    }
-			    List<String> newList = new ArrayList<>();
-                List<T> bagList = deserialized.toList();
-                for(int i = 0; i < bagList.size(); i++) {
-                    newList.add(tSerde.serialize(bagList.get(i)));
-                }
-                
-                return String.join(String.valueOf(separator), newList);
+			
+		    public String serialize(SortedBag<T> deserialized) {
+		        
+                return listOf(tSerde, separator).serialize(deserialized.toList());
 			}
 
 			public SortedBag<T> deserialize(String serialized) {
-			    List<String> oldList = Arrays.asList(serialized.split(Pattern.quote(String.valueOf(separator)), -1));
-                List<T> newList = new ArrayList<T>();
-                for(int i = 0; i < oldList.size(); i++) {
-                    newList.add(tSerde.deserialize(oldList.get(i)));
-                }
-                
-                return SortedBag.of(newList);
+			    
+                return SortedBag.of(listOf(tSerde, separator).deserialize(serialized));
 			}
 		};
 	}
