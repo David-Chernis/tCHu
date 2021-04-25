@@ -133,12 +133,10 @@ public interface Serde<T> {
 		return new Serde<SortedBag<T>>() {
 			
 		    public String serialize(SortedBag<T> deserialized) {
-		        
                 return listOf(tSerde, separator).serialize(deserialized.toList());
 			}
 
 			public SortedBag<T> deserialize(String serialized) {
-			    
                 return SortedBag.of(listOf(tSerde, separator).deserialize(serialized));
 			}
 		};
