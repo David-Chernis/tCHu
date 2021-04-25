@@ -14,7 +14,7 @@ import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 
-public class RemotePlayerProxy implements Player{
+public final class RemotePlayerProxy implements Player{
 
 	private Socket socket;
 	
@@ -45,43 +45,57 @@ public class RemotePlayerProxy implements Player{
 
 	@Override
 	public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
-		String toBeSent = MessageId.SET_INITIAL_TICKETS + " " + Serdes.ticketBagSerde.serialize(tickets);
+		String toBeSent = MessageId.SET_INITIAL_TICKETS.name() + " " + Serdes.ticketBagSerde.serialize(tickets);
 		this.sendThroughSocket(toBeSent);
 	}
 
 	@Override
 	public SortedBag<Ticket> chooseInitialTickets() {
+	    String toBeSent = MessageId.CHOOSE_INITIAL_TICKETS.name();
+	    this.sendThroughSocket(toBeSent);
 		return Serdes.ticketBagSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public TurnKind nextTurn() {
+	    String toBeSent = MessageId.NEXT_TURN.name();
+        this.sendThroughSocket(toBeSent);
 		return Serdes.turnKindSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-		return null;
+	    String toBeSent = MessageId.CHOOSE_TICKETS.name() + " " + Serdes.ticketBagSerde.serialize(options);
+	    this.sendThroughSocket(toBeSent);
+		return Serdes.ticketBagSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public int drawSlot() {
+	    String toBeSent = MessageId.DRAW_SLOT.name();
+        this.sendThroughSocket(toBeSent);
 		return Serdes.intSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public Route claimedRoute() {
+	    String toBeSent = MessageId.ROUTE.name();
+        this.sendThroughSocket(toBeSent);
 		return Serdes.routeSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public SortedBag<Card> initialClaimCards() {
+	    String toBeSent = MessageId.CARDS.name();
+        this.sendThroughSocket(toBeSent);
 		return Serdes.cardBagSerde.deserialize(this.receiveThroughSocket());
 	}
 
 	@Override
 	public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
-		return null;
+		String toBeSent = MessageId.CHOOSE_ADDITIONAL_CARDS.name() + " " + Serdes.cardListBagSerde.serialize(options);
+		this.sendThroughSocket(toBeSent);
+		return Serdes.cardBagSerde.deserialize(this.receiveThroughSocket());
 	}
 	
 	/**
@@ -105,7 +119,7 @@ public class RemotePlayerProxy implements Player{
 	private void sendThroughSocket(String toBeSent) {
 		try(BufferedWriter writer =
 				   new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), US_ASCII))){
-			writer.write(toBeSent + "\n");
+			writer.write(toBeSent + " " + "\n");
 			writer.flush();
 		}
 		catch(IOException e) {
