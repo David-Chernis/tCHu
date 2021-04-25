@@ -20,27 +20,70 @@ import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 
 public final class Serdes {
+	
+	/**
+	 * (Serde<Integer>): a Serde responsible for (de)serializing int fields.
+	 */
     public static final Serde<Integer> intSerde = Serde.of(
             (i) -> Integer.toString(i) ,
             Integer::parseInt);
     
+    /**
+	 * (Serde<String>): a Serde responsible for (de)serializing String fields.
+	 */
     public static final Serde<String> stringSerde = Serde.of(
             (i) -> Base64.getEncoder().encodeToString(i.getBytes(StandardCharsets.UTF_8)) ,
             (i) -> new String (Base64.getDecoder().decode(i.getBytes(StandardCharsets.UTF_8))));
     
+    /**
+	 * (Serde<PlayerId>): a Serde responsible for (de)serializing PlayerId enumerates.
+	 */
     public static final Serde<PlayerId> playerIdSerde = Serde.oneOf(PlayerId.ALL);
+    /**
+	 * (Serde<TurnKind>): a Serde responsible for (de)serializing TurnKind enumerates.
+	 */
     public static final Serde<TurnKind> turnKindSerde = Serde.oneOf(TurnKind.ALL);
+    /**
+	 * (Serde<Card>): a Serde responsible for (de)serializing Card enumerates.
+	 */
     public static final Serde<Card> cardSerde = Serde.oneOf(Card.ALL);
+    /**
+	 * (Serde<Route>): a Serde responsible for (de)serializing Route instances.
+	 */
     public static final Serde<Route> routeSerde = Serde.oneOf(ChMap.routes());
+    /**
+	 * (Serde<Ticket>): a Serde responsible for (de)serializing Ticket instances.
+	 */
     public static final Serde<Ticket> ticketSerde = Serde.oneOf(ChMap.tickets());
     
+    /**
+	 * (Serde<List<String>>): a Serde responsible for (de)serializing lists of Strings.
+	 */
     public static final Serde<List<String>> stringListSerde = Serde.listOf(stringSerde, ',');
+    /**
+	 * (Serde<List<Card>>): a Serde responsible for (de)serializing lists of Cards.
+	 */
     public static final Serde<List<Card>> cardListSerde = Serde.listOf(cardSerde, ',');
+    /**
+	 * (Serde<List<Route>>): a Serde responsible for (de)serializing lists of Routes.
+	 */
     public static final Serde<List<Route>> routeListSerde = Serde.listOf(routeSerde, ',');
+    /**
+	 * (Serde<SortedBag<Card>>): a Serde responsible for (de)serializing sorted bags of Cards.
+	 */
     public static final Serde<SortedBag<Card>> cardBagSerde = Serde.bagOf(cardSerde, ',');
+    /**
+	 * (Serde<SortedBag<Ticket>>): a Serde responsible for (de)serializing sorted bags of Tickets.
+	 */
     public static final Serde<SortedBag<Ticket>> ticketBagSerde = Serde.bagOf(ticketSerde, ',');
+    /**
+	 * (Serde<List<String>>): a Serde responsible for (de)serializing lists of sorted bags of Cards.
+	 */
     public static final Serde<List<SortedBag<Card>>> cardListBagSerde = Serde.listOf(cardBagSerde, ';');
     
+    /**
+	 * (Serde<PublicCardState>): a Serde responsible for (de)serializing PublicCardState instances.
+	 */
     public static final Serde<PublicCardState> publicCardStateSerde = Serde.of(
             (i) -> cardListSerde.serialize(i.faceUpCards()) + 
             ";" + intSerde.serialize(i.deckSize()) + 
@@ -56,6 +99,9 @@ public final class Serdes {
                         intSerde.deserialize(tempList.get(2)));
             });
     
+    /**
+	 * (Serde<PublicPlayerState>): a Serde responsible for (de)serializing PublicPlayerState instances.
+	 */
     public static final Serde<PublicPlayerState> publicPlayerStateSerde = Serde.of(
             (i) -> intSerde.serialize(i.ticketCount()) + 
             ";" + intSerde.serialize(i.cardCount()) + 
@@ -71,6 +117,9 @@ public final class Serdes {
                         routeListSerde.deserialize(tempList.get(2)));
             });
     
+    /**
+	 * (Serde<PlayerState>): a Serde responsible for (de)serializing PlayerState instances.
+	 */
     public static final Serde<PlayerState> playerStateSerde = Serde.of(
             (i) -> ticketBagSerde.serialize(i.tickets()) + 
             ";" + cardBagSerde.serialize(i.cards()) + 
@@ -86,6 +135,9 @@ public final class Serdes {
                         routeListSerde.deserialize(tempList.get(2)));
             });
     
+    /**
+	 * (Serde<PublicGameState>): a Serde responsible for (de)serializing PublicGameState instances.
+	 */
     public static final Serde<PublicGameState> publicGameStateSerde = Serde.of(
             (i) -> {
             String playerIdString = i.lastPlayer() == null ? "" : playerIdSerde.serialize(i.lastPlayer());
