@@ -23,8 +23,7 @@ public final class TestClient {
 
     private final static class TestPlayer implements Player {
         @Override
-        public void initPlayers(PlayerId ownId,
-                Map<PlayerId, String> names) {
+        public void initPlayers(PlayerId ownId, Map<PlayerId, String> names) {
             System.out.printf("ownId: %s\n", ownId);
             System.out.printf("playerNames: %s\n", names);
         }
@@ -32,8 +31,8 @@ public final class TestClient {
 
         @Override
         public void receiveInfo(String info) {
-            // TODO Auto-generated method stub
-
+            
+            
         }
 
         @Override

@@ -40,17 +40,24 @@ public final class RemotePlayerClient {
     }
 
     public void run() {
-        while(true) {
-            try(
-                    Socket s = new Socket(name, port);
-                    BufferedReader r =
-                            new BufferedReader(
-                                    new InputStreamReader(s.getInputStream(), US_ASCII));
-                    BufferedWriter w =
-                            new BufferedWriter(
-                                    new OutputStreamWriter(s.getOutputStream(), US_ASCII) ) ){
+        try(
+                Socket s = new Socket(name, port);
+                
+                BufferedReader r =
+                        new BufferedReader(
+                                new InputStreamReader(s.getInputStream(), US_ASCII));
+                
+                BufferedWriter w =
+                        new BufferedWriter(
+                                new OutputStreamWriter(s.getOutputStream(), US_ASCII) )) {
 
-                List<String> messageList = Arrays.asList(r.readLine().split(Pattern.quote(" "), -1))   ;
+            while(true) {
+                String readLine = r.readLine();
+                if(readLine == null) {
+                    break;
+                }
+                List<String> messageList = Arrays.asList(readLine.split(Pattern.quote(" "), -1))   ;
+
                 switch(MessageId.valueOf(messageList.get(0))) {
 
                 case INIT_PLAYERS:
@@ -77,54 +84,56 @@ public final class RemotePlayerClient {
 
                 case CHOOSE_INITIAL_TICKETS:
                     SortedBag<Ticket> initialTickets = player.chooseInitialTickets();
-                    w.write(Serdes.ticketBagSerde.serialize(initialTickets));
+                    w.write(Serdes.ticketBagSerde.serialize(initialTickets) + "\n");
                     w.flush();
                     break;
 
                 case NEXT_TURN:
                     TurnKind nextTurn = player.nextTurn();
-                    w.write(Serdes.turnKindSerde.serialize(nextTurn));
+                    w.write(Serdes.turnKindSerde.serialize(nextTurn)+ "\n");
                     w.flush();
                     break;
 
                 case CHOOSE_TICKETS:
                     SortedBag<Ticket> options = Serdes.ticketBagSerde.deserialize(messageList.get(1));
                     SortedBag<Ticket> chosenTickets = player.chooseTickets(options);
-                    w.write(Serdes.ticketBagSerde.serialize(chosenTickets));
+                    w.write(Serdes.ticketBagSerde.serialize(chosenTickets)+ "\n");
                     w.flush();
                     break;
 
                 case DRAW_SLOT: 
                     int drawSlot = player.drawSlot();
-                    w.write(Serdes.intSerde.serialize(drawSlot));
+                    w.write(Serdes.intSerde.serialize(drawSlot)+ "\n");
                     w.flush();
                     break;
 
                 case ROUTE: 
                     Route claimedRoute = player.claimedRoute();
-                    w.write(Serdes.routeSerde.serialize(claimedRoute));
+                    w.write(Serdes.routeSerde.serialize(claimedRoute)+ "\n");
                     w.flush();
                     break;
 
                 case CARDS: 
                     SortedBag<Card> cards = player.initialClaimCards();
-                    w.write(Serdes.cardBagSerde.serialize(cards));
+                    w.write(Serdes.cardBagSerde.serialize(cards)+ "\n");
                     w.flush();
                     break;
 
                 case CHOOSE_ADDITIONAL_CARDS:    
                     List<SortedBag<Card>>  additionalOptions = Serdes.cardListBagSerde.deserialize(messageList.get(1));
                     SortedBag<Card> chosenAdditionalCards = player.chooseAdditionalCards(additionalOptions);
-                    w.write(Serdes.cardBagSerde.serialize(chosenAdditionalCards));
+                    w.write(Serdes.cardBagSerde.serialize(chosenAdditionalCards)+ "\n");
                     w.flush();
                     break;
                 }
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
-    }
-    
-    
 
+    }
 }
+
+
+
+
