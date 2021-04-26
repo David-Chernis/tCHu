@@ -32,7 +32,6 @@ public final class TestClient {
         @Override
         public void receiveInfo(String info) {
             
-            
         }
 
         @Override
