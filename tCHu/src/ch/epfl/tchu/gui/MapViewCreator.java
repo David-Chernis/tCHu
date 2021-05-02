@@ -11,10 +11,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Class that allows for the creation of the graphical elements needed to display the map of the game.
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 class MapViewCreator {
 	
+	/**
+	 * Private MapViewCreator constructor, whose sole aim is to make this class uninstanciable.
+	 */
 	private MapViewCreator() {}
 	
+	/**
+	 * Creates a view of the map of the game, based on the given parameters.
+	 * @param ogs (ObservableGameState): the observable game state of the game.
+	 * @param property (ObjectProperty<ClaimRouteHandler>): the property of the game.
+	 * @param chooser (CardChooser): the card chooser of the game.
+	 */
 	public static void createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> property, CardChooser chooser) {
 		Pane Carte = new Pane();
 		Carte.getStylesheets().add("map.css");
@@ -55,8 +69,19 @@ class MapViewCreator {
 	    
 	}
 	
+	/**
+	 * Functional interface which is embedded into the MapViewCreator class, and whose aim
+	 * is to force implementing classes to define a method which allows it to choose cards.
+	 * @author Shrey Mittal (312275)
+	 * @author David Chernis (310298)
+	 */
 	@FunctionalInterface
 	interface CardChooser {
-	  void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
+		/**
+		 * Chooses cards from the list of options and based on the handler provided.
+		 * @param options (List<SortedBag<Card>>): the options of cards that can be drawn.
+		 * @param handler (ChooseCardsHandler): the handler which is used to choose cards.
+		 */
+		void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
 	}
 }
