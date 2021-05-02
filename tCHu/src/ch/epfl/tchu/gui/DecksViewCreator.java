@@ -64,8 +64,7 @@ class DecksViewCreator {
 	 * @param tirageCartes(EventHandler<>): the event handler for drawing cards.
 	 * @return (VBox): a graphical view of the cards and tickets of the game.
 	 */
-	public static VBox createCardsView(ObservableGameState ogs, EventHandler<> tirageBillets,
-			EventHandler<> tirageCartes) {
+	public static VBox createCardsView(ObservableGameState ogs, EventHandler<> tirageBillets, EventHandler<> tirageCartes) {
 		
 		//The deck of cards and tickets
 		Button piocheBillets = pioche();

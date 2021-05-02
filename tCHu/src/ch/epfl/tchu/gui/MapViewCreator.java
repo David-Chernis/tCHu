@@ -29,7 +29,7 @@ class MapViewCreator {
 	 * @param property (ObjectProperty<ClaimRouteHandler>): the property of the game.
 	 * @param chooser (CardChooser): the card chooser of the game.
 	 */
-	public static void createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> property, CardChooser chooser) {
+	public static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> property, CardChooser chooser) {
 		Pane Carte = new Pane();
 		Carte.getStylesheets().add("map.css");
 		Carte.getStylesheets().add("colors.css");
@@ -66,7 +66,8 @@ class MapViewCreator {
 	    routeGroup.getChildren().add(caseGroup);
 	    caseGroup.getChildren().addAll(Voie, wagonGroup);
         wagonGroup.getChildren().addAll(wagonR, circleR1, circleR2);
-	    
+        
+        return Carte;
 	}
 	
 	/**
