@@ -19,6 +19,11 @@ import ch.epfl.tchu.game.PublicPlayerState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 
+/**
+ * A class containing all the different Serde types we may need in the game.
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public final class Serdes {
 
     /**

@@ -26,18 +26,44 @@ import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 
+/**
+ * Represents the client device of the distant player.
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public final class RemotePlayerClient {
 
+	/**
+	 * (Player): the player to which it must provide remote access.
+	 */
     private Player player;
+    
+    /**
+     * (String): the name of the socket used for communication between itself and the proxy.
+     */
     private final String name;
+    
+    /**
+     * (int): the port to be used.
+     */
     private final int port;
 
+    /**
+     * Default RemotePlayerClient constructor. Initializes an instance by using a player, a
+     * socket name and a port provided as a parameter.
+     * @param player (Player): the player to which it must provide remote access.
+     * @param name (String): the name of the socket used for communication between itself and the proxy.
+     * @param port (int): the port to be used.
+     */
     public RemotePlayerClient(Player player, String name, int port) {
         this.player = player;
         this.name = name;
         this.port = port;
     }
 
+    /**
+     * Method that sets up a socket and lets it communicate with the proxy.
+     */
     public void run() {
         try(
                 Socket s = new Socket(name, port);

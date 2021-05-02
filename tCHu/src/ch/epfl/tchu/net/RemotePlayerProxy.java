@@ -14,10 +14,23 @@ import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 
+/**
+ * Class representing the proxy of a player playing from another device. Implements the Player interface
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public final class RemotePlayerProxy implements Player{
 
+	/**
+	 * (Socket): the socket used to connect the client and the proxy.
+	 */
     private Socket socket;
 
+    /**
+     * Default public RemotePlayerProxy constructor. Initializes an instance using the Socket provided
+     * as a parameter.
+     * @param socket (Socket): the socket provided as parameter
+     */
     public RemotePlayerProxy(Socket socket) {
         this.socket = socket;
     }
