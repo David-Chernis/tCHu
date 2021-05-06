@@ -67,8 +67,8 @@ class DecksViewCreator {
 	/**
 	 * Returns a graphical view of the cards and tickets of the game.
 	 * @param ogs (ObservableGameState): the observable game state of the game.
-	 * @param tirageBillets (EventHandler<>): the event handler for drawing tickets.
-	 * @param tirageCartes(EventHandler<>): the event handler for drawing cards.
+	 * @param drawTickets (ObjectProperty<DrawTicketsHandler>): the object property for drawing tickets.
+	 * @param drawCard (EventHandler<DrawCardHandler>): the object property for drawing cards.
 	 * @return (VBox): a graphical view of the cards and tickets of the game.
 	 */
 	public static VBox createCardsView(ObservableGameState ogs, ObjectProperty<DrawTicketsHandler> drawTickets, ObjectProperty<DrawCardHandler> drawCard) {
