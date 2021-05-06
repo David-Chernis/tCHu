@@ -4,6 +4,8 @@ import java.util.List;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
+import ch.epfl.tchu.game.Route;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
@@ -25,48 +27,59 @@ class MapViewCreator {
 	
 	/**
 	 * Creates a view of the map of the game, based on the given parameters.
-	 * @param ogs (ObservableGameState): the observable game state of the game.
+	 * @param gameState (ObservableGameState): the observable game state of the game.
 	 * @param property (ObjectProperty<ClaimRouteHandler>): the property of the game.
 	 * @param chooser (CardChooser): the card chooser of the game.
 	 */
-	public static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> property, CardChooser chooser) {
+	public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser chooser) {
 		Pane Carte = new Pane();
 		Carte.getStylesheets().add("map.css");
 		Carte.getStylesheets().add("colors.css");
 		ImageView fond = new ImageView("map.png");
+		Carte.getChildren().add(fond);
 		
 		// Group called route on diagram
-		Group routeGroup = new Group();
-		routeGroup.setId("AT1_STG_1");
-		routeGroup.getStyleClass().add("route");
-        routeGroup.getStyleClass().add("UNDERGROUND");
-        routeGroup.getStyleClass().add("NEUTRAL");
-        
-        
-        // Group called Case on diagram 
-		Group caseGroup = new Group();
-		caseGroup.setId("AT1_STG_1_1");
 		
-		// Voie on Diagram
-		Rectangle Voie = new Rectangle(36, 12);
-		Voie.getStyleClass().add("track");
-	    Voie.getStyleClass().add("filled");
-	    
-	    // Group called wagon on the diagram 
-	    Group wagonGroup = new Group();
-	    wagonGroup.getStyleClass().add("car");
-	    Rectangle wagonR = new Rectangle(36 , 12);
-	    wagonR.getStyleClass().add("filled");
-	    Circle circleR1 = new Circle(12, 6, 3);
-	    Circle circleR2 = new Circle(24, 6, 3);
-	    
-	    
-	    // Establishing Heirarchy of Nodes.
-	    Carte.getChildren().addAll(fond, routeGroup);
-	    routeGroup.getChildren().add(caseGroup);
-	    caseGroup.getChildren().addAll(Voie, wagonGroup);
-        wagonGroup.getChildren().addAll(wagonR, circleR1, circleR2);
-        
+		for(Route r : ChMap.routes()) {
+		    Group routeGroup = new Group();
+		    gameState.routeId(r).addListener((o, oV, nV) -> routeGroup.getStyleClass().add(nV.name()));
+		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(r).not()));
+	        routeGroup.setId(r.id());
+	        routeGroup.getStyleClass().add("route");
+	        routeGroup.getStyleClass().add(r.level().name());
+	        routeGroup.getStyleClass().add(r.color() == null ? "NEUTRAL" : r.color().name());
+	        
+	        
+	        for(int j = 0; j < r.length(); j++) {
+	            Group caseGroup = new Group();
+	            caseGroup.setId(r.id() + "_" + (j+1));
+	            
+	            // Voie on Diagram
+	            Rectangle Voie = new Rectangle(36, 12);
+	            Voie.getStyleClass().add("track");
+	            Voie.getStyleClass().add("filled");
+	            
+	            // Group called wagon on the diagram 
+	            Group wagonGroup = new Group();
+	            wagonGroup.getStyleClass().add("car");
+	            
+	            
+	            Rectangle wagonR;
+	            wagonR = new Rectangle(36 , 12);
+	            wagonR.getStyleClass().add("filled");
+	            Circle circleR1;
+	            circleR1 = new Circle(12, 6, 3);           
+	            Circle circleR2; 
+	            circleR2 = new Circle(24, 6, 3);
+	            
+	            routeGroup.getChildren().add(caseGroup);
+	            caseGroup.getChildren().addAll(Voie, wagonGroup);
+                wagonGroup.getChildren().addAll(wagonR, circleR1, circleR2);
+	        }
+	        Carte.getChildren().add(routeGroup);
+	        
+	        
+		}
         return Carte;
 	}
 	

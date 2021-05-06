@@ -32,7 +32,7 @@ class DecksViewCreator {
 	 */
 	public static HBox createHandView(ObservableGameState ogs) {
 		//The List of the tickets in the player's hand
-		ListView<Ticket> billets = new ListView<Ticket>(ogs.tickets());
+		ListView<Ticket> billets = new ListView<Ticket>(ogs.playerTickets());
 		billets.setId("tickets");
 		
 		//The cards part of the player's hand
@@ -45,6 +45,7 @@ class DecksViewCreator {
 		StackPane redCards = carteCompteur("RED");
 		StackPane whiteCards = carteCompteur("WHITE");
 		StackPane locomotiveCards = carteCompteur("NEUTRAL");
+		
 		HBox handPane = new HBox(blackCards, violetCards, blueCards, greenCards, yellowCards,
 				orangeCards, redCards, whiteCards, locomotiveCards);
 		handPane.setId("hand-pane");
