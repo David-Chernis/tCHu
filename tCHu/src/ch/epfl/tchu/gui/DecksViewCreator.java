@@ -2,6 +2,9 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Ticket;
+import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
+import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
+import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -65,7 +68,7 @@ class DecksViewCreator {
 	 * @param tirageCartes(EventHandler<>): the event handler for drawing cards.
 	 * @return (VBox): a graphical view of the cards and tickets of the game.
 	 */
-	public static VBox createCardsView(ObservableGameState ogs, EventHandler<> tirageBillets, EventHandler<> tirageCartes) {
+	public static VBox createCardsView(ObservableGameState ogs, ObjectProperty<DrawTicketsHandler> drawTickets, ObjectProperty<DrawCardHandler> drawCard) {
 		
 		//The deck of cards and tickets
 		Button piocheBillets = pioche();

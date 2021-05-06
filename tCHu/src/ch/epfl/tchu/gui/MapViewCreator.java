@@ -6,6 +6,8 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
+import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;

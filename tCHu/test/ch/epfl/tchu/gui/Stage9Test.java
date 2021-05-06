@@ -12,6 +12,10 @@ import ch.epfl.tchu.game.PublicCardState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.PublicPlayerState;
 import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
+import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
+import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
+import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,7 +31,7 @@ public final class Stage9Test extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-      //ObservableGameState gameState = new ObservableGameState(PLAYER_1);
+      ObservableGameState gameState = new ObservableGameState(PLAYER_1);
 
       ObjectProperty<ClaimRouteHandler> claimRoute =
         new SimpleObjectProperty<>(Stage9Test::claimRoute);
