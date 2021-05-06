@@ -33,7 +33,7 @@ class MapViewCreator {
 	 * @param property (ObjectProperty<ClaimRouteHandler>): the property of the game.
 	 * @param chooser (CardChooser): the card chooser of the game.
 	 */
-	public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser chooser) {
+	public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
 		Pane Carte = new Pane();
 		Carte.getStylesheets().add("map.css");
 		Carte.getStylesheets().add("colors.css");
@@ -42,19 +42,30 @@ class MapViewCreator {
 		
 		// Group called route on diagram
 		
-		for(Route r : ChMap.routes()) {
+		for(Route route : ChMap.routes()) {
 		    Group routeGroup = new Group();
-		    gameState.routeId(r).addListener((o, oV, nV) -> routeGroup.getStyleClass().add(nV.name()));
-		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(r).not()));
-	        routeGroup.setId(r.id());
+		    gameState.routeId(route).addListener((o, oV, nV) -> routeGroup.getStyleClass().add(nV.name()));
+		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(route).not()));
+	        routeGroup.setId(route.id());
 	        routeGroup.getStyleClass().add("route");
-	        routeGroup.getStyleClass().add(r.level().name());
-	        routeGroup.getStyleClass().add(r.color() == null ? "NEUTRAL" : r.color().name());
+	        routeGroup.getStyleClass().add(route.level().name());
+	        routeGroup.getStyleClass().add(route.color() == null ? "NEUTRAL" : route.color().name());
 	        
+	        routeGroup.setOnMouseClicked((e) -> {
+	            List<SortedBag<Card>> possibleClaimCards = route.possibleClaimCards();
+	            
+	            if(possibleClaimCards.size() == 1) {
+	                claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
+	            } else if(possibleClaimCards.size() > 1){
+	                ClaimRouteHandler claimRouteH = claimRouteHP.get();
+	                ChooseCardsHandler chooseCardsH = chosenCards -> claimRouteH.onClaimRoute(route, chosenCards);
+	                cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
+	            }
+	        });
 	        
-	        for(int j = 0; j < r.length(); j++) {
+	        for(int j = 0; j < route.length(); j++) {
 	            Group caseGroup = new Group();
-	            caseGroup.setId(r.id() + "_" + (j+1));
+	            caseGroup.setId(route.id() + "_" + (j+1));
 	            
 	            // Voie on Diagram
 	            Rectangle Voie = new Rectangle(36, 12);
