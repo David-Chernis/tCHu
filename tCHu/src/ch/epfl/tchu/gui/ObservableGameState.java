@@ -252,8 +252,8 @@ public class ObservableGameState {
      * Returns the ReadOnlyIntegerProperty containing the amount of claim points
      * owned by the player whose PlayerId is specified in the parameter.
      * @return (ReadOnlyIntegerProperty): the ReadOnlyIntegerProperty containing
-     * the amount of claim points owned by the player whose PlayerId is specified in
-     * the parameter.
+     * the amount of claim points owned by the player whose PlayerId is specified
+     * in the parameter.
      */
     public ReadOnlyIntegerProperty playerClaimPoints(PlayerId id) {
         return playerClaimPoints.get(id.ordinal());
