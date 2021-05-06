@@ -36,6 +36,8 @@ public final class Stage9Test extends Application {
       ObjectProperty<DrawCardHandler> drawCard =
         new SimpleObjectProperty<>(Stage9Test::drawCard);
 
+      Node mapView = MapViewCreator
+        .createMapView(gameState, claimRoute, Stage9Test::chooseCards);
       Node cardsView = DecksViewCreator
         .createCardsView(gameState, drawTickets, drawCard);
       Node handView = DecksViewCreator
