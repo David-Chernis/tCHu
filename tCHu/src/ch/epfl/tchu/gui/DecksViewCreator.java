@@ -4,7 +4,10 @@ import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Ticket;
 import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -109,10 +112,16 @@ class DecksViewCreator {
 		carteInside.getStyleClass().add("inside");
 		Rectangle carteOutside = new Rectangle(40, 70);
 		carteOutside.getStyleClass().add("outside");
+		
 		Text compteur = new Text();
 		compteur.getStyleClass().add("count");
+		ReadOnlyIntegerProperty countCompteur = new SimpleIntegerProperty();
+		compteur.visibleProperty().bind(Bindings.greaterThan(countCompteur, 1));
+		
 		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage, compteur);
 		carteCompteur.getStyleClass().add(color);
+		ReadOnlyIntegerProperty countCarteCompteur = new SimpleIntegerProperty();
+		compteur.visibleProperty().bind(Bindings.greaterThan(countCarteCompteur, 0));
 		
 		return carteCompteur;
 	}
