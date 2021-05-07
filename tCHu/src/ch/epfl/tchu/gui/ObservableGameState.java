@@ -133,8 +133,12 @@ public class ObservableGameState {
        ogs = newGameState;
        ops = newPlayerState;
        Set<List<Station>> doubles = new HashSet<>();
-       cardPercentage.set(newGameState.cardState().deckSize() / Constants.TOTAL_CARDS_COUNT);
-       ticketPercentage.set(newGameState.ticketsCount() / 46);
+       
+       double cardPct = (double)newGameState.cardState().deckSize() / Constants.TOTAL_CARDS_COUNT;
+       double ticketPct = (double)newGameState.ticketsCount() / 46;
+       cardPercentage.set((int)(cardPct*100));
+       ticketPercentage.set((int)(ticketPct*100));
+       
        playerTickets.setAll(newPlayerState.tickets().toList());
        for(Route r: newGameState.claimedRoutes()) {
            doubles.add(r.stations());

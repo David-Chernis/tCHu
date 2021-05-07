@@ -70,8 +70,8 @@ class DecksViewCreator {
 	public static VBox createCardsView(ObservableGameState ogs, ObjectProperty<DrawTicketsHandler> drawTickets, ObjectProperty<DrawCardHandler> drawCard) {
 		
 		//The deck of cards and tickets
-		Button deckTickets = deck(ogs.ticketPercentage());
-		Button deckCards = deck(ogs.cardPercentage());
+		Button deckTickets = deck(ogs.ticketPercentage(), "Billets");
+		Button deckCards = deck(ogs.cardPercentage(), "Cartes");
 		
 		deckTickets.disableProperty().bind(drawTickets.isNull());
 	    deckCards.disableProperty().bind(drawCard.isNull());
@@ -82,7 +82,7 @@ class DecksViewCreator {
         The cards and tickets view of the game, containing all the face-up cards,
         the deck of cards and the deck of tickets
         */
-		VBox cardView = new VBox(deckTickets, deckCards);
+		VBox cardView = new VBox(deckTickets);
         cardView.getStylesheets().add("decks.css");
         cardView.getStylesheets().add("colors.css");
         cardView.setId("card-pane");
@@ -97,7 +97,7 @@ class DecksViewCreator {
 		    
 		    StackPane faceUp = cardOnly(fuCard);
 		    cardView.getChildren().add(faceUp);
-
+		    
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
@@ -105,7 +105,7 @@ class DecksViewCreator {
 		        faceUp.getStyleClass().remove(oV == null ? "" : oV.name());
 		    });
 		}
-		
+		cardView.getChildren().add(deckCards);
 		return cardView;
 	}
 	
@@ -159,18 +159,18 @@ class DecksViewCreator {
 	 * @return (Button): a Button which will act as a deck and has a gauge attached to
 	 * it, which corresponds to the amount of cards/tickets remaining.
 	 */
-	private static Button deck(ReadOnlyIntegerProperty pctProp) {
+	private static Button deck(ReadOnlyIntegerProperty pctProp, String name) {
 	    
 		Rectangle background = new Rectangle(50, 5);
 		background.getStyleClass().add("background");
+		
 		Rectangle foreground = new Rectangle(50, 5);
 		foreground.getStyleClass().add("foreground");
 		Group grouped = new Group(background, foreground);
+		Button pioche = new Button(name);
 		
-		Button pioche = new Button();
 		pioche.getStyleClass().add("gauged");
 		pioche.setGraphic(grouped);
-		
 		foreground.widthProperty().bind(pctProp.multiply(50).divide(100));
 		return pioche;
 	}
