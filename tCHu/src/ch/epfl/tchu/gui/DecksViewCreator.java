@@ -40,11 +40,12 @@ class DecksViewCreator {
 	 */
 	public static HBox createHandView(ObservableGameState ogs) {
 		//The List of the tickets in the player's hand
+	    HBox handPane = new HBox();
+        handPane.setId("hand-pane");
+	    
 		ListView<Ticket> billets = new ListView<Ticket>(ogs.playerTickets());
 		billets.setId("tickets");
 		
-		HBox handPane = new HBox();
-        handPane.setId("hand-pane");
 		//The cards part of the player's hand
 		for(Card c : Card.ALL) {
 		    StackPane colorCards = cardCompteur(c, c.name(), ogs);
@@ -88,15 +89,20 @@ class DecksViewCreator {
         
         //The 5 face-up cards
 		for(int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
-		    Card fuCard = ogs.faceUpCard(i).get();
-		    StackPane faceUp = cardOnly("Blue");
+		    String fuCard = ogs.faceUpCard(i).get() == Card.LOCOMOTIVE 
+		            ? "NEUTRAL" 
+		            : ogs.faceUpCard(i).get() == null 
+		                ? ""  
+		                : ogs.faceUpCard(i).get().name();
+		    
+		    StackPane faceUp = cardOnly(fuCard);
 		    cardView.getChildren().add(faceUp);
 
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
-		        faceUp.getStyleClass().remove(oV.name().toUpperCase());
-		        faceUp.getStyleClass().add(nV.name().toUpperCase()); 
+		        faceUp.getStyleClass().add(nV.name()); 
+		        faceUp.getStyleClass().remove(oV == null ? "" : oV.name());
 		    });
 		}
 		
@@ -154,11 +160,13 @@ class DecksViewCreator {
 	 * it, which corresponds to the amount of cards/tickets remaining.
 	 */
 	private static Button deck(ReadOnlyIntegerProperty pctProp) {
+	    
 		Rectangle background = new Rectangle(50, 5);
 		background.getStyleClass().add("background");
 		Rectangle foreground = new Rectangle(50, 5);
 		foreground.getStyleClass().add("foreground");
 		Group grouped = new Group(background, foreground);
+		
 		Button pioche = new Button();
 		pioche.getStyleClass().add("gauged");
 		pioche.setGraphic(grouped);

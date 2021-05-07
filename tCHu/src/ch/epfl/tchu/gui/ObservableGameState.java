@@ -142,9 +142,9 @@ public class ObservableGameState {
        
        for (int slot : FACE_UP_CARD_SLOTS) {
            Card newCard = newGameState.cardState().faceUpCard(slot);
-           System.out.println(newCard);
            faceUpCards.get(slot).set(newCard);
        }
+
        
        for(PlayerId id : PlayerId.ALL) {
            int ord = id.ordinal();

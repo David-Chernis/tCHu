@@ -52,7 +52,7 @@ class MapViewCreator {
 	        routeGroup.getStyleClass().add(route.color() == null ? "NEUTRAL" : route.color().name());
 	        
 	        routeGroup.setOnMouseClicked((e) -> {
-	            List<SortedBag<Card>> possibleClaimCards = route.possibleClaimCards();
+	            List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
 	            
 	            if(possibleClaimCards.size() == 1) {
 	                claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));

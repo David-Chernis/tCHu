@@ -52,7 +52,7 @@ public final class Stage9Test extends Application {
       primaryStage.setScene(new Scene(mainPane));
       primaryStage.show();
 
-      //setState(gameState);
+      setState(gameState);
     }
 
     private void setState(ObservableGameState gameState) {
