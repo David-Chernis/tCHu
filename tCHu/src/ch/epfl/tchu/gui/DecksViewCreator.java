@@ -1,12 +1,14 @@
 package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -41,21 +43,14 @@ class DecksViewCreator {
 		ListView<Ticket> billets = new ListView<Ticket>(ogs.playerTickets());
 		billets.setId("tickets");
 		
+		HBox handPane = new HBox();
+        handPane.setId("hand-pane");
 		//The cards part of the player's hand
-		StackPane blackCards = carteCompteur("BLACK");
-		StackPane violetCards = carteCompteur("VIOLET");
-		StackPane blueCards = carteCompteur("BLUE");
-		StackPane greenCards = carteCompteur("GREEN");
-		StackPane yellowCards = carteCompteur("YELLOW");
-		StackPane orangeCards = carteCompteur("ORANGE");
-		StackPane redCards = carteCompteur("RED");
-		StackPane whiteCards = carteCompteur("WHITE");
-		StackPane locomotiveCards = carteCompteur("NEUTRAL");
+		for(Card c : Card.ALL) {
+		    StackPane colorCards = cardCompteur(c, c.name(), ogs);
+		    handPane.getChildren().add(colorCards);
+		}
 		
-		HBox handPane = new HBox(blackCards, violetCards, blueCards, greenCards, yellowCards,
-				orangeCards, redCards, whiteCards, locomotiveCards);
-		handPane.setId("hand-pane");
-
 		//The hand of the player, containing all of their cards and tickets
 		HBox handView = new HBox(billets, handPane);
 		handView.getStylesheets().add("decks.css");
@@ -74,25 +69,36 @@ class DecksViewCreator {
 	public static VBox createCardsView(ObservableGameState ogs, ObjectProperty<DrawTicketsHandler> drawTickets, ObjectProperty<DrawCardHandler> drawCard) {
 		
 		//The deck of cards and tickets
-		Button piocheBillets = pioche();
-		Button piocheCartes = pioche();
+		Button deckTickets = deck(ogs.ticketPercentage());
+		Button deckCards = deck(ogs.cardPercentage());
 		
-		//The 5 face-up cards
-		StackPane faceUp1 = carteOnly("RED");
-		StackPane faceUp2 = carteOnly("RED");
-		StackPane faceUp3 = carteOnly("RED");
-		StackPane faceUp4 = carteOnly("RED");
-		StackPane faceUp5 = carteOnly("RED");
-		
+		deckTickets.disableProperty().bind(drawTickets.isNull());
+	    deckCards.disableProperty().bind(drawCard.isNull());
+	    
+	    deckTickets.setOnMouseClicked((e) -> drawTickets.get().onDrawTickets());
+	    deckCards.setOnMouseClicked((e) -> drawCard.get().onDrawCard(-1));
 		/*
-		The cards and tickets view of the game, containing all the face-up cards,
-		the deck of cards and the deck of tickets
-		*/
-		VBox cardView = new VBox(piocheBillets, faceUp1, faceUp2,
-				faceUp3, faceUp4, faceUp5, piocheCartes);
-		cardView.getStylesheets().add("decks.css");
-		cardView.getStylesheets().add("colors.css");
-		cardView.setId("card-pane");
+        The cards and tickets view of the game, containing all the face-up cards,
+        the deck of cards and the deck of tickets
+        */
+		VBox cardView = new VBox(deckTickets, deckCards);
+        cardView.getStylesheets().add("decks.css");
+        cardView.getStylesheets().add("colors.css");
+        cardView.setId("card-pane");
+        
+        //The 5 face-up cards
+		for(int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
+		    Card fuCard = ogs.faceUpCard(i).get();
+		    StackPane faceUp = cardOnly("Red");
+		    cardView.getChildren().add(faceUp);
+
+            int slot = i;
+		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
+		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
+		        faceUp.getStyleClass().remove(oV.name());
+		        faceUp.getStyleClass().add(nV.name()); 
+		    });
+		}
 		
 		return cardView;
 	}
@@ -104,25 +110,17 @@ class DecksViewCreator {
 	 * @return (StackPane): a StackPane that resembles a card of the specified color with a
 	 * number on top if there are multiple such cards in the player's hand.
 	 */
-	private static StackPane carteCompteur(String color) {
-		Rectangle carteTrainImage = new Rectangle(60, 90);
-		carteTrainImage.getStyleClass().add("train-image");
-		Rectangle carteInside = new Rectangle(40, 70);
-		carteInside.getStyleClass().add("filled");
-		carteInside.getStyleClass().add("inside");
-		Rectangle carteOutside = new Rectangle(40, 70);
-		carteOutside.getStyleClass().add("outside");
-		
+	private static StackPane cardCompteur(Card card, String color, ObservableGameState ogs) {
 		Text compteur = new Text();
 		compteur.getStyleClass().add("count");
-		ReadOnlyIntegerProperty countCompteur = new SimpleIntegerProperty();
-		compteur.visibleProperty().bind(Bindings.greaterThan(countCompteur, 1));
+		StackPane carteCompteur = cardOnly(color);
+		carteCompteur.getChildren().add(compteur);
 		
-		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage, compteur);
-		carteCompteur.getStyleClass().add(color);
-		ReadOnlyIntegerProperty countCarteCompteur = new SimpleIntegerProperty();
-		compteur.visibleProperty().bind(Bindings.greaterThan(countCarteCompteur, 0));
-		
+		ReadOnlyIntegerProperty count = ogs.playerCards(card);
+		carteCompteur.visibleProperty().bind(Bindings.greaterThan(count, 0));
+        compteur.visibleProperty().bind(Bindings.greaterThan(count, 1));
+        compteur.textProperty().bind(Bindings.convert(count));
+        
 		return carteCompteur;
 	}
 	
@@ -131,16 +129,18 @@ class DecksViewCreator {
 	 * @param color (String): the color of the card.
 	 * @return (StackPane): a StackPane that resembles a card of the specified color.
 	 */
-	private static StackPane carteOnly(String color) {
-		Rectangle carteTrainImage = new Rectangle(60, 90);
+	private static StackPane cardOnly(String color) {
+		Rectangle carteTrainImage = new Rectangle(40, 70);
 		carteTrainImage.getStyleClass().add("train-image");
 		Rectangle carteInside = new Rectangle(40, 70);
 		carteInside.getStyleClass().add("filled");
 		carteInside.getStyleClass().add("inside");
-		Rectangle carteOutside = new Rectangle(40, 70);
+		Rectangle carteOutside = new Rectangle(60, 90);
 		carteOutside.getStyleClass().add("outside");
+		
 		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage);
 		carteCompteur.getStyleClass().add(color);
+		carteCompteur.getStyleClass().add("card");
 		
 		return carteCompteur;
 	}
@@ -151,15 +151,17 @@ class DecksViewCreator {
 	 * @return (Button): a Button which will act as a deck and has a gauge attached to
 	 * it, which corresponds to the amount of cards/tickets remaining.
 	 */
-	private static Button pioche() {
-		Rectangle background = new Rectangle();
+	private static Button deck(ReadOnlyIntegerProperty pctProp) {
+		Rectangle background = new Rectangle(50, 5);
 		background.getStyleClass().add("background");
-		Rectangle foreground = new Rectangle();
+		Rectangle foreground = new Rectangle(50, 5);
 		foreground.getStyleClass().add("foreground");
 		Group grouped = new Group(background, foreground);
 		Button pioche = new Button();
+		pioche.getStyleClass().add("gauged");
 		pioche.setGraphic(grouped);
 		
+		foreground.widthProperty().bind(pctProp.multiply(50).divide(100));
 		return pioche;
 	}
 }

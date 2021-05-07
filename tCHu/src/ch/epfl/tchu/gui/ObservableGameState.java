@@ -90,7 +90,7 @@ public class ObservableGameState {
      */
     private List<ObjectProperty<Card>> createFaceUpCards(){
         List<ObjectProperty<Card>> newList = new ArrayList<>();
-        for (@SuppressWarnings("unused") int slot : FACE_UP_CARD_SLOTS) {
+        for (int slot : FACE_UP_CARD_SLOTS) {
             newList.add(new SimpleObjectProperty<Card>());
         }
         return newList;
@@ -142,6 +142,7 @@ public class ObservableGameState {
        
        for (int slot : FACE_UP_CARD_SLOTS) {
            Card newCard = newGameState.cardState().faceUpCard(slot);
+           System.out.println(newCard);
            faceUpCards.get(slot).set(newCard);
        }
        
