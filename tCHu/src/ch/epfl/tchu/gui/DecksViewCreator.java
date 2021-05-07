@@ -89,14 +89,14 @@ class DecksViewCreator {
         //The 5 face-up cards
 		for(int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
 		    Card fuCard = ogs.faceUpCard(i).get();
-		    StackPane faceUp = cardOnly("Red");
+		    StackPane faceUp = cardOnly("Blue");
 		    cardView.getChildren().add(faceUp);
 
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
-		        faceUp.getStyleClass().remove(oV.name());
-		        faceUp.getStyleClass().add(nV.name()); 
+		        faceUp.getStyleClass().remove(oV.name().toUpperCase());
+		        faceUp.getStyleClass().add(nV.name().toUpperCase()); 
 		    });
 		}
 		
@@ -132,14 +132,16 @@ class DecksViewCreator {
 	private static StackPane cardOnly(String color) {
 		Rectangle carteTrainImage = new Rectangle(40, 70);
 		carteTrainImage.getStyleClass().add("train-image");
+		
 		Rectangle carteInside = new Rectangle(40, 70);
 		carteInside.getStyleClass().add("filled");
 		carteInside.getStyleClass().add("inside");
+		
 		Rectangle carteOutside = new Rectangle(60, 90);
 		carteOutside.getStyleClass().add("outside");
 		
 		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage);
-		carteCompteur.getStyleClass().add(color);
+		carteCompteur.getStyleClass().add(color.toUpperCase());
 		carteCompteur.getStyleClass().add("card");
 		
 		return carteCompteur;
