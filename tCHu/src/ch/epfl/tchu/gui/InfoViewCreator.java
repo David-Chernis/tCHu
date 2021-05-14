@@ -41,16 +41,15 @@ class InfoViewCreator {
 		//The text part of the player statistics
 		Text textBlue = new Text();
 		Text textRed = new Text();
-		
-		StringExpression sBlue = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id), ogs.playerTickets(id), ogs.playerCards(id), ogs.playerWagons(id), ogs.playerClaimPoints(id));
-		StringExpression sRed = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id.next()), ogs.playerTickets(id.next()), ogs.playerCards(id.next()), ogs.playerWagons(id.next()), ogs.playerClaimPoints(id.next()));
-		
+		StringExpression sBlue = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id), ogs.playerTickets(id),
+				ogs.playerCards(id), ogs.playerWagons(id), ogs.playerClaimPoints(id));
+		StringExpression sRed = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id.next()), ogs.playerTickets(id.next()),
+				ogs.playerCards(id.next()), ogs.playerWagons(id.next()), ogs.playerClaimPoints(id.next()));
 		textBlue.textProperty().bind(sBlue);
 		textRed.textProperty().bind(sRed);
 		
 		//The TextFlow of each player
 		TextFlow textFlowBlue = new TextFlow(cBlue, textBlue);
-		
 		textFlowBlue.getStyleClass().add(id == PlayerId.PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
 		TextFlow textFlowRed = new TextFlow(cRed, textRed);
 		textFlowRed.getStyleClass().add(id.next() == PlayerId.PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
@@ -61,7 +60,6 @@ class InfoViewCreator {
 		
 		//The separator that separates the player statistics and the last 5 game infos
 		Separator separator = new Separator();
-		
 		separator.orientationProperty().set(Orientation.HORIZONTAL);
 		
 		//The last 5 game infos
