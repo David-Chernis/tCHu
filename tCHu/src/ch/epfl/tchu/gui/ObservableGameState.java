@@ -33,11 +33,12 @@ public class ObservableGameState {
     private PublicGameState ogs;
     private PlayerState ops;
     private PlayerId id; 
+    private static final int TOTAL_TICKETS = ChMap.tickets().size();
     // Group 1
     private final IntegerProperty ticketPercentage; 
     private final IntegerProperty cardPercentage;
     private final List<ObjectProperty<Card>> faceUpCards;
-    private final Map<Route, ObjectProperty<PlayerId>> routeOwners;
+    private final Map<Route, ObjectProperty<PlayerId>> routes;
     
     // Group 2
     private final List<IntegerProperty> playerTicketsNum;
@@ -58,9 +59,9 @@ public class ObservableGameState {
     public ObservableGameState(PlayerId id){
         this.id = id;
         faceUpCards = createFaceUpCards();
-        routeOwners = createRoutes();
-        ticketPercentage = new SimpleIntegerProperty();
-        cardPercentage = new SimpleIntegerProperty();
+        routes = createRoutes();
+        ticketPercentage = new SimpleIntegerProperty(0);
+        cardPercentage = new SimpleIntegerProperty(0);
         playerTicketsNum = createIntList(2);
         playerTotalCardsNum = createIntList(2);
         playerWagonsNum = createIntList(2);
@@ -78,10 +79,10 @@ public class ObservableGameState {
     private List<IntegerProperty> createIntList(int n){
         List<IntegerProperty> newList = new ArrayList<>();
         for(int i = 0; i < n; i++) {
-            newList.add(new SimpleIntegerProperty());
+            newList.add(new SimpleIntegerProperty(0));
         }
         return newList;
-    } 
+    }
     
     /**
      * Creates and returns a list of 5 ObjectProperty instances of the generic type Card.
@@ -91,7 +92,7 @@ public class ObservableGameState {
     private List<ObjectProperty<Card>> createFaceUpCards(){
         List<ObjectProperty<Card>> newList = new ArrayList<>();
         for (int slot : FACE_UP_CARD_SLOTS) {
-            newList.add(new SimpleObjectProperty<Card>());
+            newList.add(new SimpleObjectProperty<Card>(null));
         }
         return newList;
     }
@@ -105,7 +106,7 @@ public class ObservableGameState {
     private Map<Route, ObjectProperty<PlayerId>> createRoutes(){
         Map<Route, ObjectProperty<PlayerId>> newRoutes = new HashMap<>();
         for(Route r : ChMap.routes()) {
-            newRoutes.put(r, new SimpleObjectProperty<>());
+            newRoutes.put(r, new SimpleObjectProperty<>(null));
         }
         return newRoutes;
     }
@@ -118,7 +119,7 @@ public class ObservableGameState {
     private Map<Route, BooleanProperty> createOwnedRoutes(){
         Map<Route, BooleanProperty> newRoutes = new HashMap<>();
         for(Route r : ChMap.routes()) {
-            newRoutes.put(r, new SimpleBooleanProperty());
+            newRoutes.put(r, new SimpleBooleanProperty(false));
         }
         return newRoutes;
     }
@@ -134,12 +135,10 @@ public class ObservableGameState {
        ops = newPlayerState;
        Set<List<Station>> doubles = new HashSet<>();
        
-       double cardPct = (double)newGameState.cardState().deckSize() / Constants.TOTAL_CARDS_COUNT;
-       double ticketPct = (double)newGameState.ticketsCount() / 46;
-       cardPercentage.set((int)(cardPct*100));
-       ticketPercentage.set((int)(ticketPct*100));
-       
+       cardPercentage.set((100 *newGameState.ticketsCount()) / TOTAL_TICKETS);
+       ticketPercentage.set((100 *newGameState.cardState().deckSize()) / Constants.TOTAL_CARDS_COUNT);
        playerTickets.setAll(newPlayerState.tickets().toList());
+       
        for(Route r: newGameState.claimedRoutes()) {
            doubles.add(r.stations());
        }
@@ -160,15 +159,14 @@ public class ObservableGameState {
        
        for(Route r : ChMap.routes()) {
            if(!(newGameState.claimedRoutes().contains(r))) {
-               routeOwners.get(r).set(null);
+               routes.get(r).set(null);
            } else if(newPlayerState.routes().contains(r)) {
-               routeOwners.get(r).set(id);
+               routes.get(r).set(id);
            } else {
-               routeOwners.get(r).set(id.next());
+               routes.get(r).set(id.next());
            }
            
            // ================== Check This Part ==================
-           
            
            if(newGameState.currentPlayerId() == id && newPlayerState.canClaimRoute(r) && !doubles.contains(r.stations())) {
                claimableRoutes.get(r).set(true);
@@ -217,7 +215,7 @@ public class ObservableGameState {
      * the PlayerId who owns the route specified in the parameter r.
      */
     public ReadOnlyObjectProperty<PlayerId> routeId(Route r){
-        return routeOwners.get(r);
+        return routes.get(r);
     }
     
     /**

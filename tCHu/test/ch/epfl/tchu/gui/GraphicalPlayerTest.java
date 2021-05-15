@@ -29,45 +29,32 @@ import javafx.stage.Stage;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
-public final class Stage9Test extends Application {
+public final class GraphicalPlayerTest extends Application {
     public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage primaryStage) {
       ObservableGameState gameState = new ObservableGameState(PLAYER_1);
 
-      Map<PlayerId, String> playerNames =
-              Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
-            ObservableList<Text> infos = FXCollections.observableArrayList(
-              new Text("Première information.\n"),
-              new Text("\nSeconde information.\n"));
-            Node infoView = InfoViewCreator
-              .createInfoView(PLAYER_1, playerNames, gameState, infos);
+      Map<PlayerId, String> playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
       
+      GraphicalPlayer p = new GraphicalPlayer(PLAYER_1, playerNames);
+      setState(p);
       
-      ObjectProperty<ClaimRouteHandler> claimRoute =
-        new SimpleObjectProperty<>(Stage9Test::claimRoute);
-      ObjectProperty<DrawTicketsHandler> drawTickets =
-        new SimpleObjectProperty<>(Stage9Test::drawTickets);
-      ObjectProperty<DrawCardHandler> drawCard =
-        new SimpleObjectProperty<>(Stage9Test::drawCard);
+      DrawTicketsHandler drawTicketsH =
+              () -> p.receiveInfo("Je tire des billets !");
+            DrawCardHandler drawCardH =
+              s -> p.receiveInfo(String.format("Je tire une carte de %s !", s));
+            ClaimRouteHandler claimRouteH =
+              (r, cs) -> {
+              String rn = r.station1() + " - " + r.station2();
+              p.receiveInfo(String.format("Je m'empare de %s avec %s", rn, cs));
+            };
 
-      Node mapView = MapViewCreator
-        .createMapView(gameState, claimRoute, Stage9Test::chooseCards);
-      Node cardsView = DecksViewCreator
-        .createCardsView(gameState, drawTickets, drawCard);
-      Node handView = DecksViewCreator
-        .createHandView(gameState);
-
-      BorderPane mainPane =
-        new BorderPane(mapView, null, cardsView, handView, infoView);
-      primaryStage.setScene(new Scene(mainPane));
-      primaryStage.show();
-
-      setState(gameState);
+            p.startTurn(drawTicketsH, drawCardH, claimRouteH);
     }
 
-    private void setState(ObservableGameState gameState) {
+    private void setState(GraphicalPlayer p) {
       PlayerState p1State =
         new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
                 SortedBag.of(1, Card.WHITE, 3, Card.RED),
@@ -82,7 +69,7 @@ public final class Stage9Test extends Application {
         new PublicCardState(Card.ALL.subList(0, 5), 110 - 2 * 4 - 5, 0);
       PublicGameState publicGameState =
         new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
-      gameState.setState(publicGameState, p1State);
+      p.setState(publicGameState, p1State);
     }
 
     private static void claimRoute(Route route, SortedBag<Card> cards) {
@@ -102,4 +89,7 @@ public final class Stage9Test extends Application {
     private static void drawCard(int slot) {
       System.out.printf("Tirage de cartes (emplacement %s)!\n", slot);
     }
+    
+    
+    
   }

@@ -30,7 +30,7 @@ class InfoViewCreator {
 	 * @param ogs (ObservableGameState): the observable game state of the game.
 	 * @return (VBox): a graphical view of the infos of the players.
 	 */
-	public static VBox createInfoView(ObservableGameState ogs, PlayerId id, Map<PlayerId, String> playerNames, ObservableList<Text> infos) {
+	public static VBox createInfoView(PlayerId id, Map<PlayerId, String> playerNames,  ObservableGameState ogs, ObservableList<Text> infos) {
 		
 		//The circles that represents the color of each player
 		Circle cBlue = new Circle(5);
