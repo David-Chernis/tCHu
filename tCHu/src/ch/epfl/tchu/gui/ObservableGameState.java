@@ -165,15 +165,27 @@ public class ObservableGameState {
            } else {
                routes.get(r).set(id.next());
            }
-           
-           // ================== Check This Part ==================
-           
-           if(newGameState.currentPlayerId() == id && newPlayerState.canClaimRoute(r) && !doubles.contains(r.stations())) {
-               claimableRoutes.get(r).set(true);
-           } else {
-               claimableRoutes.get(r).set(false);
-           }
        }
+
+       for(Route r1: routes.keySet()) {
+           
+           boolean correctPlayer = newGameState.currentPlayerId() == id;
+           boolean routeUnowned = routes.get(r1).get() == null;
+           boolean doubleUnowned = true;
+           
+           for(Route r2 : routes.keySet()) {
+               if(r2.id() == r1.id()) 
+                   continue;
+               if(r2.stations().containsAll(r1.stations())) 
+                   doubleUnowned = routes.get(r2).get() == null;
+           }
+           
+           boolean playerCanClaimRoute = newPlayerState.canClaimRoute(r1);
+           
+           claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
+       }
+       
+       
        
        for(Card c : Card.ALL) {
            playerCards.get(c.ordinal()).set(newPlayerState.cards().countOf(c));

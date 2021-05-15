@@ -21,6 +21,8 @@ import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -39,27 +41,32 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
 public class GraphicalPlayer {
-    ObservableGameState ogs;
-    ObservableList <Text> infos;
-    ObjectProperty<DrawTicketsHandler> dthProperty;
-    ObjectProperty<DrawCardHandler> dchProperty;
-    ObjectProperty<ClaimRouteHandler> crhProperty;
-    Stage mainStage;
-    final Node mapView;
+    private ObservableGameState ogs;
+    private ObservableList <Text> infos = FXCollections.observableArrayList();
+    private ObjectProperty<DrawTicketsHandler> dthProperty;
+    private ObjectProperty<DrawCardHandler> dchProperty;
+    private ObjectProperty<ClaimRouteHandler> crhProperty;
+    private Stage mainStage;
+    private final Node mapView;
+    
     
     public GraphicalPlayer(PlayerId id,  Map<PlayerId, String> playerNames) {
         ogs = new ObservableGameState(id);
+        dthProperty = new SimpleObjectProperty<>();
+        dchProperty = new SimpleObjectProperty<>();
+        crhProperty = new SimpleObjectProperty<>();
+        
         mapView = MapViewCreator.createMapView(ogs, crhProperty, this::chooseClaimCards);
         Node cardsView = DecksViewCreator.createCardsView(ogs, dthProperty, dchProperty);
         Node handView = DecksViewCreator.createHandView(ogs);
         Node infoView = InfoViewCreator.createInfoView(id, playerNames, ogs,infos);
         
-        Stage playerStage = new Stage();
+        mainStage = new Stage();
         BorderPane mainPane = new BorderPane(mapView , null , cardsView, handView,  infoView);
         Scene mainScene = new Scene(mainPane);
-        playerStage.setScene(mainScene);
-        playerStage.setTitle("tCHu — " + playerNames.get(id));
-        this.mainStage = playerStage;
+        mainStage.setScene(mainScene);
+        mainStage.setTitle("tCHu — " + playerNames.get(id));
+        mainStage.show();
     }
 
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {   
@@ -69,6 +76,7 @@ public class GraphicalPlayer {
     
     public void receiveInfo(String message) {
         assert Platform.isFxApplicationThread();
+        System.out.println(message);
         infos.add(new Text(message));
         if(infos.size() > 5) {
             infos.remove(0);
@@ -110,8 +118,8 @@ public class GraphicalPlayer {
         ListView<Ticket> list = (ListView<Ticket>) ticketChooser.getScene().rootProperty().get().getChildrenUnmodifiable().get(1);
         
         ticketButton.setOnAction((e) -> {
-            ticketChooser.hide();
             tch.onChooseTickets(SortedBag.of(list.getSelectionModel().getSelectedItems()));
+            ticketChooser.hide();
         });
     }
     
@@ -131,8 +139,9 @@ public class GraphicalPlayer {
         
         //Creation of Button Handler
         claimCardButton.setOnAction((e) -> {
-            claimCard.hide();
+            
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
+            claimCard.hide();
         });
     } 
     public void chooseAdditionalCards(List<SortedBag<Card>> claimCards, ChooseCardsHandler cch) {   
@@ -144,8 +153,9 @@ public class GraphicalPlayer {
         
         //Creation of Button Handler
         additionalCardButton.setOnAction((e) -> {
-            additionalCard.hide();
+            
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
+            additionalCard.hide();
         });
     }
     

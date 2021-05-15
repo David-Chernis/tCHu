@@ -5,6 +5,7 @@ import java.util.Map;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
@@ -31,7 +32,7 @@ class InfoViewCreator {
 	 * @return (VBox): a graphical view of the infos of the players.
 	 */
 	public static VBox createInfoView(PlayerId id, Map<PlayerId, String> playerNames,  ObservableGameState ogs, ObservableList<Text> infos) {
-		
+		infos = FXCollections.observableArrayList();
 		//The circles that represents the color of each player
 		Circle cBlue = new Circle(5);
 		cBlue.getStyleClass().add("filled");

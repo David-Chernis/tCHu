@@ -45,8 +45,6 @@ class MapViewCreator {
 		for(Route route : ChMap.routes()) {
 		    Group routeGroup = new Group();
 		    gameState.routeId(route).addListener((o, oV, nV) -> routeGroup.getStyleClass().add(nV.name()));
-		    System.out.println(gameState.claimable(route).not());
-		    System.out.println(gameState.claimable(route));
 		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(route).not()));
 	        routeGroup.setId(route.id());
 	        routeGroup.getStyleClass().add("route");
