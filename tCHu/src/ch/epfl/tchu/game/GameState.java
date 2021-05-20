@@ -204,8 +204,6 @@ public final class GameState extends PublicGameState{
      * @throws IllegalArgumentException if canDrawCards method of PublicGameState returns false.
      */
     public GameState withDrawnFaceUpCard(int slot) {
-        Preconditions.checkArgument(canDrawCards());
-        
         PlayerState ps = playerState.get(currentPlayerId()).withAddedCard(cardState.faceUpCard(slot));
         CardState newCardState = cardState.withDrawnFaceUpCard(slot);
         
@@ -220,8 +218,6 @@ public final class GameState extends PublicGameState{
      * @throws IllegalArgumentException if deck of cards (deckCards) is empty.
      */
     public GameState withBlindlyDrawnCard() {
-        Preconditions.checkArgument(canDrawCards());
-        
         PlayerState ps = playerState.get(currentPlayerId()).withAddedCard(cardState.topDeckCard());
         CardState newCardState = cardState.withoutTopDeckCard();
         
