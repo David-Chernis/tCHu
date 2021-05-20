@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package ch.epfl.tchu.gui;
 
 import javafx.application.Application;
@@ -16,3 +17,12 @@ public class ClientMain extends Application{
     }
     
 }
+=======
+package ch.epfl.tchu.gui;
+
+public class ClientMain {
+	public static void main(String[] args) {
+		
+	}
+}
+>>>>>>> 511729f (Hola)
