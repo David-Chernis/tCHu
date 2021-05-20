@@ -2,6 +2,9 @@ package ch.epfl.tchu.gui;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import static javafx.application.Platform.runLater;
 
 import ch.epfl.tchu.SortedBag;
@@ -15,17 +18,26 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.application.Platform;
 
 public class GraphicalPlayerAdapter implements Player{
-	
+    private BlockingQueue<SortedBag<Ticket>> ticketQ;
+    private BlockingQueue<TurnKind> turnQ;
+    private BlockingQueue<Integer> drawSlotQ;
+    private BlockingQueue<Route> routeQ;
+    private BlockingQueue<SortedBag<Card>> cardBagQ;
+    
+    
 	private GraphicalPlayer graphicalPlayer;
 	
 	public GraphicalPlayerAdapter() {
-		
+		ticketQ = new ArrayBlockingQueue<>(1);
+		turnQ = new ArrayBlockingQueue<>(1);
+		drawSlotQ = new ArrayBlockingQueue<>(2);
+		routeQ = new ArrayBlockingQueue<>(1);
+		cardBagQ = new ArrayBlockingQueue<>(1);
 	}
 
 	@Override
 	public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-		assert Platform.isFxApplicationThread();
-		graphicalPlayer = new GraphicalPlayer(ownId, playerNames);
+		runLater(() -> graphicalPlayer = new GraphicalPlayer(ownId, playerNames));
 	}
 
 	@Override
@@ -40,48 +52,135 @@ public class GraphicalPlayerAdapter implements Player{
 
 	@Override
 	public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
-		runLater(() -> graphicalPlayer.setState(tickets, ));
+	    runLater(() -> graphicalPlayer.chooseTickets(tickets, 
+                (ticketBag) -> {
+            try {
+                ticketQ.put(ticketBag);
+            } catch (InterruptedException e) {
+                throw new Error();
+            }
+        }));
 	}
 
 	@Override
 	public SortedBag<Ticket> chooseInitialTickets() {
-		// TODO Auto-generated method stub
-		return null;
+	    try {
+            return ticketQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
 	}
 
 	@Override
 	public TurnKind nextTurn() {
-		// TODO Auto-generated method stub
-		return null;
+		runLater(() -> graphicalPlayer.startTurn(
+		        
+		        () -> {
+                    try {
+                        turnQ.put(TurnKind.DRAW_TICKETS);
+                    } catch (InterruptedException e) {
+                        throw new Error();
+                    }
+                }
+		        
+		        , 
+		        
+		        (a) -> {
+		                try {
+                            turnQ.put(TurnKind.DRAW_CARDS);
+                            drawSlotQ.put(a);
+                        } catch (InterruptedException e) {
+                            throw new Error();
+                        }
+		            }
+		        
+		        , 
+		        
+		        (r, bag) -> {
+		            try {
+                        turnQ.put(TurnKind.CLAIM_ROUTE);
+                        routeQ.put(r);
+                        cardBagQ.put(bag);
+                    } catch (InterruptedException e) {
+                        throw new Error();
+                    }
+		        }
+		        
+		        ));
+		try {
+            return turnQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
+		
 	}
 
 	@Override
 	public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-		runLater(() -> graphicalPlayer.chooseTickets(options, );
+	    setInitialTicketChoice(options);
+        return chooseInitialTickets();
 	}
 
 	@Override
 	public int drawSlot() {
-		// TODO Auto-generated method stub
-		return 0;
+	    if(!drawSlotQ.isEmpty()) {
+	        try {
+                return drawSlotQ.take();
+            } catch (InterruptedException e) {
+                throw new Error();
+            }
+	    } else {
+	        runLater(() -> graphicalPlayer.drawCard((a) -> {
+                try {
+                    drawSlotQ.put(a);
+                } catch (InterruptedException e) {
+                    throw new Error();
+                }
+            }));
+	    }
+		try {
+            return drawSlotQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
 	}
 
 	@Override
 	public Route claimedRoute() {
-		// TODO Auto-generated method stub
-		return null;
+	    
+		try {
+            return routeQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
 	}
 
 	@Override
 	public SortedBag<Card> initialClaimCards() {
-		// TODO Auto-generated method stub
-		return null;
+	    try {
+            return cardBagQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
 	}
 
 	@Override
 	public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
-		// TODO Auto-generated method stub
-		return null;
+	    runLater( () -> graphicalPlayer.chooseAdditionalCards(options, 
+	            (bag) -> {
+	                try {
+                        cardBagQ.put(bag);
+                    } catch (InterruptedException e) {
+                        throw new Error();
+                    }
+	            })
+	    );
+	    
+		try {
+            return cardBagQ.take();
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
 	}
 	
 	
