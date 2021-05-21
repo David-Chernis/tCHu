@@ -36,7 +36,7 @@ public final class Ticket implements Comparable<Ticket> {
         for(int i = 0; i < trips.size()-1; i++) {
             Preconditions.checkArgument(trips.get(i).from().name().equals(trips.get(i+1).from().name()));
         }
-        this.trips = trips;
+        this.trips = List.copyOf(trips);
         text = Ticket.computeText(trips);
     }
     

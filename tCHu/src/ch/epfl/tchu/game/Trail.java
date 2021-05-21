@@ -184,7 +184,7 @@ public final class Trail {
         Station st = this.station1();
         StringBuilder builder = new StringBuilder();
         
-        if(st == null) {
+        if(st == null || routes.isEmpty()) {
             return builder.toString();
         }
         

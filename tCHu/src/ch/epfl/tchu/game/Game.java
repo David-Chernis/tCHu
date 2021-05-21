@@ -139,7 +139,6 @@ public final class Game {
      * @param playerInfoMap (Map<PlayerId, Info>): Allows the access of the Info object of both players.
      * @param gameState (GameState): the given game state used to play out a turn.
      * @param players (Map<PlayerId, Player>): A map linking each player id to the player it refers to.
-     * @param currentPlayerId (PlayerId): the ID of the current player.
      * @param rng (Random): A random variable used to randomize certain aspects of the game.
      * @return (GameState): an updated game state after the turn of the given player has been played.
      */
