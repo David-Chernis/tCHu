@@ -1,6 +1,9 @@
 <<<<<<< HEAD
 package ch.epfl.tchu.gui;
 
+import java.util.List;
+
+import ch.epfl.tchu.net.RemotePlayerClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -8,11 +11,17 @@ public class ClientMain extends Application{
 
     public static void main(String[] args) {
         launch(args);
+        
     }
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-            
+        List<String> prop = getParameters().getRaw();
+        String name = prop.get(0);
+        int port = Integer.parseInt(prop.get(1));
+        GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
+        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, name, port);
+        new Thread(() -> client.run()).start();
         
     }
     

@@ -83,16 +83,7 @@ public final class PlayerState extends PublicPlayerState{
 	 * @return (PlayerState): an identical state to the receiver, except that the player also has the given card.
 	 */
 	public PlayerState withAddedCard(Card card) {
-		return withAddedCards(SortedBag.of(card));
-	}
-	
-	/**
-	 * Returns an identical state to the receiver, except that the player also has the given additionalCards.
-	 * @param additionalCards (SortedBag<Card>): the additional cards to be added.
-	 * @return (PlayerState): an identical state to the receiver, except that the player also has the given additionalCards.
-	 */
-	public PlayerState withAddedCards(SortedBag<Card> additionalCards) {
-		return new PlayerState(tickets, additionalCards.union(cards()), routes());
+		return new PlayerState(tickets, SortedBag.of(card).union(cards()), routes());
 	}
 	
 	/**
