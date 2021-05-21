@@ -40,6 +40,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
+/**
+ * Class that represents a Graphical Interface of a player. It must be noted that despite its name,
+ * it does not implement the Player interface.
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public class GraphicalPlayer {
     private ObservableGameState ogs;
     private ObservableList <Text> infos = FXCollections.observableArrayList();
@@ -49,7 +55,14 @@ public class GraphicalPlayer {
     private Stage mainStage;
     private final Node mapView;
     
-    
+    /**
+     * Default GraphicalPlayer constructor. Initializes a GraphicalPlayer by taking the ID of the player
+     * whose GUI it will represent, along with a map of the names of the 2 players (accessible using their
+     * player IDs).
+     * @param id (PlayerId): ID of the player whose GUI this instance of Graphical Player will represent.
+     * @param playerNames (Map<PlayerId, String>): a map of the names of the 2 players (accessible using
+     * their player IDs).
+     */
     public GraphicalPlayer(PlayerId id,  Map<PlayerId, String> playerNames) {
         ogs = new ObservableGameState(id);
         dthProperty = new SimpleObjectProperty<>();
@@ -69,11 +82,22 @@ public class GraphicalPlayer {
         mainStage.show();
     }
 
+    /**
+     * Updates all the attributes within the ObservableGameState using the values provided
+     * in the parameters of the method. Does this by calling the setState method onto the
+     * ObservableGameState of this instance of GraphicalPlayer.
+     * @param newGameState (PublicGameState): the new public game state.
+     * @param newPlayerState (PlayerState): the new player state.
+     */
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {   
         assert Platform.isFxApplicationThread();
         ogs.setState(newGameState, newPlayerState);     
     }
     
+    /**
+     * Takes a message about an event and adds it to the bottom of the Info View of the GUI.
+     * @param message (String): the message to be added to the bottom of the GUI.
+     */
     public void receiveInfo(String message) {
         assert Platform.isFxApplicationThread();
         System.out.println(message);
@@ -83,6 +107,13 @@ public class GraphicalPlayer {
         }
     }
     
+    /**
+     * Defines the properties of all the action handlers of the GUI. Once a button is clicked, it also
+     * disables the other actions to make sure only one "action" is taken per turn.
+     * @param dth (DrawTicketsHandler): the DrawTicketsHandler to be used.
+     * @param dch (DrawCardHanlder):  the DrawCardHandler to be used.
+     * @param crh (ClaimRouteHandler): the ClaimRouteHandler to be used.
+     */
     public void startTurn(DrawTicketsHandler dth, DrawCardHandler dch, ClaimRouteHandler crh) {
         assert Platform.isFxApplicationThread();
         
@@ -109,6 +140,12 @@ public class GraphicalPlayer {
                 );
     }
     
+    /**
+     * Opens the ticket choosing window, where a player can choose which tickets they wish to keep.
+     * @param ticketChoices (SortedBag<Ticket>): the choice of tickets the player has.
+     * @param tch (ChooseTicketsHandler): the action handler allowing interaction between the player
+     * and the GUI window where tickets to be kept are chosen.
+     */
     public void chooseTickets(SortedBag<Ticket> ticketChoices, ChooseTicketsHandler tch) {
         assert Platform.isFxApplicationThread();
         Preconditions.checkArgument(ticketChoices.size() == 5 || ticketChoices.size() == 3);
@@ -123,6 +160,11 @@ public class GraphicalPlayer {
         });
     }
     
+    /**
+     * Allows the player to interact with the GUI to be able to draw either a face-up card or a card
+     * from the deck of cards.
+     * @param dch (DrawCardHandler): the action handler that allows the drawing of cards.
+     */
     public void drawCard(DrawCardHandler dch) {
         assert Platform.isFxApplicationThread();
         dchProperty.set((int i ) -> {
@@ -131,6 +173,14 @@ public class GraphicalPlayer {
         });
     }
     
+    /**
+     * Opens a card choosing window, where a player can choose which cards they with to use to claim
+     * a route.
+     * @param claimCards (List<SortedBag<Card>>): the possible combinations of claim cards that can
+     * be used to claim a route.
+     * @param cch (ChooseCardsHandler): the action handler allowing interaction between the player
+     * and the GUI window where the player can choose which cards to use to claim a route.
+     */
     public void chooseClaimCards(List<SortedBag<Card>> claimCards, ChooseCardsHandler cch) { 
         assert Platform.isFxApplicationThread();
         Stage claimCard = createChooser(StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, 1, false);
@@ -144,6 +194,15 @@ public class GraphicalPlayer {
             claimCard.hide();
         });
     } 
+    
+    /**
+     * Opens a card choosing window, where a player can choose which additional cards they with to
+     * use to claim a route.
+     * @param claimCards (List<SortedBag<Card>>): the possible combinations of additional claim
+     * cards that can be used to claim a route.
+     * @param cch (ChooseCardsHandler): the action handler allowing interaction between the player
+     * and the GUI window where the player can choose which additional cards to use to claim a route.
+     */
     public void chooseAdditionalCards(List<SortedBag<Card>> claimCards, ChooseCardsHandler cch) {   
         assert Platform.isFxApplicationThread();
         Preconditions.checkArgument(claimCards.size() > 0);
@@ -159,12 +218,28 @@ public class GraphicalPlayer {
         });
     }
     
+    /**
+     * Disables the 3 action handlers used by the GUI.
+     */
     private void disableHandlers() {
         dthProperty.set(null);
         dchProperty.set(null);
         crhProperty.set(null);
     }
     
+    /**
+     * Returns a GUI pop-up window used for allowing the player to choose between certain in-game
+     * options using a title and intro text, the minimum number of options needed to be chosen by
+     * the player for the window to become closeable, and whether there are multiple options that
+     * can be chosen.
+     * @param titleText (String): the title of the pop-up window.
+     * @param introText (String): the introductory text of the pop-up window.
+     * @param minimum (int): the minimum number of options needed to be chosen by the player for
+     * the window to become closeable.
+     * @param multiple (boolean): whether there are multiple options that can be chosen.
+     * @return (Stage): a GUI pop-up window used for allowing the player to choose between certain
+     * in-game options.
+     */
     private Stage createChooser(String titleText, String introText, int minimum, boolean multiple) {
         Text text = new Text(introText);
         
@@ -215,6 +290,11 @@ public class GraphicalPlayer {
         return chooserStage;
     }
 
+    /**
+     * Class allowing for the representation of a sorted bag of cards as a String.
+     * @author Shrey Mittal (312275)
+     * @author David Chernis (310298)
+     */
     public class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
 
         @Override

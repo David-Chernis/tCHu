@@ -17,6 +17,13 @@ import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
 import javafx.application.Platform;
 
+/**
+ * Class that adapts an instance of GraphicalPlayer into a variable of type Player. Also makes
+ * the methods described below to force some of the processes in the game to be run on the JavaFX
+ * thread.
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public class GraphicalPlayerAdapter implements Player{
     private BlockingQueue<SortedBag<Ticket>> ticketQ;
     private BlockingQueue<TurnKind> turnQ;
@@ -27,6 +34,10 @@ public class GraphicalPlayerAdapter implements Player{
     
 	private GraphicalPlayer graphicalPlayer;
 	
+	/**
+	 * Default GraphicalPlayerAdapter Constructor. Initializes all the blocking queues needed for
+	 * the GraphicalPlayerAdapter to run as intended.
+	 */
 	public GraphicalPlayerAdapter() {
 		ticketQ = new ArrayBlockingQueue<>(1);
 		turnQ = new ArrayBlockingQueue<>(1);
