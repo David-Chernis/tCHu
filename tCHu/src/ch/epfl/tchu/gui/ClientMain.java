@@ -19,6 +19,7 @@ public class ClientMain extends Application{
         List<String> prop = getParameters().getRaw();
         String name = prop.get(0);
         int port = Integer.parseInt(prop.get(1));
+        System.out.println(port);
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
         RemotePlayerClient client = new RemotePlayerClient(playerAdapter, name, port);
         new Thread(() -> client.run()).start();

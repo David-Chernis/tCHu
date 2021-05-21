@@ -24,7 +24,7 @@ import javafx.application.Platform;
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
-public class GraphicalPlayerAdapter implements Player{
+public final class GraphicalPlayerAdapter implements Player{
     private BlockingQueue<SortedBag<Ticket>> ticketQ;
     private BlockingQueue<TurnKind> turnQ;
     private BlockingQueue<Integer> drawSlotQ;
@@ -41,7 +41,7 @@ public class GraphicalPlayerAdapter implements Player{
 	public GraphicalPlayerAdapter() {
 		ticketQ = new ArrayBlockingQueue<>(1);
 		turnQ = new ArrayBlockingQueue<>(1);
-		drawSlotQ = new ArrayBlockingQueue<>(2);
+		drawSlotQ = new ArrayBlockingQueue<>(1);
 		routeQ = new ArrayBlockingQueue<>(1);
 		cardBagQ = new ArrayBlockingQueue<>(1);
 	}
@@ -148,12 +148,15 @@ public class GraphicalPlayerAdapter implements Player{
                     throw new Error();
                 }
             }));
+	        
+	        try {
+	            return drawSlotQ.take();
+	        } catch (InterruptedException e) {
+	            throw new Error();
+	        }
 	    }
-		try {
-            return drawSlotQ.take();
-        } catch (InterruptedException e) {
-            throw new Error();
-        }
+	    
+	    
 	}
 
 	@Override
