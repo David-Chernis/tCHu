@@ -43,14 +43,6 @@ public class PublicCardState {
 	}
 	
 	/**
-	 * Returns the total number of cards that are not in the two players' hands i.e the 5 face-up cards, the cards in the deck and the discarded cards.
-	 * @return (int): the total number of cards that are not in the two players' hands.
-	 */
-	public int totalSize() {
-		return faceUpCards.size() + deckSize + discardsSize;
-	}
-	
-	/**
 	 * Returns the 5 cards face up, in the form of a List with exactly 5 items.
 	 * @return (List<Card>): the 5 cards face up, in the form of a List with exactly 5 items.
 	 */
