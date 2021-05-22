@@ -271,6 +271,8 @@ public class GraphicalPlayer {
         TextFlow texts = new TextFlow(text);    
         VBox options = new VBox(texts, list, chooserButton);
         
+        chooserButton.setText(StringsFr.CHOOSE);
+        
         Scene chooser = new Scene(options);
         chooser.getStylesheets().add("chooser.css");
         
