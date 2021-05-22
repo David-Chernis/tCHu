@@ -55,7 +55,7 @@ public final class Trip {
      * @throws IllegalArgumentException if from or to are null or if points <= 0.
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){
-        Preconditions.checkArgument(from != null && !from.isEmpty() && to != null && points > 0);
+        Preconditions.checkArgument(from != null && !from.isEmpty() && to != null && !to.isEmpty() && points > 0);
         ArrayList<Trip> allTrips = new ArrayList<Trip>();
         for(Station stationFrom : from) {
             for(Station stationTo : to) {

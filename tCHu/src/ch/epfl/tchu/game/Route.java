@@ -2,6 +2,7 @@ package ch.epfl.tchu.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
@@ -59,9 +60,7 @@ public final class Route {
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
         Preconditions.checkArgument(!(station1.equals(station2)) && length >= Constants.MIN_ROUTE_LENGTH && length <= Constants.MAX_ROUTE_LENGTH);
-        if(id == null || station1 == null || station2 == null || level == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(id); Objects.requireNonNull(station1); Objects.requireNonNull(station2); Objects.requireNonNull(level);
         this.color = color;
         this.id = id;
         this.station1 = station1;

@@ -49,14 +49,6 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(Station from, Station to, int points){
         this(List.of(new Trip(from, to, points)));
     }
-
-    /**
-     * Returns the trips of this instance of Ticket.
-     * @return (List<Trips>): the trips of this instance of Ticket.
-     */
-    public List<Trip> getTrips() {
-        return trips;
-    }
     
     /**
      * Returns the text for this instance of Ticket.

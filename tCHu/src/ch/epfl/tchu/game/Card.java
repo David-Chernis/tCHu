@@ -23,7 +23,7 @@ public enum Card {
     /**
      * (List<Card>): list of all the different types of Card that are cars.
      */
-    public static final List<Card> CARS = ALL.subList(0, 8);
+    public static final List<Card> CARS = ALL.subList(0, COUNT-1);
     
     /**
      * Method that returns the type of card that matches the given color.
