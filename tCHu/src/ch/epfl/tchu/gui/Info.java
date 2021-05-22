@@ -216,7 +216,7 @@ public final class Info {
 	 * @param cards (SortedBag<Card>): the set of cards that need a String representation.
 	 * @return (String): a String representation of the given set of cards in the correct format.
 	 */
-	private static String cardsRepresentation(SortedBag<Card> cards) {
+	public static String cardsRepresentation(SortedBag<Card> cards) {
 		String cardsString = "";
 		int counter = 0;
 		for(Card c : cards.toSet()) {

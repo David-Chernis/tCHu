@@ -101,6 +101,8 @@ class DecksViewCreator {
 		    
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
+		    
+		    
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
 		        faceUp.getStyleClass().add(nV == Card.LOCOMOTIVE ? "NEUTRAL" : nV.name()); 
 		        faceUp.getStyleClass().remove(oV == null 
