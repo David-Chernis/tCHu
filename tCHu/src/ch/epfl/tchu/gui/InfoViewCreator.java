@@ -41,10 +41,12 @@ class InfoViewCreator {
 		//The text part of the player statistics
 		Text textBlue = new Text();
 		Text textRed = new Text();
+		
 		StringExpression sBlue = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id), ogs.playerTickets(id),
 				ogs.playerCards(id), ogs.playerWagons(id), ogs.playerClaimPoints(id));
 		StringExpression sRed = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id.next()), ogs.playerTickets(id.next()),
 				ogs.playerCards(id.next()), ogs.playerWagons(id.next()), ogs.playerClaimPoints(id.next()));
+		
 		textBlue.textProperty().bind(sBlue);
 		textRed.textProperty().bind(sRed);
 		
