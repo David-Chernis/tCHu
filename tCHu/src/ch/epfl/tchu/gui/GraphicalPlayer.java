@@ -169,7 +169,7 @@ public class GraphicalPlayer {
         });
         
         createChooser(chooserStage, StringsFr.TICKETS_CHOICE, message, chooserButton, list);
-        
+        chooserStage.show();
     }
     
     /**

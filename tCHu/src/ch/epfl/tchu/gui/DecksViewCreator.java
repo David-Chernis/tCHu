@@ -48,7 +48,7 @@ class DecksViewCreator {
 		
 		//The cards part of the player's hand
 		for(Card c : Card.ALL) {
-		    StackPane colorCards = cardCompteur(c, c.name(), ogs);
+		    StackPane colorCards = cardCompteur(c, c == Card.LOCOMOTIVE ? "NEUTRAL" : c.name(), ogs);
 		    handPane.getChildren().add(colorCards);
 		}
 		
@@ -102,8 +102,12 @@ class DecksViewCreator {
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
-		        faceUp.getStyleClass().add(nV.name()); 
-		        faceUp.getStyleClass().remove(oV == null ? "" : oV.name());
+		        faceUp.getStyleClass().add(nV == Card.LOCOMOTIVE ? "NEUTRAL" : nV.name()); 
+		        faceUp.getStyleClass().remove(oV == null 
+		                ? "" 
+		                : oV == Card.LOCOMOTIVE 
+		                    ? "NEUTRAL"
+		                    : oV.name());
 		    });
 		}
 		cardView.getChildren().add(deckCards);
