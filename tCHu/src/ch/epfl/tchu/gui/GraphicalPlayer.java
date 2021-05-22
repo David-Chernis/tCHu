@@ -39,6 +39,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import static javafx.collections.FXCollections.observableArrayList;
 
 /**
  * Class that represents a Graphical Interface of a player. It must be noted that despite its name,
@@ -48,7 +49,7 @@ import javafx.util.StringConverter;
  */
 public class GraphicalPlayer {
     private ObservableGameState ogs;
-    private ObservableList <Text> infos = FXCollections.observableArrayList();
+    private ObservableList <Text> infos = observableArrayList();
     private ObjectProperty<DrawTicketsHandler> dthProperty;
     private ObjectProperty<DrawCardHandler> dchProperty;
     private ObjectProperty<ClaimRouteHandler> crhProperty;
@@ -149,15 +150,26 @@ public class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketChoices, ChooseTicketsHandler tch) {
         assert Platform.isFxApplicationThread();
         Preconditions.checkArgument(ticketChoices.size() == 5 || ticketChoices.size() == 3);
-        boolean multiple = ticketChoices.size() == 5;
-        Stage ticketChooser = createChooser(StringsFr.TICKETS_CHOICE, String.format(StringsFr.CHOOSE_TICKETS, multiple ? "5" : "3" , multiple ? "s" : "" ), ticketChoices.size()-2, true);
-        Button ticketButton = (Button) ticketChooser.getScene().rootProperty().get().getChildrenUnmodifiable().get(2);
-        ListView<Ticket> list = (ListView<Ticket>) ticketChooser.getScene().rootProperty().get().getChildrenUnmodifiable().get(1);
         
-        ticketButton.setOnAction((e) -> {
+        Stage chooserStage = new Stage(StageStyle.UTILITY);
+        
+        String message = String.format(StringsFr.CHOOSE_TICKETS, ticketChoices.size() - 2 , StringsFr.plural(ticketChoices.size() -2) );
+        
+        ObservableList<Ticket> observableList = observableArrayList(ticketChoices.toList());
+        ListView<Ticket> list = new ListView<>(observableList);
+        list.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        Button chooserButton = new Button();
+        
+        chooserButton.disableProperty().bind(Bindings.size(list.getSelectionModel().getSelectedItems()).lessThan(ticketChoices.size()-2));
+        
+        chooserButton.setOnAction((e) -> {
+            chooserStage.hide();
             tch.onChooseTickets(SortedBag.of(list.getSelectionModel().getSelectedItems()));
-            ticketChooser.hide();
         });
+        
+        createChooser(chooserStage, StringsFr.TICKETS_CHOICE, message, chooserButton, list);
+        
     }
     
     /**
@@ -183,15 +195,21 @@ public class GraphicalPlayer {
      */
     public void chooseClaimCards(List<SortedBag<Card>> claimCards, ChooseCardsHandler cch) { 
         assert Platform.isFxApplicationThread();
-        Stage claimCard = createChooser(StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, 1, false);
-        Button claimCardButton = (Button) claimCard.getScene().rootProperty().get().getChildrenUnmodifiable().get(2);
-        ListView<SortedBag<Card>> list = (ListView<SortedBag<Card>>) claimCard.getScene().rootProperty().get().getChildrenUnmodifiable().get(1);
+        
+        String message = StringsFr.CHOOSE_CARDS;
+        Stage chooserStage = new Stage(StageStyle.UTILITY);
+        ObservableList<SortedBag<Card>> observableList = observableArrayList(claimCards);
+        ListView<SortedBag<Card>> list = new ListView<>(observableList);
+        list.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
+        
+        Button chooserButton = new Button();
+        
+        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);
         
         //Creation of Button Handler
-        claimCardButton.setOnAction((e) -> {
-            
+        chooserButton.setOnAction((e) -> {
+            chooserStage.hide();
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
-            claimCard.hide();
         });
     } 
     
@@ -206,15 +224,21 @@ public class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> claimCards, ChooseCardsHandler cch) {   
         assert Platform.isFxApplicationThread();
         Preconditions.checkArgument(claimCards.size() > 0);
-        Stage additionalCard = createChooser(StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_ADDITIONAL_CARDS, 1, false);
-        Button additionalCardButton = (Button) additionalCard.getScene().rootProperty().get().getChildrenUnmodifiable().get(2);
-        ListView<SortedBag<Card>> list = (ListView<SortedBag<Card>>) additionalCard.getScene().rootProperty().get().getChildrenUnmodifiable().get(1);
+        Stage chooserStage = new Stage(StageStyle.UTILITY);
+        String message = StringsFr.CHOOSE_ADDITIONAL_CARDS;
+        
+        ObservableList<SortedBag<Card>> observableList = observableArrayList(claimCards);
+        ListView<SortedBag<Card>> list = new ListView<>(observableList);
+        list.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
+        
+        Button chooserButton = new Button();
+        
+        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);
         
         //Creation of Button Handler
-        additionalCardButton.setOnAction((e) -> {
-            
+        chooserButton.setOnAction((e) -> {
+            chooserStage.hide();
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
-            additionalCard.hide();
         });
     }
     
@@ -240,54 +264,21 @@ public class GraphicalPlayer {
      * @return (Stage): a GUI pop-up window used for allowing the player to choose between certain
      * in-game options.
      */
-    private Stage createChooser(String titleText, String introText, int minimum, boolean multiple) {
-        Text text = new Text(introText);
+    private void createChooser(Stage chooserStage, String titleText, String message, Button chooserButton, ListView<?> list) {
         
-        TextFlow texts = new TextFlow(text);
-        Stage chooserStage;
+        Text text = new Text( message );
         
-        if(multiple) {
-            ListView<Ticket> list = new ListView<>();
-            list.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            Button chooserButton = new Button();
-            chooserButton.disableProperty().bind(Bindings.size(list.getSelectionModel().getSelectedItems()).lessThan(minimum));
-            
-            VBox options = new VBox(texts, list, chooserButton);
-            
-            Scene chooser = new Scene(options);
-            chooser.getStylesheets().add("chooser.css");
-            
-            chooserStage = new Stage(StageStyle.UTILITY);
-            chooserStage.setScene(chooser);
-            chooserStage.initOwner(mainStage);
-            chooserStage.initModality(Modality.WINDOW_MODAL);
-            
-            chooserStage.setOnCloseRequest((e) -> {e.consume();});
-            chooserStage.setTitle(titleText);
-        }
+        TextFlow texts = new TextFlow(text);    
+        VBox options = new VBox(texts, list, chooserButton);
         
-        else {
-            ListView<SortedBag<Card>> list = new ListView<>();
-            list.setCellFactory(v ->  new TextFieldListCell<>(new CardBagStringConverter()));
-            list.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            Button chooserButton = new Button();
-            chooserButton.disableProperty().bind(Bindings.size(list.getSelectionModel().getSelectedItems()).lessThan(minimum));
-            
-            VBox options = new VBox(texts, list, chooserButton);
-            
-            Scene chooser = new Scene(options);
-            chooser.getStylesheets().add("chooser.css");
-            
-            chooserStage = new Stage(StageStyle.UTILITY);
-            chooserStage.setScene(chooser);
-            chooserStage.initOwner(mainStage);
-            chooserStage.initModality(Modality.WINDOW_MODAL);
-            
-            chooserStage.setOnCloseRequest((e) -> {e.consume();});
-            chooserStage.setTitle(titleText);
-        }
+        Scene chooser = new Scene(options);
+        chooser.getStylesheets().add("chooser.css");
         
-        return chooserStage;
+        chooserStage.setScene(chooser);
+        chooserStage.initOwner(mainStage);
+        chooserStage.initModality(Modality.WINDOW_MODAL);
+        chooserStage.setOnCloseRequest((e) -> {e.consume();});
+        chooserStage.setTitle(titleText);
     }
 
     /**
