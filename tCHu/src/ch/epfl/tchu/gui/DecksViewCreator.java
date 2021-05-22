@@ -97,7 +97,7 @@ class DecksViewCreator {
 		    
 		    StackPane faceUp = cardOnly(fuCard);
 		    cardView.getChildren().add(faceUp);
-		    faceUp.disableProperty().bind(drawCard.isNull().or(drawTickets.isNull()));
+		    faceUp.disableProperty().bind(drawCard.isNull());
 		    
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
