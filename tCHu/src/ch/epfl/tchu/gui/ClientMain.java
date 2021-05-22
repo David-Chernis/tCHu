@@ -9,6 +9,10 @@ import javafx.stage.Stage;
 
 public class ClientMain extends Application{
 
+	/**
+	 * The main method for the client.
+	 * @param args (String[]): the arguments passed to the program at the beginning.
+	 */
     public static void main(String[] args) {
         launch(args);
         
