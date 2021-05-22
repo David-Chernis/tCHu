@@ -211,6 +211,7 @@ public class GraphicalPlayer {
             chooserStage.hide();
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
         });
+        chooserStage.show();
     } 
     
     /**
@@ -240,6 +241,7 @@ public class GraphicalPlayer {
             chooserStage.hide();
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
         });
+        chooserStage.show();
     }
     
     /**
