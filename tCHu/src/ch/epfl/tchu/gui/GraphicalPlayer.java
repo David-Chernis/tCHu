@@ -100,7 +100,8 @@ public class GraphicalPlayer {
      * @param newPlayerState
      *            (PlayerState): the new player state.
      */
-    public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
+    public void setState(PublicGameState newGameState,
+            PlayerState newPlayerState) {
         assert Platform.isFxApplicationThread();
         ogs.setState(newGameState, newPlayerState);
     }
@@ -241,6 +242,10 @@ public class GraphicalPlayer {
         createChooser(chooserStage, StringsFr.CARDS_CHOICE, message,
                 chooserButton, list);
 
+        chooserButton.disableProperty()
+        .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
+                .lessThan(1));
+        
         // Creation of Button Handler
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
@@ -281,7 +286,7 @@ public class GraphicalPlayer {
         // Creation of Button Handler
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
-            cch.onChooseCards(list.getSelectionModel().getSelectedItem());
+            cch.onChooseCards(list.getSelectionModel().getSelectedItem() == null ? SortedBag.of() : list.getSelectionModel().getSelectedItem());
         });
         chooserStage.show();
     }

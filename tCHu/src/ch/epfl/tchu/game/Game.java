@@ -220,20 +220,24 @@ public final class Game {
 	private static GameState claimRouteTurn(GameState gameState , Map<PlayerId, Player> players , Map<PlayerId, Info> playerInfoMap, Random rng) {
 	    Route currentRoute = players.get(gameState.currentPlayerId()).claimedRoute();
         SortedBag<Card> initialClaimCards = players.get(gameState.currentPlayerId()).initialClaimCards();
+        PlayerId currentId = gameState.currentPlayerId();
+        PlayerState currentPlayerState = gameState.currentPlayerState();
+        Info currentInfo = playerInfoMap.get(currentId);
+        
         
         if(currentRoute.level() == Level.OVERGROUND) {
-            if(!initialClaimCards.isEmpty()  && gameState.currentPlayerState().canClaimRoute(currentRoute) ) {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).claimedRoute(currentRoute, initialClaimCards), players);
+            if(!initialClaimCards.isEmpty()  && currentPlayerState.canClaimRoute(currentRoute) ) {
+                receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
                 gameState = gameState.withClaimedRoute(currentRoute, initialClaimCards);
                 
             } else {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).didNotClaimRoute(currentRoute), players);
+                receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
             }
         }
         
         else if(currentRoute.level() == Level.UNDERGROUND) {
-            if(!initialClaimCards.isEmpty()  && gameState.currentPlayerState().canClaimRoute(currentRoute) ) {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).attemptsTunnelClaim(currentRoute, initialClaimCards), players);
+            if(!initialClaimCards.isEmpty()  && currentPlayerState.canClaimRoute(currentRoute) ) {
+                receiveInfoForBoth(currentInfo.attemptsTunnelClaim(currentRoute, initialClaimCards), players);
                 
                 // Additional Cards Being Drawn
                 SortedBag<Card> drawnCards;
@@ -250,30 +254,30 @@ public final class Game {
                 
                 //Building of Possible Additional Cards + Informing player of drawn Additional Cards
                 int additionalCardCount = currentRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).drewAdditionalCards(drawnCards, additionalCardCount), players);
+                receiveInfoForBoth(currentInfo.drewAdditionalCards(drawnCards, additionalCardCount), players);
                 
                 List<SortedBag<Card>> possibleAdditionalCards = additionalCardCount >= 1 ? 
-                        gameState.currentPlayerState().possibleAdditionalCards(additionalCardCount, initialClaimCards, drawnCards) 
+                        currentPlayerState.possibleAdditionalCards(additionalCardCount, initialClaimCards, drawnCards) 
                         : List.of();
                 
                 // Management of the claiming of the route if the additionalCardCount implies an additional cost and can be fulfilled by the player.
                 if( additionalCardCount >= 1 && !possibleAdditionalCards.isEmpty()){ 
-                    additionalCards = players.get(gameState.currentPlayerId()).chooseAdditionalCards(possibleAdditionalCards);
+                    additionalCards = players.get(currentId).chooseAdditionalCards(possibleAdditionalCards);
                     if(!additionalCards.isEmpty()) {
-                        receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).claimedRoute(currentRoute, additionalCards.union(initialClaimCards)), players);
+                        receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, additionalCards.union(initialClaimCards)), players);
                         gameState = gameState.withClaimedRoute(currentRoute, additionalCards.union(initialClaimCards));
                     } else {
-                        receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).didNotClaimRoute(currentRoute), players);
+                        receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
                     }
                 // Management of the claiming of the route if there is no additional Cost.
                 } else if(additionalCardCount == 0) {
-                    receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).claimedRoute(currentRoute, initialClaimCards), players);
+                    receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
                     gameState = gameState.withClaimedRoute(currentRoute, initialClaimCards);
                 } else {
-                    receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).didNotClaimRoute(currentRoute), players);
+                    receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
                 }
             } else {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).didNotClaimRoute(currentRoute), players);
+                receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
             }
         }
         return gameState;
