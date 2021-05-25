@@ -62,7 +62,7 @@ public final class Game {
         updateState(players, gameState);
         calculatePoints(gameState, players,  playerNames, playerInfoMap);
 	}
-	
+	 
     /**
      * Initializes a game performing all the tasks needed to be performed at the start of a game.
      * @param players (Map<PlayerId, Player>): A map linking the player IDs with the players they represent.
