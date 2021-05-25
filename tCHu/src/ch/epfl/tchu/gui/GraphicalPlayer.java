@@ -100,8 +100,7 @@ public class GraphicalPlayer {
      * @param newPlayerState
      *            (PlayerState): the new player state.
      */
-    public void setState(PublicGameState newGameState,
-            PlayerState newPlayerState) {
+    public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
         assert Platform.isFxApplicationThread();
         ogs.setState(newGameState, newPlayerState);
     }

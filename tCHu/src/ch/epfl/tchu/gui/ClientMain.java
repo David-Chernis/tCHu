@@ -20,11 +20,21 @@ public class ClientMain extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        List<String> prop = getParameters().getRaw();
-        String name = prop.get(0);
-        int port = Integer.parseInt(prop.get(1));
+        List<String> param = getParameters().getRaw();
+        
+        // Instiantiation of variables necessary to the creation of the RemotePlayerClient
+        String address = param.isEmpty() 
+                ? "localhost" 
+                : param.get(0);
+        int port = param.isEmpty() 
+                ? 5108 
+                : Integer.parseInt(param.get(1));
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
-        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, name, port);
+        
+        // Creation of the Client.
+        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port);
+        
+        // Running the thread.
         new Thread(() -> client.run()).start();
         
     }

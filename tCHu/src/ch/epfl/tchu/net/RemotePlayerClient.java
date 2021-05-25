@@ -65,17 +65,16 @@ public final class RemotePlayerClient {
      * Method that sets up a socket and lets it communicate with the proxy.
      */
     public void run() {
-        try(
-                Socket s = new Socket(name, port);
-                
-                BufferedReader r =
-                        new BufferedReader(
-                                new InputStreamReader(s.getInputStream(), US_ASCII));
-                
-                BufferedWriter w =
-                        new BufferedWriter(
-                                new OutputStreamWriter(s.getOutputStream(), US_ASCII) )) {
-
+        try {
+            Socket s = new Socket(name, port);
+            
+            BufferedReader r =
+                    new BufferedReader(
+                            new InputStreamReader(s.getInputStream(), US_ASCII));
+            
+            BufferedWriter w =
+                    new BufferedWriter(
+                            new OutputStreamWriter(s.getOutputStream(), US_ASCII) );
             while(true) {
                 String readLine = r.readLine();
                 if(readLine == null) {

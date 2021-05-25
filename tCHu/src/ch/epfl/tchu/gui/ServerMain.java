@@ -14,6 +14,8 @@ import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public class ServerMain extends Application{
 
@@ -24,19 +26,29 @@ public class ServerMain extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO Auto-generated method stub
-        List<String> names = getParameters().getRaw();
-        Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, names.get(0), PlayerId.PLAYER_2, names.get(1));
-        ServerSocket server = new ServerSocket(5108);
-        Socket s0 = server.accept();
-        Random r = new Random(600743829L);
-        
+        // Setting up Server
+        RemotePlayerProxy playerProxy = null;
         GraphicalPlayerAdapter gpa = new GraphicalPlayerAdapter();
-        gpa.initPlayers(PlayerId.PLAYER_1, playerNames);
+        try{
+            ServerSocket server = new ServerSocket(5108);
+            Socket s = server.accept();
+            playerProxy = new RemotePlayerProxy(s);
+            
+        } catch(Exception e) {
+            
+        }
         
-        RemotePlayerProxy playerProxy = new RemotePlayerProxy(s0);
+        List<String> names = getParameters().getRaw();
+        Random rand = new Random();
         
-        Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, gpa, PlayerId.PLAYER_2, playerProxy);
-        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), r)).start();
+        //Initializaing Player Maps and GraphicalPlayerAdapter through analyzing parameters
+        Map<PlayerId, String> playerNames = Map.of( 
+                PLAYER_1, names.isEmpty() ? "Ada" : names.get(0),  
+                PLAYER_2, names.isEmpty() ? "Charles" : names.get(1)); 
+        Map<PlayerId, Player> players = Map.of( 
+                PLAYER_1, gpa,
+                PLAYER_2, playerProxy);
+        
+        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
     }
 }

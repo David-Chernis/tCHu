@@ -116,8 +116,9 @@ public final class RemotePlayerProxy implements Player{
      * @return (String): the String that it received from the socket connection.
      */
     private String receiveThroughSocket() {
-        try(BufferedReader reader = 
-                new BufferedReader(new InputStreamReader(socket.getInputStream(), US_ASCII))){
+        try{
+            BufferedReader reader = 
+                    new BufferedReader(new InputStreamReader(socket.getInputStream(), US_ASCII));
             return reader.readLine();
         }
         catch(IOException e) {
@@ -130,8 +131,9 @@ public final class RemotePlayerProxy implements Player{
      * @param toBeSent (String): the String to be sent.
      */
     private void sendThroughSocket(String toBeSent) {
-        try(BufferedWriter writer =
-                new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), US_ASCII))){
+        try{
+            BufferedWriter writer =
+                    new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), US_ASCII));
             writer.write(toBeSent + " " + "\n");
             writer.flush();
         }

@@ -89,8 +89,8 @@ class MapViewCreator {
 	            caseGroup.getChildren().addAll(Voie, wagonGroup);
                 wagonGroup.getChildren().addAll(wagonR, circleR1, circleR2);
 	        }
-	        Carte.getChildren().add(routeGroup);
 	        
+	        Carte.getChildren().add(routeGroup);
 	        
 		}
         return Carte;
