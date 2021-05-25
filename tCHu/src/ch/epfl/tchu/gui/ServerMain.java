@@ -35,7 +35,7 @@ public class ServerMain extends Application{
             playerProxy = new RemotePlayerProxy(s);
             
         } catch(Exception e) {
-            
+             
         }
         
         List<String> names = getParameters().getRaw();
