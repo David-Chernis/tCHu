@@ -36,7 +36,6 @@ public class ServerMain extends Application{
         
         RemotePlayerProxy playerProxy = new RemotePlayerProxy(s0);
         
-        
         Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, gpa, PlayerId.PLAYER_2, playerProxy);
         new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), r)).start();
     }

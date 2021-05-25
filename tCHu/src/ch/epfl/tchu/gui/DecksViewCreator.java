@@ -104,12 +104,7 @@ class DecksViewCreator {
 		    
 		    
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
-		        faceUp.getStyleClass().add(nV == Card.LOCOMOTIVE ? "NEUTRAL" : nV.name()); 
-		        faceUp.getStyleClass().remove(oV == null 
-		                ? "" 
-		                : oV == Card.LOCOMOTIVE 
-		                    ? "NEUTRAL"
-		                    : oV.name());
+		        faceUp.getStyleClass().setAll("card", nV == Card.LOCOMOTIVE ? "NEUTRAL" : nV.name());
 		    });
 		}
 		cardView.getChildren().add(deckCards);
@@ -180,5 +175,6 @@ class DecksViewCreator {
 		pioche.setGraphic(grouped);
 		foreground.widthProperty().bind(pctProp.multiply(50).divide(100));
 		return pioche;
+		
 	}
 }

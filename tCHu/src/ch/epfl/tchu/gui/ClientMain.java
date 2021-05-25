@@ -28,7 +28,6 @@ public class ClientMain extends Application{
         new Thread(() -> client.run()).start();
         
     }
-    
 }
 =======
 package ch.epfl.tchu.gui;
