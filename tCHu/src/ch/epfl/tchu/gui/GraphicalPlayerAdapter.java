@@ -156,8 +156,6 @@ public final class GraphicalPlayerAdapter implements Player{
 	        }
 	    }
 	    
-	    //hi
-	    
 	}
 
 	@Override
