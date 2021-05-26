@@ -27,6 +27,8 @@ public final class Trail {
      */
     private final List<Route> routes;
     
+    private final int length;
+    
     /**
      * Private Trail constructor. Initializes a Trail by giving it a length and a unique Starting (station1) and Ending (station2) Station.
      * @param routes (List<Route>): the List of routes of the trail.
@@ -37,6 +39,12 @@ public final class Trail {
         this.routes = routes;
         this.station1 = station1;
         this.station2 = station2;
+        
+        int length = 0;
+        for(Route r : routes) {
+            length += r.length();
+        }
+        this.length = length;
     }
     
     /**
@@ -156,10 +164,6 @@ public final class Trail {
      * @return (int): the length of the path i.e. the number of cars + locomotives comprising this instance of Path.
      */
     public int length() {
-        int length = 0;
-        for(Route r : routes) {
-            length += r.length();
-        }
     	return length;
     }
     

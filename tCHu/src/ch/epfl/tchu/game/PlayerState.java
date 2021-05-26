@@ -110,7 +110,7 @@ public final class PlayerState extends PublicPlayerState{
         List<SortedBag<Card>> possibleClaimCards = route.possibleClaimCards();
         Set<SortedBag<Card>> setPossibleClaimCards;
         
-        setPossibleClaimCards = route.length() <= cards.size() && route.length() <= cards.size() 
+        setPossibleClaimCards = route.length() <= cards.size() 
                     ? cards.subsetsOfSize(route.length()) 
                     : new HashSet<SortedBag<Card>>() ;
         

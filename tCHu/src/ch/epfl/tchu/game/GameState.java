@@ -58,23 +58,18 @@ public final class GameState extends PublicGameState{
      * @return (GameState): a GameState in an "initial" phase.
      */
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
-        List<Card> deckList = Constants.ALL_CARDS.toList();
-        List<Card> deckWithoutInitialCards = deckList.subList(Constants.INITIAL_CARDS_COUNT*2, deckList.size());
+        Deck<Card> cardDeck = Deck.of(SortedBag.of(Constants.ALL_CARDS), rng);
+        Map<PlayerId, PlayerState> playerStateStore = new EnumMap<>(PlayerId.class);
         
+        for(PlayerId id : PlayerId.ALL) {
+            PlayerState ps = PlayerState.initial(cardDeck.topCards(Constants.INITIAL_CARDS_COUNT));
+            cardDeck = cardDeck.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
+            playerStateStore.put(id, ps);
+        }
         
-        PlayerState ps1 = PlayerState.initial(SortedBag.of(deckList.subList(0, Constants.INITIAL_CARDS_COUNT)));
-        PlayerState ps2 = PlayerState.initial(SortedBag.of(deckList.subList(Constants.INITIAL_CARDS_COUNT, Constants.INITIAL_CARDS_COUNT*2)));
-        
-        Map<PlayerId, PlayerState> playerStateStore = new EnumMap<PlayerId, PlayerState>(PlayerId.class);
-        playerStateStore.put(PlayerId.PLAYER_1, ps1);
-        playerStateStore.put(PlayerId.PLAYER_2, ps2);
-        
-        
-        CardState cardState = CardState.of(Deck.of(SortedBag.of(deckWithoutInitialCards), rng));
-        // Initiates last Player as null at the beginning of the Game, as it is impossible to know at this moment.
-        return new GameState(Deck.of(tickets, rng), cardState, PlayerId.ALL.get(rng.nextInt(2)), playerStateStore, null);
+        return new GameState(Deck.of(tickets, rng), CardState.of(cardDeck), PlayerId.ALL.get(rng.nextInt(2)), playerStateStore, null);
     }
-
+    
     /**
      * Returns the player state of the given player.
      * @param playerId (PlayerId): the PlayerId of the player.
