@@ -10,6 +10,9 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Player.TurnKind;
 import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
+
 
 /**
  * Final and non-instanciable class that represents a part of the game.
@@ -102,34 +105,39 @@ public final class Game {
 	    
 	    players.forEach((playerId, player) -> longestMap.put(playerId, Trail.longest(gameState.playerState(playerId).routes())));
         
+	    // Auxiliary variables to increase efficiency
 	    int bonus1 = 0, bonus2 = 0;
-        int length1 = longestMap.get(PlayerId.PLAYER_1).length(); 
-        int length2 = longestMap.get(PlayerId.PLAYER_2).length();
+        int length1 = longestMap.get(PLAYER_1).length(); 
+        int length2 = longestMap.get(PLAYER_2).length();
+        Info playerInfo1 = playerInfoMap.get(PLAYER_1);
+        Info playerInfo2 = playerInfoMap.get(PLAYER_2);
+        Trail trail1 = longestMap.get(PLAYER_1);
+        Trail trail2 = longestMap.get(PLAYER_2);
         
         if(length1 > length2) {
-            receiveInfoForBoth(playerInfoMap.get(PlayerId.PLAYER_1).getsLongestTrailBonus(longestMap.get(PlayerId.PLAYER_1)), players);
+            receiveInfoForBoth(playerInfo1.getsLongestTrailBonus(trail1), players);
             bonus1 = 10;   
             
         } else if(length1 < length2) {
-            receiveInfoForBoth(playerInfoMap.get(PlayerId.PLAYER_2).getsLongestTrailBonus(longestMap.get(PlayerId.PLAYER_2)), players);
+            receiveInfoForBoth(playerInfo2.getsLongestTrailBonus(trail2), players);
             bonus2 = 10;
             
         } else {
-            receiveInfoForBoth(playerInfoMap.get(PlayerId.PLAYER_1).getsLongestTrailBonus(longestMap.get(PlayerId.PLAYER_1)) 
-                    + playerInfoMap.get(PlayerId.PLAYER_2).getsLongestTrailBonus(longestMap.get(PlayerId.PLAYER_2)), players);
+            receiveInfoForBoth(playerInfo1.getsLongestTrailBonus(trail1) 
+                    + playerInfo2.getsLongestTrailBonus(trail2), players);
             bonus1 = 10; bonus2 = 10;
         }
         
-        int finalPoints1 = gameState.playerState(PlayerId.PLAYER_1).finalPoints() + bonus1;
-        int finalPoints2 = gameState.playerState(PlayerId.PLAYER_2).finalPoints() + bonus2;
+        int finalPoints1 = gameState.playerState(PLAYER_1).finalPoints() + bonus1;
+        int finalPoints2 = gameState.playerState(PLAYER_2).finalPoints() + bonus2;
         
         if(finalPoints1 > finalPoints2) {
-            receiveInfoForBoth(playerInfoMap.get(PlayerId.PLAYER_1).won(finalPoints1, finalPoints2), players);
+            receiveInfoForBoth(playerInfo1.won(finalPoints1, finalPoints2), players);
             
         } else if(finalPoints1 < finalPoints2) {
-            receiveInfoForBoth(playerInfoMap.get(PlayerId.PLAYER_2).won(finalPoints2, finalPoints1), players);
+            receiveInfoForBoth(playerInfo2.won(finalPoints2, finalPoints1), players);
         } else {
-            List<String> playerNameList = List.of(playerNames.get(PlayerId.PLAYER_1), playerNames.get(PlayerId.PLAYER_2));
+            List<String> playerNameList = List.of(playerNames.get(PLAYER_1), playerNames.get(PLAYER_2));
             receiveInfoForBoth(Info.draw(playerNameList, finalPoints1), players);
         }
 	}
@@ -144,9 +152,14 @@ public final class Game {
      */
 	private static GameState playTurn(Map<PlayerId, Info> playerInfoMap, GameState gameState, Map<PlayerId, Player> players, Random rng) {
 	    //Start of turn and Choosing Type of Turn
-        receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).canPlay(), players);
+	    PlayerId currentId = gameState.currentPlayerId();
+	    Info currentInfo =  playerInfoMap.get(currentId);
+	    Player currentPlayer = players.get(currentId);
+	    PlayerState currentPlayerState = gameState.currentPlayerState();
+	    
+        receiveInfoForBoth(currentInfo.canPlay(), players);
         updateState(players, gameState);
-        TurnKind chosenTurnKind = players.get(gameState.currentPlayerId()).nextTurn();
+        TurnKind chosenTurnKind = currentPlayer.nextTurn();
         
         // Turn type: Choose Tickets
         switch(chosenTurnKind) {
@@ -160,7 +173,7 @@ public final class Game {
         
         //informs the player that the last turn has begun
         if(gameState.lastTurnBegins()) {
-            receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount()), players);  
+            receiveInfoForBoth(currentInfo.lastTurnBegins(currentPlayerState.carCount()), players);  
         }
         
         return gameState;
@@ -174,10 +187,13 @@ public final class Game {
 	 * @return (GameState) : the new updated gameState
 	 */
 	private static GameState drawTicketTurn(GameState gameState , Map<PlayerId, Player> players , Map<PlayerId, Info> playerInfoMap) {
-	    receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).drewTickets(3), players);
-        SortedBag<Ticket> chosenTickets = players.get(gameState.currentPlayerId()).chooseTickets(gameState.topTickets(3));
+	    PlayerId currentId = gameState.currentPlayerId();
+	    Info currentInfo = playerInfoMap.get(currentId);
+	    
+	    receiveInfoForBoth(currentInfo.drewTickets(3), players);
+        SortedBag<Ticket> chosenTickets = players.get(currentId).chooseTickets(gameState.topTickets(3));
         gameState = gameState.withChosenAdditionalTickets(gameState.topTickets(3), chosenTickets);
-        receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).keptTickets(chosenTickets.size()), players);
+        receiveInfoForBoth(currentInfo.keptTickets(chosenTickets.size()), players);
         return gameState;
 	}
 	
@@ -247,7 +263,6 @@ public final class Game {
                     gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                     drawnCardsBuilder.add(gameState.topCard());
                     gameState = gameState.withoutTopCard();  
-                    gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                 }
                 drawnCards = drawnCardsBuilder.build();
                 gameState = gameState.withMoreDiscardedCards(drawnCards);

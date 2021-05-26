@@ -7,22 +7,27 @@ import ch.epfl.tchu.net.RemotePlayerClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class ClientMain extends Application{
+/**
+ * Class that represents the client on which tchu is played 
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
+public final class ClientMain extends Application{
 
 	/**
 	 * The main method for the client.
-	 * @param args (String[]): the arguments passed to the program at the beginning.
+	 * @param args (String[]): the arguments passed to the program at the beginning. 
+	 * The first will be the name of the address and the second the port.
 	 */
     public static void main(String[] args) {
-        launch(args);
-        
+        launch(args);        
     }
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         List<String> param = getParameters().getRaw();
         
-        // Instiantiation of variables necessary to the creation of the RemotePlayerClient
+        // Instiantiation of variables necessary to the creation of the RemotePlayerClient 
         String address = param.isEmpty() 
                 ? "localhost" 
                 : param.get(0);

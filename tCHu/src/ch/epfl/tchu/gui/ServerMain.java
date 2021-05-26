@@ -1,5 +1,7 @@
 package ch.epfl.tchu.gui;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -17,8 +19,17 @@ import javafx.stage.Stage;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
+/**
+ * Class that represents the server that manages communication between the client and proxy player on which tchu is being played.  
+ * @author Shrey Mittal (312275)
+ * @author David Chernis (310298)
+ */
 public class ServerMain extends Application{
 
+    /**
+     * program that calls launch with the parameters passed to the program
+     * @param args (String[]) parameters passed to the program, which will be the names of the two players. 
+     */
     public static void main(String[] args) {
         launch(args);
         
@@ -29,13 +40,13 @@ public class ServerMain extends Application{
         // Setting up Server
         RemotePlayerProxy playerProxy = null;
         GraphicalPlayerAdapter gpa = new GraphicalPlayerAdapter();
+        
         try{
             ServerSocket server = new ServerSocket(5108);
             Socket s = server.accept();
             playerProxy = new RemotePlayerProxy(s);
-            
-        } catch(Exception e) {
-             
+        } catch(IOException e) {
+            throw new UncheckedIOException(e);
         }
         
         List<String> names = getParameters().getRaw();

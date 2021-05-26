@@ -48,13 +48,13 @@ import static javafx.collections.FXCollections.observableArrayList;
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
-public class GraphicalPlayer {
-    private ObservableGameState ogs;
-    private ObservableList<Text> infos = observableArrayList();
-    private ObjectProperty<DrawTicketsHandler> dthProperty;
-    private ObjectProperty<DrawCardHandler> dchProperty;
-    private ObjectProperty<ClaimRouteHandler> crhProperty;
-    private Stage mainStage;
+public final class GraphicalPlayer {
+    private final ObservableGameState gameState;
+    private final ObservableList<Text> infos = observableArrayList();
+    private final ObjectProperty<DrawTicketsHandler> drawTicketProperty;
+    private final ObjectProperty<DrawCardHandler> drawCardProperty;
+    private final ObjectProperty<ClaimRouteHandler> claimRouteProperty;
+    private final Stage mainStage;
     private final Node mapView;
 
     /**
@@ -70,17 +70,20 @@ public class GraphicalPlayer {
      *            (accessible using their player IDs).
      */
     public GraphicalPlayer(PlayerId id, Map<PlayerId, String> playerNames) {
-        ogs = new ObservableGameState(id);
-        dthProperty = new SimpleObjectProperty<>();
-        dchProperty = new SimpleObjectProperty<>();
-        crhProperty = new SimpleObjectProperty<>();
+        // Initializing the handler Properties and ObservableGameState
+        gameState = new ObservableGameState(id);
+        drawTicketProperty = new SimpleObjectProperty<>();
+        drawCardProperty = new SimpleObjectProperty<>();
+        claimRouteProperty = new SimpleObjectProperty<>();
 
-        mapView = MapViewCreator.createMapView(ogs, crhProperty,
+        // Creation of the four main sections of the game
+        mapView = MapViewCreator.createMapView(gameState, claimRouteProperty,
                 this::chooseClaimCards);
-        Node cardsView = DecksViewCreator.createCardsView(ogs, dthProperty, dchProperty);
-        Node handView = DecksViewCreator.createHandView(ogs);
-        Node infoView = InfoViewCreator.createInfoView(id, playerNames, ogs, infos);
+        Node cardsView = DecksViewCreator.createCardsView(gameState, drawTicketProperty, drawCardProperty);
+        Node handView = DecksViewCreator.createHandView(gameState);
+        Node infoView = InfoViewCreator.createInfoView(id, playerNames, gameState, infos);
 
+        // Creation + Modification of the stage, pane and scene on which the views are displayed. 
         mainStage = new Stage();
         BorderPane mainPane = new BorderPane(mapView, null, cardsView, handView, infoView);
         Scene mainScene = new Scene(mainPane);
@@ -103,7 +106,7 @@ public class GraphicalPlayer {
     public void setState(PublicGameState newGameState,
             PlayerState newPlayerState) {
         assert Platform.isFxApplicationThread();
-        ogs.setState(newGameState, newPlayerState);
+        gameState.setState(newGameState, newPlayerState);
     }
 
     /**
@@ -137,18 +140,18 @@ public class GraphicalPlayer {
             ClaimRouteHandler crh) {
         assert Platform.isFxApplicationThread();
 
-        dthProperty.set(!ogs.canDrawTickets() ? null : () -> {
+        drawTicketProperty.set(!gameState.canDrawTickets() ? null : () -> {
             disableHandlers();
             dth.onDrawTickets();
         });
 
-        dchProperty.set(!ogs.canDrawCards() ? null : (int i) -> {
+        drawCardProperty.set(!gameState.canDrawCards() ? null : (int i) -> {
             disableHandlers();
             dch.onDrawCard(i);
             drawCard(dch);
         });
 
-        crhProperty.set((route, claimCards) -> {
+        claimRouteProperty.set((route, claimCards) -> {
             disableHandlers();
             crh.onClaimRoute(route, claimCards);
         });
@@ -185,8 +188,8 @@ public class GraphicalPlayer {
         Button chooserButton = new Button();
 
         chooserButton.disableProperty()
-                .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
-                        .lessThan(ticketChoices.size() - 2));
+        .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
+                .lessThan(ticketChoices.size() - 2));
 
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
@@ -209,7 +212,7 @@ public class GraphicalPlayer {
      */
     public void drawCard(DrawCardHandler dch) {
         assert Platform.isFxApplicationThread();
-        dchProperty.set((int i) -> {
+        drawCardProperty.set((int i) -> {
             disableHandlers();
             dch.onDrawCard(i);
         });
@@ -245,7 +248,7 @@ public class GraphicalPlayer {
         chooserButton.disableProperty()
         .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
                 .lessThan(1));
-        
+
         // Creation of Button Handler
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
@@ -295,9 +298,9 @@ public class GraphicalPlayer {
      * Disables the 3 action handlers used by the GUI.
      */
     private void disableHandlers() {
-        dthProperty.set(null);
-        dchProperty.set(null);
-        crhProperty.set(null);
+        drawTicketProperty.set(null);
+        drawCardProperty.set(null);
+        claimRouteProperty.set(null);
     }
 
     /**
@@ -323,16 +326,15 @@ public class GraphicalPlayer {
     private void createChooser(Stage chooserStage, String titleText,
             String message, Button chooserButton, ListView<?> list) {
 
+        // Creation of Necessary Components along with their heirarchy
         Text text = new Text(message);
-
         TextFlow texts = new TextFlow(text);
         VBox options = new VBox(texts, list, chooserButton);
-
-        chooserButton.setText(StringsFr.CHOOSE);
-
         Scene chooser = new Scene(options);
-        chooser.getStylesheets().add("chooser.css");
 
+        // Modification of the components
+        chooser.getStylesheets().add("chooser.css");
+        chooserButton.setText(StringsFr.CHOOSE);
         chooserStage.setScene(chooser);
         chooserStage.initOwner(mainStage);
         chooserStage.initModality(Modality.WINDOW_MODAL);
@@ -350,7 +352,7 @@ public class GraphicalPlayer {
      * @author David Chernis (310298)
      */
     public class CardBagStringConverter
-            extends StringConverter<SortedBag<Card>> {
+    extends StringConverter<SortedBag<Card>> {
 
         @Override
         public String toString(SortedBag<Card> cards) {

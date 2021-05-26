@@ -78,10 +78,8 @@ class DecksViewCreator {
 	    
 	    deckTickets.setOnMouseClicked((e) -> drawTickets.get().onDrawTickets());
 	    deckCards.setOnMouseClicked((e) -> drawCard.get().onDrawCard(-1));
-		/*
-        The cards and tickets view of the game, containing all the face-up cards,
-        the deck of cards and the deck of tickets
-        */
+	    
+		//Creation of the cards view of the game, containing all the face-up cards
 		VBox cardView = new VBox(deckTickets);
         cardView.getStylesheets().add("decks.css");
         cardView.getStylesheets().add("colors.css");
@@ -89,11 +87,12 @@ class DecksViewCreator {
         
         //The 5 face-up cards
 		for(int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
-		    String fuCard = ogs.faceUpCard(i).get() == Card.LOCOMOTIVE 
-		            ? "NEUTRAL" 
-		            : ogs.faceUpCard(i).get() == null 
-		                ? ""  
-		                : ogs.faceUpCard(i).get().name();
+		    String fuCard = "";
+		    if(ogs.faceUpCard(i).get() != null) {
+		        fuCard = ogs.faceUpCard(i).get() == Card.LOCOMOTIVE 
+	                    ? "NEUTRAL" 
+	                    : ogs.faceUpCard(i).get().name();
+		    }
 		    
 		    StackPane faceUp = cardOnly(fuCard);
 		    cardView.getChildren().add(faceUp);
@@ -102,11 +101,13 @@ class DecksViewCreator {
             int slot = i;
 		    faceUp.setOnMouseClicked((e) -> drawCard.get().onDrawCard(slot));
 		    
-		    
 		    ogs.faceUpCard(i).addListener((o, oV, nV) -> {
+		        // using setAll instead of set or add so as to avoid ambiguity and assure there is no unnecessary addition of style classes. 
 		        faceUp.getStyleClass().setAll("card", nV == Card.LOCOMOTIVE ? "NEUTRAL" : nV.name());
 		    });
 		}
+		
+		// deckCards added at the end to assure the correct placement of the graphical component of deckCards
 		cardView.getChildren().add(deckCards);
 		return cardView;
 	}
