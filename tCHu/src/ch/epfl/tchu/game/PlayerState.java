@@ -94,7 +94,7 @@ public final class PlayerState extends PublicPlayerState{
 	 */
 	public boolean canClaimRoute(Route route) {
         boolean hasCars = carCount() >= route.length();
-        boolean hasCorrectCards = hasCars ? !possibleClaimCards(route).isEmpty() : false;
+        boolean hasCorrectCards = hasCars && !possibleClaimCards(route).isEmpty();
         return hasCars && hasCorrectCards;
 	}
 	
@@ -108,14 +108,14 @@ public final class PlayerState extends PublicPlayerState{
 	public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(carCount() >= route.length());
         List<SortedBag<Card>> possibleClaimCards = route.possibleClaimCards();
-        Set<SortedBag<Card>> setPossibleClaimCards;
         
-        setPossibleClaimCards = route.length() <= cards.size() 
-                    ? cards.subsetsOfSize(route.length()) 
-                    : new HashSet<SortedBag<Card>>() ;
+        for(int i = 0; i < possibleClaimCards.size(); i++) {
+            if(!cards.contains(possibleClaimCards.get(i))) {
+                possibleClaimCards.remove(i);
+                i--;
+            }
+        }
         
-        List<SortedBag<Card>> listPossibleClaimCards = List.copyOf(setPossibleClaimCards);
-        possibleClaimCards.retainAll(listPossibleClaimCards);
         return possibleClaimCards;
     }
 	
