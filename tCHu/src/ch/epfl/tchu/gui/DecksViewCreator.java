@@ -26,7 +26,16 @@ import javafx.scene.text.Text;
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
-class DecksViewCreator {
+final class DecksViewCreator {
+	
+	private static final int GAUGE_BAR_LENGTH = 50;
+	private static final int GAUGE_BAR_HEIGHT = 5;
+	
+	private static final int CARD_INSIDE_LENGTH = 40;
+	private static final int CARD_INSIDE_HEIGHT = 70;
+	
+	private static final int CARD_OUTSIDE_LENGTH = 60;
+	private static final int CARD_OUTSIDE_HEIGHT = 90;
 	
 	/**
 	 * Private DecksViewCreator constructor, whose sole aim is to make this class uninstanciable.
@@ -139,14 +148,14 @@ class DecksViewCreator {
 	 * @return (StackPane): a StackPane that resembles a card of the specified color.
 	 */
 	private static StackPane cardOnly(String color) {
-		Rectangle carteTrainImage = new Rectangle(40, 70);
+		Rectangle carteTrainImage = new Rectangle(CARD_INSIDE_LENGTH, CARD_INSIDE_HEIGHT);
 		carteTrainImage.getStyleClass().add("train-image");
 		
-		Rectangle carteInside = new Rectangle(40, 70);
+		Rectangle carteInside = new Rectangle(CARD_INSIDE_LENGTH, CARD_INSIDE_HEIGHT);
 		carteInside.getStyleClass().add("filled");
 		carteInside.getStyleClass().add("inside");
 		
-		Rectangle carteOutside = new Rectangle(60, 90);
+		Rectangle carteOutside = new Rectangle(CARD_OUTSIDE_LENGTH, CARD_OUTSIDE_HEIGHT);
 		carteOutside.getStyleClass().add("outside");
 		
 		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage);
@@ -164,17 +173,17 @@ class DecksViewCreator {
 	 */
 	private static Button deck(ReadOnlyIntegerProperty pctProp, String name) {
 	    
-		Rectangle background = new Rectangle(50, 5);
+		Rectangle background = new Rectangle(GAUGE_BAR_LENGTH, GAUGE_BAR_HEIGHT);
 		background.getStyleClass().add("background");
 		
-		Rectangle foreground = new Rectangle(50, 5);
+		Rectangle foreground = new Rectangle(GAUGE_BAR_LENGTH, GAUGE_BAR_HEIGHT);
 		foreground.getStyleClass().add("foreground");
 		Group grouped = new Group(background, foreground);
 		Button pioche = new Button(name);
 		
 		pioche.getStyleClass().add("gauged");
 		pioche.setGraphic(grouped);
-		foreground.widthProperty().bind(pctProp.multiply(50).divide(100));
+		foreground.widthProperty().bind(pctProp.divide(2));
 		return pioche;
 		
 	}
