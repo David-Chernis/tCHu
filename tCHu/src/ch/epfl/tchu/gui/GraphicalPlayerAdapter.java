@@ -26,7 +26,7 @@ import javafx.application.Platform;
  */
 public final class GraphicalPlayerAdapter implements Player{
     private static final int QUEUE_SIZE = 1;
-    
+
     private final BlockingQueue<SortedBag<Ticket>> ticketQ;
     private final BlockingQueue<TurnKind> turnQ;
     private final BlockingQueue<Integer> drawSlotQ;
@@ -67,65 +67,35 @@ public final class GraphicalPlayerAdapter implements Player{
     public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
         runLater(() -> graphicalPlayer.chooseTickets(tickets, 
                 (ticketBag) -> {
-                    try {
-                        ticketQ.put(ticketBag);
-                    } catch (InterruptedException e) {
-                        throw new Error();
-                    }
+                    QPut(ticketQ, ticketBag);
                 }));
     }
 
     @Override
     public SortedBag<Ticket> chooseInitialTickets() {
-        try {
-            return ticketQ.take();
-        } catch (InterruptedException e) {
-            throw new Error();
-        }
+        return QTake(ticketQ);
     }
 
     @Override
     public TurnKind nextTurn() {
         runLater(() -> graphicalPlayer.startTurn(
 
-                () -> {
-                    try {
-                        turnQ.put(TurnKind.DRAW_TICKETS);
-                    } catch (InterruptedException e) {
-                        throw new Error();
-                    }
-                }
-
-                , 
+                () -> {     
+                    QPut(turnQ, TurnKind.DRAW_TICKETS);  
+                }  , 
 
                 (a) -> {
-                    try {
-                        turnQ.put(TurnKind.DRAW_CARDS);
-                        drawSlotQ.put(a);
-                    } catch (InterruptedException e) {
-                        throw new Error();
-                    }
-                }
-
-                , 
+                    QPut(turnQ, TurnKind.DRAW_CARDS);
+                    QPut(drawSlotQ, a);
+                }  , 
 
                 (r, bag) -> {
-                    try {
-                        turnQ.put(TurnKind.CLAIM_ROUTE);
-                        routeQ.put(r);
-                        cardBagQ.put(bag);
-                    } catch (InterruptedException e) {
-                        throw new Error();
-                    }
-                }
+                    QPut(turnQ, TurnKind.CLAIM_ROUTE);
+                    QPut(routeQ, r);
+                    QPut(cardBagQ, bag);
+                }));
 
-                ));
-        try {
-            return turnQ.take();
-        } catch (InterruptedException e) {
-            throw new Error();
-        }
-
+        return QTake(turnQ);
     }
 
     @Override
@@ -137,68 +107,53 @@ public final class GraphicalPlayerAdapter implements Player{
     @Override
     public int drawSlot() {
         if(!drawSlotQ.isEmpty()) {
-            try {
-                return drawSlotQ.take();
-            } catch (InterruptedException e) {
-                throw new Error();
-            }
+            return QTake(drawSlotQ);
         } else {
+
             runLater(() -> graphicalPlayer.drawCard((a) -> {
-                try {
-                    drawSlotQ.put(a);
-                } catch (InterruptedException e) {
-                    throw new Error();
-                }
+                QPut(drawSlotQ, a);
             }));
 
-            try {
-                return drawSlotQ.take();
-            } catch (InterruptedException e) {
-                throw new Error();
-            }
+            return QTake(drawSlotQ);
         }
 
     }
 
     @Override
     public Route claimedRoute() {
-
-        try {
-            return routeQ.take();
-        } catch (InterruptedException e) {
-            throw new Error();
-        }
+        return QTake(routeQ);
     }
 
     @Override
     public SortedBag<Card> initialClaimCards() {
-        try {
-            return cardBagQ.take();
-        } catch (InterruptedException e) {
-            throw new Error();
-        }
+        return QTake(cardBagQ);
     }
 
     @Override
     public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
         runLater( () -> graphicalPlayer.chooseAdditionalCards(options, 
-                (bag) -> {
-                    try {
-                        cardBagQ.put(bag);
-                    } catch (InterruptedException e) {
-                        throw new Error();
-                    }
-                })
+                    (bag) -> {
+                        QPut(cardBagQ, bag);
+                    })
                 );
 
+        return QTake(cardBagQ);
+    }
+
+
+    private <T> T QTake(BlockingQueue<T> genericQ) {
         try {
-            return cardBagQ.take();
+            return genericQ.take();
         } catch (InterruptedException e) {
             throw new Error();
         }
     }
-    
-    
 
-
+    private <T> void QPut(BlockingQueue<T> genericQ, T genericVar) {
+        try {
+            genericQ.put(genericVar);
+        } catch (InterruptedException e) {
+            throw new Error();
+        }
+    }
 }
