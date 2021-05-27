@@ -32,7 +32,6 @@ public final class StationPartition implements StationConnectivity{
                && s2.id() < stationsConnections.length 
                && stationsConnections[s1.id()] == stationsConnections[s2.id()] 
                || s1.id() == s2.id();
-        
     }
 
     /**

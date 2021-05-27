@@ -2,6 +2,8 @@ package ch.epfl.tchu.game;
 
 import java.util.List;
 
+import ch.epfl.tchu.Preconditions;
+
 /**
  * The enumerable type Card represents the different types of cards a player can have.
  * @author Shrey Mittal (312275)
@@ -31,7 +33,8 @@ public enum Card {
      * @return (Card): car matching the Color.
      */
     public static Card of(Color color) {
-        return color != null ? CARS.get(color.ordinal()) : null;
+        Preconditions.checkArgument(color != null);
+        return CARS.get(color.ordinal());
     }
     
     /**
