@@ -25,11 +25,11 @@ import javafx.application.Platform;
  * @author David Chernis (310298)
  */
 public final class GraphicalPlayerAdapter implements Player{
-    private BlockingQueue<SortedBag<Ticket>> ticketQ;
-    private BlockingQueue<TurnKind> turnQ;
-    private BlockingQueue<Integer> drawSlotQ;
-    private BlockingQueue<Route> routeQ;
-    private BlockingQueue<SortedBag<Card>> cardBagQ;
+    private final BlockingQueue<SortedBag<Ticket>> ticketQ;
+    private final BlockingQueue<TurnKind> turnQ;
+    private final BlockingQueue<Integer> drawSlotQ;
+    private final BlockingQueue<Route> routeQ;
+    private final BlockingQueue<SortedBag<Card>> cardBagQ;
 
 
     private GraphicalPlayer graphicalPlayer;

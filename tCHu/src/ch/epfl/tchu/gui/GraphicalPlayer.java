@@ -351,7 +351,7 @@ public final class GraphicalPlayer {
      * @author Shrey Mittal (312275)
      * @author David Chernis (310298)
      */
-    public class CardBagStringConverter
+    public final class CardBagStringConverter
     extends StringConverter<SortedBag<Card>> {
 
         @Override
