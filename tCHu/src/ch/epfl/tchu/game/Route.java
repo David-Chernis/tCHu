@@ -140,12 +140,13 @@ public final class Route {
      * @throws IllegalArgumentException if station is not connected by this route.
      */
     public Station stationOpposite(Station station) {
-    	Preconditions.checkArgument(station.equals(station1) || station.equals(station2));
-    	return station1.name().equals(station.name()) ? station2 : station1;
+    	Preconditions.checkArgument(station == station1 || station == station2);
+    	return station1 == station ? station2 : station1;
     }
     
     /**
      * Returns a List of a SortedBag (itself a SortedBag of Cards) containing all the possible combinations of cards which can be used to claim the route.
+     * The returned list is also sorted by increasing order of locomotives simply be method of adding the combinations in an increasing order. 
      * @return (List<SortedBag<Card>>): a List containing all the possible combinations of cards which can be used to claim the route.
      */
     public List<SortedBag<Card>> possibleClaimCards() {

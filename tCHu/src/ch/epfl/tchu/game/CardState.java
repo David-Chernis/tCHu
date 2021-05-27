@@ -73,7 +73,7 @@ public final class CardState extends PublicCardState{
 	 * @throws IndexOutOfBoundsException if slot is not between 0 and 4 (both inclusive).
 	 */
 	public CardState withDrawnFaceUpCard(int slot) {
-		Preconditions.checkArgument(!deckCards.isEmpty());
+		Preconditions.checkArgument(!isDeckEmpty());
 		List<Card> newFaceUpCards = new ArrayList<>(super.faceUpCards());
 		newFaceUpCards.set(Objects.checkIndex(slot, newFaceUpCards.size()), this.deckCards.topCard());
 		return new CardState(newFaceUpCards, deckCards.withoutTopCard(), SortedBag.of(this.discardedCards));
