@@ -24,6 +24,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -77,8 +78,7 @@ public final class GraphicalPlayer {
         claimRouteProperty = new SimpleObjectProperty<>();
 
         // Creation of the four main sections of the game
-        mapView = MapViewCreator.createMapView(gameState, claimRouteProperty,
-                this::chooseClaimCards);
+        mapView = MapViewCreator.createMapView(gameState, claimRouteProperty, this::chooseClaimCards);
         Node cardsView = DecksViewCreator.createCardsView(gameState, drawTicketProperty, drawCardProperty);
         Node handView = DecksViewCreator.createHandView(gameState);
         Node infoView = InfoViewCreator.createInfoView(id, playerNames, gameState, infos);
@@ -335,9 +335,7 @@ public final class GraphicalPlayer {
         chooserStage.setScene(chooser);
         chooserStage.initOwner(mainStage);
         chooserStage.initModality(Modality.WINDOW_MODAL);
-        chooserStage.setOnCloseRequest((e) -> {
-            e.consume();
-        });
+        chooserStage.setOnCloseRequest(Event::consume);
         chooserStage.setTitle(titleText);
     }
 
