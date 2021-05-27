@@ -28,13 +28,11 @@ public final class StationPartition implements StationConnectivity{
 
     @Override
     public boolean connected(Station s1, Station s2) {
-        if(s1.id() < stationsConnections.length && s2.id() < stationsConnections.length && stationsConnections[s1.id()] == stationsConnections[s2.id()]) {
-            return true;
-        }
-        else if(s1.id() == s2.id()) {
-            return true;
-        }
-        return false;
+        return s1.id() < stationsConnections.length 
+               && s2.id() < stationsConnections.length 
+               && stationsConnections[s1.id()] == stationsConnections[s2.id()] 
+               || s1.id() == s2.id();
+        
     }
 
     /**
