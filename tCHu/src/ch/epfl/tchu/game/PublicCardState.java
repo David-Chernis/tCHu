@@ -13,6 +13,7 @@ import ch.epfl.tchu.Preconditions;
  */
 public class PublicCardState {
 	
+    private static final int FACE_UP_CARD_COUNT = 5;
 	/**
 	 * (List<Card>): contains the 5 face-up cards in the game.
 	 */
@@ -36,7 +37,7 @@ public class PublicCardState {
 	 * @throws IllegalArgumentException if the size of the List faceUpCards is not 5 or if deckSize or discardsSize is negative.
 	 */
 	public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize){
-		Preconditions.checkArgument(faceUpCards.size() == 5 && deckSize >= 0 && discardsSize >= 0);
+		Preconditions.checkArgument(faceUpCards.size() == FACE_UP_CARD_COUNT && deckSize >= 0 && discardsSize >= 0);
 		this.faceUpCards = List.copyOf(faceUpCards);
 		this.deckSize = deckSize;
 		this.discardsSize = discardsSize;

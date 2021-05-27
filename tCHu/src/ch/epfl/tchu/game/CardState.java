@@ -16,6 +16,7 @@ import ch.epfl.tchu.SortedBag;
  */
 public final class CardState extends PublicCardState{
 	
+    private final static int FACE_UP_CARD_COUNT = 5;
 	/**
 	 * (Deck<Card>): is the deck of cards.
 	 */
@@ -34,8 +35,8 @@ public final class CardState extends PublicCardState{
 	 * @throws IllegalArgumentException if the size of deck is below 5.
 	 */
 	private CardState(Deck<Card> deck) {
-		super(deck.topCards(5).toList(), deck.size()-5, 0);
-		deckCards = deck.withoutTopCards(5);
+		super(deck.topCards(FACE_UP_CARD_COUNT).toList(), deck.size()-FACE_UP_CARD_COUNT, 0);
+		deckCards = deck.withoutTopCards(FACE_UP_CARD_COUNT);
 		this.discardedCards = SortedBag.of();
 	}
 	
@@ -59,7 +60,7 @@ public final class CardState extends PublicCardState{
 	 * @throws IllegalArgumentException if the size of deck is below 5.
 	 */
 	public static CardState of(Deck<Card> deck) {
-		Preconditions.checkArgument(deck.size() >= 5);
+		Preconditions.checkArgument(deck.size() >= FACE_UP_CARD_COUNT);
 		return new CardState(deck);
 	}
 	
@@ -110,7 +111,7 @@ public final class CardState extends PublicCardState{
 	 */
 	public CardState withDeckRecreatedFromDiscards(Random rng){
 		Preconditions.checkArgument(deckCards.isEmpty());
-		return new CardState(super.faceUpCards(), Deck.of(discardedCards, rng), SortedBag.of(new ArrayList<Card>()));
+		return new CardState(super.faceUpCards(), Deck.of(discardedCards, rng), SortedBag.of());
 	}
 	
 	/**

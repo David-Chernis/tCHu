@@ -113,7 +113,7 @@ public final class Trail {
      * can extend a given trail.
      */
     private static List<Route> computeExtensibleRoutes(List<Route> routes, Trail trail){
-        List<Route> rs = new ArrayList<Route>();
+        List<Route> rs = new ArrayList<>();
         for(Route r: routes) {
             if(trail.routes.contains(r)) {
                 continue;
@@ -134,7 +134,7 @@ public final class Trail {
      * as parameter) added to that list (essentially extending the trail by that route).
      */
     private static List<Route> computeExtendedRoutes(Route route, Trail trail){
-        List<Route> newRoutes = new ArrayList<Route>();
+        List<Route> newRoutes = new ArrayList<>();
         newRoutes.addAll(trail.routes);
         newRoutes.add(route);
         return newRoutes;
