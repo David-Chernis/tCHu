@@ -140,7 +140,13 @@ public final class GraphicalPlayerAdapter implements Player{
         return QTake(cardBagQ);
     }
 
-
+    /**
+     * Allows the take() method to be performed on a blocking queue. Also treats any
+     * potential exceptions that arise locally.
+     * @param <T> the type of the object returned by take().
+     * @param genericQ (BlockingQueue<T>): the blocking queue to be used.
+     * @return (<T>): the object returned by the take() method.
+     */
     private <T> T QTake(BlockingQueue<T> genericQ) {
         try {
             return genericQ.take();
@@ -149,6 +155,14 @@ public final class GraphicalPlayerAdapter implements Player{
         }
     }
 
+    /**
+     * Allows the put() method to be performed on a blocking queue. Also treats any
+     * potential exceptions that arise locally.
+     * @param <T> the type of the object returned by put().
+     * @param genericQ (BlockingQueue<T>): the blocking queue to be used.
+     * @param genericVar (<T>): the type of the object that is passes as parameter
+     * to put().
+     */
     private <T> void QPut(BlockingQueue<T> genericQ, T genericVar) {
         try {
             genericQ.put(genericVar);
