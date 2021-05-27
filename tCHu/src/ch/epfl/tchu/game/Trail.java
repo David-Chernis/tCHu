@@ -59,9 +59,9 @@ public final class Trail {
             return new Trail(new ArrayList<Route>(), null, null);
         }
         
-        List<Trail> trails = new ArrayList<Trail>()
-                , trailsNew = new ArrayList<Trail>()
-                , allTrails = new ArrayList<Trail>();
+        List<Trail> trails = new ArrayList<Trail>();
+        List<Trail> trailsNew = new ArrayList<Trail>();
+        List<Trail> allTrails = new ArrayList<Trail>();
         List<Route> extensibleRoutes = new ArrayList<Route>();
         
         trails = doubleAllRoutes(trails, routes);
