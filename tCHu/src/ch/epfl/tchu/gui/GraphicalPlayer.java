@@ -46,7 +46,7 @@ import static javafx.collections.FXCollections.observableArrayList;
  */
 public final class GraphicalPlayer {
     private final ObservableGameState gameState;
-    private final ObservableList<Text> infos = observableArrayList();
+    private final ObservableList<Text> infos;
     private final ObjectProperty<DrawTicketsHandler> drawTicketProperty;
     private final ObjectProperty<DrawCardHandler> drawCardProperty;
     private final ObjectProperty<ClaimRouteHandler> claimRouteProperty;
@@ -67,6 +67,7 @@ public final class GraphicalPlayer {
      */
     public GraphicalPlayer(PlayerId id, Map<PlayerId, String> playerNames) {
         // Initializing the handler Properties and ObservableGameState
+        infos = observableArrayList();
         gameState = new ObservableGameState(id);
         drawTicketProperty = new SimpleObjectProperty<>();
         drawCardProperty = new SimpleObjectProperty<>();
@@ -166,8 +167,7 @@ public final class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketChoices,
             ChooseTicketsHandler tch) {
         assert Platform.isFxApplicationThread();
-        Preconditions.checkArgument(
-                ticketChoices.size() == 5 || ticketChoices.size() == 3);
+        Preconditions.checkArgument(ticketChoices.size() == 5 || ticketChoices.size() == 3);
 
         Stage chooserStage = new Stage(StageStyle.UTILITY);
 
@@ -175,16 +175,15 @@ public final class GraphicalPlayer {
                 ticketChoices.size() - 2,
                 StringsFr.plural(ticketChoices.size() - 2));
 
-        ObservableList<Ticket> observableList = observableArrayList(
-                ticketChoices.toList());
+        ObservableList<Ticket> observableList = observableArrayList(ticketChoices.toList());
         ListView<Ticket> list = new ListView<>(observableList);
         list.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         Button chooserButton = new Button();
 
         chooserButton.disableProperty()
-        .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
-                .lessThan(ticketChoices.size() - 2));
+            .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
+            .lessThan(ticketChoices.size() - 2));
 
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
@@ -192,8 +191,7 @@ public final class GraphicalPlayer {
                     SortedBag.of(list.getSelectionModel().getSelectedItems()));
         });
 
-        createChooser(chooserStage, StringsFr.TICKETS_CHOICE, message,
-                chooserButton, list);
+        createChooser(chooserStage, StringsFr.TICKETS_CHOICE, message, chooserButton, list);
         chooserStage.show();
     }
 
@@ -232,25 +230,25 @@ public final class GraphicalPlayer {
         Stage chooserStage = new Stage(StageStyle.UTILITY);
         ObservableList<SortedBag<Card>> observableList = observableArrayList(claimCards);
         ListView<SortedBag<Card>> list = new ListView<>(observableList);
-        list.setCellFactory(
-                v -> new TextFieldListCell<>(new CardBagStringConverter()));
+        list.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
 
         Button chooserButton = new Button();
 
-        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);
+        
 
         chooserButton.disableProperty()
-        .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
-                .lessThan(1));
+            .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
+            .lessThan(1));
 
         // Creation of Button Handler
         chooserButton.setOnAction((e) -> {
             chooserStage.hide();
             cch.onChooseCards(list.getSelectionModel().getSelectedItem());
         });
+        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);
         chooserStage.show();
     }
-
+    
     /**
      * Opens a card choosing window, where a player can choose which additional
      * cards they with to use to claim a route.
@@ -269,11 +267,11 @@ public final class GraphicalPlayer {
         Preconditions.checkArgument(claimCards.size() > 0);
         Stage chooserStage = new Stage(StageStyle.UTILITY);
         String message = StringsFr.CHOOSE_ADDITIONAL_CARDS;
-
+        
         ObservableList<SortedBag<Card>> observableList = observableArrayList(claimCards);
         ListView<SortedBag<Card>> list = new ListView<>(observableList);
         list.setCellFactory( v -> new TextFieldListCell<>(new CardBagStringConverter()) );
-
+        
         Button chooserButton = new Button();
 
         createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);

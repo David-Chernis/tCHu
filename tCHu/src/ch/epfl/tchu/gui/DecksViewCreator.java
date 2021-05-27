@@ -87,8 +87,7 @@ final class DecksViewCreator {
 	    
 		//Creation of the cards view of the game, containing all the face-up cards
 		VBox cardView = new VBox(deckTickets);
-        cardView.getStylesheets().add("decks.css");
-        cardView.getStylesheets().add("colors.css");
+        cardView.getStylesheets().addAll("decks.css", "colors.css");
         cardView.setId("card-pane");
         
         //The 5 face-up cards
@@ -151,15 +150,13 @@ final class DecksViewCreator {
 		carteTrainImage.getStyleClass().add("train-image");
 		
 		Rectangle carteInside = new Rectangle(CARD_INSIDE_LENGTH, CARD_INSIDE_HEIGHT);
-		carteInside.getStyleClass().add("filled");
-		carteInside.getStyleClass().add("inside");
+		carteInside.getStyleClass().addAll("filled", "inside");
 		
 		Rectangle carteOutside = new Rectangle(CARD_OUTSIDE_LENGTH, CARD_OUTSIDE_HEIGHT);
 		carteOutside.getStyleClass().add("outside");
 		
 		StackPane carteCompteur = new StackPane(carteOutside, carteInside, carteTrainImage);
-		carteCompteur.getStyleClass().add(color.toUpperCase());
-		carteCompteur.getStyleClass().add("card");
+		carteCompteur.getStyleClass().addAll(color.toUpperCase(), "card");
 		
 		return carteCompteur;
 	}

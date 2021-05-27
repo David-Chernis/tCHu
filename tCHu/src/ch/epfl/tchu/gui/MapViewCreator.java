@@ -36,8 +36,7 @@ final class MapViewCreator {
 	 */
 	public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
 		Pane Carte = new Pane();
-		Carte.getStylesheets().add("map.css");
-		Carte.getStylesheets().add("colors.css");
+		Carte.getStylesheets().addAll("map.css", "colors.css");
 		ImageView fond = new ImageView("map.png");
 		Carte.getChildren().add(fond);
 		
@@ -45,14 +44,17 @@ final class MapViewCreator {
 		
 		for(Route route : ChMap.routes()) {
 		    Group routeGroup = new Group();
-		    ObservableList<String> styleClassList = routeGroup.getStyleClass();
 		    
-		    gameState.routeId(route).addListener((o, oV, nV) -> styleClassList.add(nV.name()));
+		    // avoiding repeated recalculation of the syleClass of routeGroup by storing it
+		    ObservableList<String> routeGroupStyleClass = routeGroup.getStyleClass();
+		    
+		    gameState.routeId(route).addListener((o, oV, nV) -> routeGroupStyleClass.add(nV.name()));
 		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(route).not()));
 	        routeGroup.setId(route.id());
-	        styleClassList.add("route");
-	        styleClassList.add(route.level().name());
-	        styleClassList.add(route.color() == null ? "NEUTRAL" : route.color().name());
+	        routeGroupStyleClass.addAll(
+	                "route",
+	                route.level().name(),  
+	                route.color() == null ? "NEUTRAL" : route.color().name());
 	        
 	        routeGroup.setOnMouseClicked((e) -> {
 	            List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
@@ -69,8 +71,7 @@ final class MapViewCreator {
 	        for(int j = 0; j < route.length(); j++) {
 	            
 	            Rectangle Voie = new Rectangle(36, 12);
-	            Voie.getStyleClass().add("track");
-	            Voie.getStyleClass().add("filled");
+	            Voie.getStyleClass().addAll("track", "filled");
 	            
 	            Rectangle wagonR;
 	            wagonR = new Rectangle(36 , 12);

@@ -63,8 +63,6 @@ final class InfoViewCreator {
 		Separator separator = new Separator();
 		separator.orientationProperty().set(HORIZONTAL);
 		
-		//The last 5 game infos
-		
 		//The TextFlow for the last 5 game infos
 		TextFlow messages = new TextFlow();
 		Bindings.bindContent(messages.getChildren(), infos);
