@@ -15,7 +15,6 @@ import ch.epfl.tchu.game.PlayerState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
-import javafx.application.Platform;
 
 /**
  * Class that adapts an instance of GraphicalPlayer into a variable of type Player. Also makes

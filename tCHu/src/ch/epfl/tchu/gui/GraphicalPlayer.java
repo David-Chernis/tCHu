@@ -2,13 +2,10 @@ package ch.epfl.tchu.gui;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
-import ch.epfl.tchu.game.ChMap;
-import ch.epfl.tchu.game.GameState;
 import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.PlayerState;
 import ch.epfl.tchu.game.PublicGameState;
@@ -22,10 +19,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
-import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

@@ -6,14 +6,12 @@ import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
-import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static javafx.geometry.Orientation.HORIZONTAL;
 /**
  * Class that allows for the creation of the graphical elements needed to display the infos of the game.
