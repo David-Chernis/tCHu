@@ -12,14 +12,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
+import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
+import static javafx.geometry.Orientation.HORIZONTAL;
 /**
  * Class that allows for the creation of the graphical elements needed to display the infos of the game.
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
 final class InfoViewCreator {
-	
+    private static final int circleRadius = 5;
 	/**
 	 * Private InfoViewCreator constructor, whose sole aim is to make this class uninstanciable.
 	 */
@@ -32,9 +34,9 @@ final class InfoViewCreator {
 	 */
 	public static VBox createInfoView(PlayerId id, Map<PlayerId, String> playerNames,  ObservableGameState ogs, ObservableList<Text> infos) {
 		//The circles that represents the color of each player
-		Circle cBlue = new Circle(5);
+		Circle cBlue = new Circle(circleRadius);
 		cBlue.getStyleClass().add("filled");
-		Circle cRed = new Circle(5);
+		Circle cRed = new Circle(circleRadius);
 		cRed.getStyleClass().add("filled");
 		
 		//The text part of the player statistics
@@ -51,9 +53,9 @@ final class InfoViewCreator {
 		
 		//The TextFlow of each player
 		TextFlow textFlowBlue = new TextFlow(cBlue, textBlue);
-		textFlowBlue.getStyleClass().add(id == PlayerId.PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
+		textFlowBlue.getStyleClass().add(id == PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
 		TextFlow textFlowRed = new TextFlow(cRed, textRed);
-		textFlowRed.getStyleClass().add(id.next() == PlayerId.PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
+		textFlowRed.getStyleClass().add(id.next() == PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
 		
 		//The VBox containing the player statistics
 		VBox playerStats = new VBox(textFlowBlue, textFlowRed);
@@ -61,7 +63,7 @@ final class InfoViewCreator {
 		
 		//The separator that separates the player statistics and the last 5 game infos
 		Separator separator = new Separator();
-		separator.orientationProperty().set(Orientation.HORIZONTAL);
+		separator.orientationProperty().set(HORIZONTAL);
 		
 		//The last 5 game infos
 		

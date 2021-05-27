@@ -242,8 +242,7 @@ public final class GraphicalPlayer {
 
         Button chooserButton = new Button();
 
-        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message,
-                chooserButton, list);
+        createChooser(chooserStage, StringsFr.CARDS_CHOICE, message, chooserButton, list);
 
         chooserButton.disableProperty()
         .bind(Bindings.size(list.getSelectionModel().getSelectedItems())
@@ -276,11 +275,9 @@ public final class GraphicalPlayer {
         Stage chooserStage = new Stage(StageStyle.UTILITY);
         String message = StringsFr.CHOOSE_ADDITIONAL_CARDS;
 
-        ObservableList<SortedBag<Card>> observableList = observableArrayList(
-                claimCards);
+        ObservableList<SortedBag<Card>> observableList = observableArrayList(claimCards);
         ListView<SortedBag<Card>> list = new ListView<>(observableList);
-        list.setCellFactory(
-                v -> new TextFieldListCell<>(new CardBagStringConverter()));
+        list.setCellFactory( v -> new TextFieldListCell<>(new CardBagStringConverter()) );
 
         Button chooserButton = new Button();
 

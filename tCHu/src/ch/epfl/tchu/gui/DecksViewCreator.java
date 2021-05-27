@@ -96,11 +96,13 @@ final class DecksViewCreator {
         
         //The 5 face-up cards
 		for(int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
+		    Card cardProp = ogs.faceUpCard(i).get();
+		    
 		    String fuCard = "";
-		    if(ogs.faceUpCard(i).get() != null) {
-		        fuCard = ogs.faceUpCard(i).get() == Card.LOCOMOTIVE 
+		    if(cardProp != null) {
+		        fuCard = cardProp == Card.LOCOMOTIVE 
 	                    ? "NEUTRAL" 
-	                    : ogs.faceUpCard(i).get().name();
+	                    : cardProp.name();
 		    }
 		    
 		    StackPane faceUp = cardOnly(fuCard);

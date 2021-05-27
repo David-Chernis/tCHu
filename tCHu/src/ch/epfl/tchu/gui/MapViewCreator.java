@@ -9,6 +9,7 @@ import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -44,12 +45,14 @@ final class MapViewCreator {
 		
 		for(Route route : ChMap.routes()) {
 		    Group routeGroup = new Group();
-		    gameState.routeId(route).addListener((o, oV, nV) -> routeGroup.getStyleClass().add(nV.name()));
+		    ObservableList<String> styleClassList = routeGroup.getStyleClass();
+		    
+		    gameState.routeId(route).addListener((o, oV, nV) -> styleClassList.add(nV.name()));
 		    routeGroup.disableProperty().bind(claimRouteHP.isNull().or(gameState.claimable(route).not()));
 	        routeGroup.setId(route.id());
-	        routeGroup.getStyleClass().add("route");
-	        routeGroup.getStyleClass().add(route.level().name());
-	        routeGroup.getStyleClass().add(route.color() == null ? "NEUTRAL" : route.color().name());
+	        styleClassList.add("route");
+	        styleClassList.add(route.level().name());
+	        styleClassList.add(route.color() == null ? "NEUTRAL" : route.color().name());
 	        
 	        routeGroup.setOnMouseClicked((e) -> {
 	            List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
@@ -64,18 +67,10 @@ final class MapViewCreator {
 	        });
 	        
 	        for(int j = 0; j < route.length(); j++) {
-	            Group caseGroup = new Group();
-	            caseGroup.setId(route.id() + "_" + (j+1));
 	            
-	            // Voie on Diagram
 	            Rectangle Voie = new Rectangle(36, 12);
 	            Voie.getStyleClass().add("track");
 	            Voie.getStyleClass().add("filled");
-	            
-	            // Group called wagon on the diagram 
-	            Group wagonGroup = new Group();
-	            wagonGroup.getStyleClass().add("car");
-	            
 	            
 	            Rectangle wagonR;
 	            wagonR = new Rectangle(36 , 12);
@@ -85,9 +80,13 @@ final class MapViewCreator {
 	            Circle circleR2; 
 	            circleR2 = new Circle(24, 6, 3);
 	            
+	            Group wagonGroup = new Group(wagonR, circleR1, circleR2);
+                wagonGroup.getStyleClass().add("car");
+                
+                Group caseGroup = new Group(Voie, wagonGroup);
+                caseGroup.setId(route.id() + "_" + (j+1));
+                
 	            routeGroup.getChildren().add(caseGroup);
-	            caseGroup.getChildren().addAll(Voie, wagonGroup);
-                wagonGroup.getChildren().addAll(wagonR, circleR1, circleR2);
 	        }
 	        
 	        Carte.getChildren().add(routeGroup);

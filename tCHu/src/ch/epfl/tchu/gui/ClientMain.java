@@ -27,7 +27,7 @@ public final class ClientMain extends Application{
     public void start(Stage primaryStage) throws Exception {
         List<String> param = getParameters().getRaw();
         
-        // Instiantiation of variables necessary to the creation of the RemotePlayerClient 
+        // analysis of parameters in order to instantiate variables necessary to the creation of RemotePlayerClient 
         String address = param.isEmpty() 
                 ? "localhost" 
                 : param.get(0);

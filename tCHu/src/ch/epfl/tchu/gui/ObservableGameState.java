@@ -34,6 +34,8 @@ public final class ObservableGameState {
     private PlayerState publicps;
     private final PlayerId id; 
     private static final int TOTAL_TICKETS = ChMap.tickets().size();
+    private static final int DIFFERENT_CARD_COUNT = 9;
+    private static final int NUMBER_OF_PLAYERS = 2;
     // Group 1
     private final IntegerProperty ticketPercentage; 
     private final IntegerProperty cardPercentage;
@@ -62,12 +64,12 @@ public final class ObservableGameState {
         routes = createRoutes();
         ticketPercentage = new SimpleIntegerProperty(0);
         cardPercentage = new SimpleIntegerProperty(0);
-        playerTicketsNum = createIntList(2);
-        playerTotalCardsNum = createIntList(2);
-        playerWagonsNum = createIntList(2);
-        playerClaimPoints = createIntList(2);
+        playerTicketsNum = createIntList(NUMBER_OF_PLAYERS);
+        playerTotalCardsNum = createIntList(NUMBER_OF_PLAYERS);
+        playerWagonsNum = createIntList(NUMBER_OF_PLAYERS);
+        playerClaimPoints = createIntList(NUMBER_OF_PLAYERS);
         playerTickets = FXCollections.observableArrayList();
-        playerCards = createIntList(9);
+        playerCards = createIntList(DIFFERENT_CARD_COUNT);
         claimableRoutes = createOwnedRoutes();
     }
     
@@ -148,7 +150,6 @@ public final class ObservableGameState {
            faceUpCards.get(slot).set(newCard);
        }
 
-       
        for(PlayerId id : PlayerId.ALL) {
            int ord = id.ordinal();
            playerTicketsNum.get(ord).set(newGameState.playerState(id).ticketCount());
@@ -172,15 +173,14 @@ public final class ObservableGameState {
            boolean correctPlayer = newGameState.currentPlayerId() == id;
            boolean routeUnowned = routes.get(r1).get() == null;
            boolean doubleUnowned = true;
+           boolean playerCanClaimRoute = newPlayerState.canClaimRoute(r1);
            
            for(Route r2 : routes.keySet()) {
-               if(r2.id() == r1.id()) 
-                   continue;
-               if(r2.stations().containsAll(r1.stations())) 
+               if(r2.stations().containsAll(r1.stations()) && !(r2.id() == r1.id())) 
                    doubleUnowned = routes.get(r2).get() == null;
            }
            
-           boolean playerCanClaimRoute = newPlayerState.canClaimRoute(r1);
+           
            
            claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
        }
