@@ -18,7 +18,7 @@ public final class Preconditions {
 	 * @param shouldBeTrue (boolean): argument must be a boolean.
 	 * @throws IllegalArgumentException if shouldBeTrue is not true.
 	 */
-    public static void checkArgument(boolean shouldBeTrue) throws IllegalArgumentException {
+    public static void checkArgument(boolean shouldBeTrue) {
         if(!shouldBeTrue) {
             throw new IllegalArgumentException();
         }
