@@ -24,9 +24,9 @@ public final class RemotePlayerProxy implements Player{
     /**
      * (Socket): the socket used to connect the client and the proxy.
      */
-    private Socket socket;
-    private BufferedReader reader;
-    private BufferedWriter writer;
+    private final Socket socket;
+    private final BufferedReader reader;
+    private final BufferedWriter writer;
 
 
     /**

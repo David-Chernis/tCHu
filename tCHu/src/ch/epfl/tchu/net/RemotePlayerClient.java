@@ -36,7 +36,7 @@ public final class RemotePlayerClient {
 	/**
 	 * (Player): the player to which it must provide remote access.
 	 */
-    private Player player;
+    private final Player player;
     
     /**
      * (String): the name of the socket used for communication between itself and the proxy.
