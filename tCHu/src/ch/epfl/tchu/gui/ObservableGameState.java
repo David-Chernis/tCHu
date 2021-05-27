@@ -180,8 +180,6 @@ public final class ObservableGameState {
                    doubleUnowned = routes.get(r2).get() == null;
            }
            
-           
-           
            claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
        }
        

@@ -49,7 +49,7 @@ final class DecksViewCreator {
 	    HBox handPane = new HBox();
         handPane.setId("hand-pane");
 	    
-		ListView<Ticket> billets = new ListView<Ticket>(ogs.playerTickets());
+		ListView<Ticket> billets = new ListView<>(ogs.playerTickets());
 		billets.setId("tickets");
 		
 		//The cards part of the player's hand

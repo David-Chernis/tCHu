@@ -22,7 +22,14 @@ import javafx.scene.shape.Rectangle;
  * @author David Chernis (310298)
  */
 final class MapViewCreator {
-	
+	private static final int WAGON_WIDTH = 36;
+	private static final int WAGON_HEIGHT = 12;
+    private static final int STATION_X = 12;
+    private static final int STATION_Y = 6;
+    private static final int STATION_RADIUS = 3;
+    private static final int AUTO_CLAIM_SIZE = 1;
+    
+    
 	/**
 	 * Private MapViewCreator constructor, whose sole aim is to make this class uninstanciable.
 	 */
@@ -59,9 +66,9 @@ final class MapViewCreator {
 	        routeGroup.setOnMouseClicked((e) -> {
 	            List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
 	            
-	            if(possibleClaimCards.size() == 1) {
+	            if(possibleClaimCards.size() == AUTO_CLAIM_SIZE) {
 	                claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
-	            } else if(possibleClaimCards.size() > 1){
+	            } else if(possibleClaimCards.size() > AUTO_CLAIM_SIZE){
 	                ClaimRouteHandler claimRouteH = claimRouteHP.get();
 	                ChooseCardsHandler chooseCardsH = chosenCards -> claimRouteH.onClaimRoute(route, chosenCards);
 	                cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
@@ -70,16 +77,16 @@ final class MapViewCreator {
 	        
 	        for(int j = 0; j < route.length(); j++) {
 	            
-	            Rectangle Voie = new Rectangle(36, 12);
+	            Rectangle Voie = new Rectangle(WAGON_WIDTH, WAGON_HEIGHT);
 	            Voie.getStyleClass().addAll("track", "filled");
 	            
 	            Rectangle wagonR;
-	            wagonR = new Rectangle(36 , 12);
+	            wagonR = new Rectangle(WAGON_WIDTH , WAGON_HEIGHT);
 	            wagonR.getStyleClass().add("filled");
 	            Circle circleR1;
-	            circleR1 = new Circle(12, 6, 3);           
+	            circleR1 = new Circle(STATION_X, STATION_Y, STATION_RADIUS);           
 	            Circle circleR2; 
-	            circleR2 = new Circle(24, 6, 3);
+	            circleR2 = new Circle(2*STATION_X, STATION_Y, STATION_RADIUS);
 	            
 	            Group wagonGroup = new Group(wagonR, circleR1, circleR2);
                 wagonGroup.getStyleClass().add("car");

@@ -59,15 +59,15 @@ public final class Trail {
             return new Trail(new ArrayList<Route>(), null, null);
         }
         
-        List<Trail> trails = new ArrayList<Trail>();
-        List<Trail> trailsNew = new ArrayList<Trail>();
-        List<Trail> allTrails = new ArrayList<Trail>();
-        List<Route> extensibleRoutes = new ArrayList<Route>();
+        List<Trail> trails = new ArrayList<>();
+        List<Trail> trailsNew = new ArrayList<>();
+        List<Trail> allTrails = new ArrayList<>();
+        List<Route> extensibleRoutes = new ArrayList<>();
         
         trails = doubleAllRoutes(trails, routes);
         
         while(!trails.isEmpty()) {
-            trailsNew = new ArrayList<Trail>();
+            trailsNew = new ArrayList<>();
             
             for(Trail c: trails) {
                 
@@ -81,7 +81,6 @@ public final class Trail {
                         trailsNew.add(new Trail(computeExtendedRoutes(r ,c) , c.station1(), r.stationOpposite(c.station2())));
                     }
                 }
-                
             }
             allTrails.addAll(trailsNew);
             trails = List.copyOf(trailsNew);
