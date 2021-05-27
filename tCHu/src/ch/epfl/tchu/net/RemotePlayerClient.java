@@ -108,46 +108,39 @@ public final class RemotePlayerClient {
 
                 case CHOOSE_INITIAL_TICKETS:
                     SortedBag<Ticket> initialTickets = player.chooseInitialTickets();
-                    w.write(Serdes.ticketBagSerde.serialize(initialTickets) + "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.ticketBagSerde.serialize(initialTickets) + "\n");
                     break;
 
                 case NEXT_TURN:
                     TurnKind nextTurn = player.nextTurn();
-                    w.write(Serdes.turnKindSerde.serialize(nextTurn)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.turnKindSerde.serialize(nextTurn)+ "\n");
                     break;
 
                 case CHOOSE_TICKETS:
                     SortedBag<Ticket> options = Serdes.ticketBagSerde.deserialize(messageList.get(1));
                     SortedBag<Ticket> chosenTickets = player.chooseTickets(options);
-                    w.write(Serdes.ticketBagSerde.serialize(chosenTickets)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.ticketBagSerde.serialize(chosenTickets)+ "\n");
                     break;
 
                 case DRAW_SLOT: 
                     int drawSlot = player.drawSlot();
-                    w.write(Serdes.intSerde.serialize(drawSlot)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.intSerde.serialize(drawSlot)+ "\n");
                     break;
 
                 case ROUTE: 
                     Route claimedRoute = player.claimedRoute();
-                    w.write(Serdes.routeSerde.serialize(claimedRoute)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.routeSerde.serialize(claimedRoute)+ "\n");
                     break;
 
                 case CARDS: 
                     SortedBag<Card> cards = player.initialClaimCards();
-                    w.write(Serdes.cardBagSerde.serialize(cards)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.cardBagSerde.serialize(cards)+ "\n");
                     break;
 
                 case CHOOSE_ADDITIONAL_CARDS:    
                     List<SortedBag<Card>>  additionalOptions = Serdes.cardListBagSerde.deserialize(messageList.get(1));
                     SortedBag<Card> chosenAdditionalCards = player.chooseAdditionalCards(additionalOptions);
-                    w.write(Serdes.cardBagSerde.serialize(chosenAdditionalCards)+ "\n");
-                    w.flush();
+                    writeAndFlush(w, Serdes.cardBagSerde.serialize(chosenAdditionalCards)+ "\n");
                     break;
                 }
             }
@@ -155,6 +148,18 @@ public final class RemotePlayerClient {
             throw new UncheckedIOException(e);
         }
 
+    }
+    
+    /**
+     * Method that writes the string provided as argument into a connection using the BufferedWriter provided
+     * as parameter. Then, the method flushes the BufferedWriter to make sure all items are sent through.
+     * @param w (BufferedWriter): the BufferedWriter used to send Strings through the Socket connection.
+     * @param toWrite (String): the String to send through the connection.
+     * @throws IOException if an I/O Error occurs.
+     */
+    private void writeAndFlush(BufferedWriter w, String toWrite) throws IOException{
+		w.write(toWrite);
+		w.flush();
     }
 }
 
