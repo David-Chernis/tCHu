@@ -38,32 +38,34 @@ public final class Info {
 	public static String cardName(Card card, int count) {
 	    
 		String cardName = "";
-		if(card.equals(Card.BLACK)) {
-			cardName += StringsFr.BLACK_CARD;
-		}
-		else if(card.equals(Card.BLUE)) {
-			cardName += StringsFr.BLUE_CARD;
-		}
-		else if(card.equals(Card.GREEN)) {
-			cardName += StringsFr.GREEN_CARD;
-		}
-		else if(card.equals(Card.ORANGE)) {
-			cardName += StringsFr.ORANGE_CARD;
-		}
-		else if(card.equals(Card.RED)) {
-			cardName += StringsFr.RED_CARD;
-		}
-		else if(card.equals(Card.VIOLET)) {
-			cardName += StringsFr.VIOLET_CARD;
-		}
-		else if(card.equals(Card.WHITE)) {
-			cardName += StringsFr.WHITE_CARD;
-		}
-		else if(card.equals(Card.YELLOW)) {
-			cardName += StringsFr.YELLOW_CARD;
-		}
-		else if(card.equals(Card.LOCOMOTIVE)) {
-			cardName += StringsFr.LOCOMOTIVE_CARD;
+		switch(card) {
+    		case BLACK      : 
+    		    cardName += StringsFr.BLACK_CARD;
+    		    break;
+    		case BLUE       :
+    		    cardName += StringsFr.BLUE_CARD;
+    		    break;
+            case GREEN      :
+                cardName += StringsFr.GREEN_CARD;
+                break;
+            case ORANGE     :
+                cardName += StringsFr.ORANGE_CARD;
+                break;
+            case RED        :
+                cardName += StringsFr.RED_CARD;
+                break;
+            case VIOLET     :
+                cardName += StringsFr.VIOLET_CARD;
+                break;
+            case WHITE      :
+                cardName += StringsFr.WHITE_CARD;
+                break;
+            case YELLOW     :
+                cardName += StringsFr.YELLOW_CARD;
+                break;
+            case LOCOMOTIVE :
+                cardName += StringsFr.LOCOMOTIVE_CARD;
+                break;
 		}
 		cardName += StringsFr.plural(count);
 		return cardName;
@@ -223,7 +225,7 @@ public final class Info {
 			int n = cards.countOf(c);
 			cardsString += n + " " + Info.cardName(c, n);
 			if(counter == cards.toSet().size()-2 ) {
-				cardsString += " et ";
+				cardsString += StringsFr.AND_SEPARATOR;
 			}
 			else if(counter < cards.toSet().size()-2) {
 				cardsString += ", ";
