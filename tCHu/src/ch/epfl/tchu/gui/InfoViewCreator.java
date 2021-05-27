@@ -19,7 +19,7 @@ import javafx.scene.text.TextFlow;
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
-class InfoViewCreator {
+final class InfoViewCreator {
 	
 	/**
 	 * Private InfoViewCreator constructor, whose sole aim is to make this class uninstanciable.

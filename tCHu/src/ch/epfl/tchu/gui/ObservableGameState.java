@@ -28,11 +28,11 @@ import static ch.epfl.tchu.game.Constants.FACE_UP_CARD_SLOTS;
  * @author Shrey Mittal (312275)
  * @author David Chernis (310298)
  */
-public class ObservableGameState {
+public final class ObservableGameState {
 	
-    private PublicGameState ogs;
-    private PlayerState ops;
-    private PlayerId id; 
+    private PublicGameState publicgs;
+    private PlayerState publicps;
+    private final PlayerId id; 
     private static final int TOTAL_TICKETS = ChMap.tickets().size();
     // Group 1
     private final IntegerProperty ticketPercentage; 
@@ -131,8 +131,8 @@ public class ObservableGameState {
      * @param newPlayerState (PlayerState): the new player state.
      */
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
-       ogs = newGameState;
-       ops = newPlayerState;
+       publicgs = newGameState;
+       publicps = newPlayerState;
        Set<List<Station>> doubles = new HashSet<>();
        
        cardPercentage.set((100 *newGameState.cardState().deckSize()) / Constants.TOTAL_CARDS_COUNT);
@@ -184,7 +184,6 @@ public class ObservableGameState {
            
            claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
        }
-       
        
        
        for(Card c : Card.ALL) {
@@ -310,7 +309,7 @@ public class ObservableGameState {
 	 * @return (boolean): true if it is possible to draw tickets, false otherwise.
 	 */
     public boolean canDrawTickets() {
-        return ogs.canDrawTickets();
+        return publicgs.canDrawTickets();
     }
     
     /**
@@ -318,7 +317,7 @@ public class ObservableGameState {
 	 * @return (boolean): true if it is possible to draw cards, false otherwise.
 	 */
     public boolean canDrawCards() {
-        return ogs.canDrawCards();
+        return publicgs.canDrawCards();
     }
     
     /**
@@ -329,7 +328,7 @@ public class ObservableGameState {
      * @throws IllegalArgumentException if the player doesn't have enough wagons to claim the route.
      */
     public List<SortedBag<Card>> possibleClaimCards(Route r) {
-        return ops.possibleClaimCards(r);
+        return publicps.possibleClaimCards(r);
     }
     
     
