@@ -82,7 +82,12 @@ class GameTest {
             if (playerNames != null) assertEquals(playerNames, player.playerNames);
             playerNames = player.playerNames;
         }
-        assertEquals(Set.of(), unusedPlayerIds);
+        if(Constants.THREE_PLAYER) {
+        	assertEquals(Set.of(), unusedPlayerIds);
+        }
+        else {
+        	assertEquals(Set.of(PlayerId.PLAYER_3), unusedPlayerIds);
+        }
     }
 
     @Test

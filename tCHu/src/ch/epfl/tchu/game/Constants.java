@@ -12,7 +12,6 @@ public final class Constants {
      */
     public static boolean THREE_PLAYER = false;
     
-    
     /**
      * Nombre de cartes wagon de chaque couleur.
      */
