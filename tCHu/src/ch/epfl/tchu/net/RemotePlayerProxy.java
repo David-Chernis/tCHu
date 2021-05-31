@@ -2,6 +2,8 @@ package ch.epfl.tchu.net;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import static java.nio.charset.StandardCharsets.US_ASCII;
@@ -47,9 +49,14 @@ public final class RemotePlayerProxy implements Player{
 
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        List<String> namesList = new ArrayList<String>();
+        for(int i = 0; i < playerNames.size(); i++) {
+            namesList.add(playerNames.get(PlayerId.ALL.get(i)));
+        }
+        System.out.println(namesList);
         String toBeSent = MessageId.INIT_PLAYERS.name() + " " + Serdes.playerIdSerde.serialize(ownId)
-        + " " + Serdes.stringListSerde.serialize(List.of(playerNames.get(PlayerId.PLAYER_1),
-                playerNames.get(PlayerId.PLAYER_2)));
+        + " " + Serdes.stringListSerde.serialize(namesList);
+        
         this.sendThroughSocket(writer, toBeSent);
     }
 

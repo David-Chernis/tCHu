@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -86,7 +87,11 @@ public final class RemotePlayerClient {
 
                 case INIT_PLAYERS:
                     List<String> namesList = Serdes.stringListSerde.deserialize(messageList.get(2));
-                    Map<PlayerId, String> namesMap = Map.of(PLAYER_1, namesList.get(0), PLAYER_2, namesList.get(1));
+                    Map<PlayerId, String> namesMap = new HashMap<>();
+                    for(int i = 0; i < namesList.size(); i++) {
+                        namesMap.put(PlayerId.ALL.get(i), namesList.get(i));
+                    }
+                    
                     player.initPlayers(Serdes.playerIdSerde.deserialize(messageList.get(1)), namesMap);
                     break;
 
