@@ -8,12 +8,12 @@ import java.util.List;
  * @author David Chernis (310298)
  */
 public enum PlayerId {
-	PLAYER_1, PLAYER_2;
+	PLAYER_1, PLAYER_2, PLAYER_3;
 	
 	/**
 	 * (List<PlayerID>): list of all the different types of PlayerID.
 	 */
-    public static final List<PlayerId> ALL = List.of(PlayerId.values());
+    public static final List<PlayerId> ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PLAYER_1, PLAYER_2);
     
     /**
      * (int): number of types of PlayerID.
@@ -25,6 +25,6 @@ public enum PlayerId {
      * @return (PlayerId): the identity of the player who follows the one to whom this method is applied.
      */
     public PlayerId next() {
-        return ALL.get((ALL.indexOf(this)+1) % COUNT);
+        return ALL.get((ALL.indexOf(this)+1)%COUNT);
     }
 }

@@ -39,7 +39,7 @@ class GameStateTest {
             assertEquals(List.of(), gameState.claimedRoutes());
             assertNull(gameState.lastPlayer());
             assertNotNull(gameState.currentPlayerId());
-            for (PlayerId id : PlayerId.values()) {
+            for (PlayerId id : PlayerId.ALL) {
                 var playerState = gameState.playerState(id);
                 assertEquals(List.of(), playerState.routes());
                 assertEquals(SortedBag.of(), playerState.tickets());
