@@ -66,7 +66,7 @@ public final class GameState extends PublicGameState{
             playerStateStore.put(id, ps);
         }
         
-        return new GameState(Deck.of(tickets, rng), CardState.of(cardDeck), PlayerId.ALL.get(rng.nextInt(2)), playerStateStore, null);
+        return new GameState(Deck.of(tickets, rng), CardState.of(cardDeck), PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT)), playerStateStore, null);
     }
     
     /**
@@ -262,9 +262,9 @@ public final class GameState extends PublicGameState{
      */
     private static Map<PlayerId, PublicPlayerState> privateToPublicPlayerState(Map<PlayerId, PlayerState> privatePlayerState) {
         Map<PlayerId, PublicPlayerState> playerStateStore = new EnumMap<PlayerId, PublicPlayerState>(PlayerId.class);
-        playerStateStore.put(PlayerId.PLAYER_1, privatePlayerState.get(PlayerId.PLAYER_1));
-        playerStateStore.put(PlayerId.PLAYER_2, privatePlayerState.get(PlayerId.PLAYER_2));
-        
+        for(PlayerId id : PlayerId.ALL) {
+        	playerStateStore.put(id, privatePlayerState.get(id));
+        }
         return playerStateStore;
     }
     

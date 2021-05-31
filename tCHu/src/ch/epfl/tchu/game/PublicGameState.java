@@ -59,7 +59,7 @@ public class PublicGameState {
 	 */
 	public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId,
 			Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
-		Preconditions.checkArgument(ticketsCount >= 0 && playerState.size() == 2);
+		Preconditions.checkArgument(ticketsCount >= 0 && (playerState.size() == 2 || playerState.size() == 3));
 		if(cardState.equals(null) || currentPlayerId.equals(null) || playerState.equals(null)) {
 			throw new NullPointerException();
 		}
@@ -132,8 +132,10 @@ public class PublicGameState {
 	 * @return (List<Route>): a list of all the roads that have been taken by either player.
 	 */
 	public List<Route> claimedRoutes(){
-		List<Route> currentPlayerRoutes = new ArrayList<Route>(publicPlayerStates.get(currentPlayerId()).routes());
-		currentPlayerRoutes.addAll(publicPlayerStates.get(currentPlayerId().next()).routes());
+		List<Route> currentPlayerRoutes = new ArrayList<Route>();
+		for(int i = 0; i < publicPlayerStates.size(); i++) {
+			currentPlayerRoutes.addAll(publicPlayerStates.get(PlayerId.ALL.get(i)).routes());
+		}
 		return currentPlayerRoutes;
 	}
 	

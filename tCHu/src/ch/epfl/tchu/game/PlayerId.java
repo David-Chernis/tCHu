@@ -25,6 +25,6 @@ public enum PlayerId {
      * @return (PlayerId): the identity of the player who follows the one to whom this method is applied.
      */
     public PlayerId next() {
-        return ALL.get((ALL.indexOf(this)+1)%COUNT);
+        return ALL.get((ALL.indexOf(this)+1) % COUNT);
     }
 }

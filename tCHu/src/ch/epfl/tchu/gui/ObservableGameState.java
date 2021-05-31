@@ -35,7 +35,7 @@ public final class ObservableGameState {
     private final PlayerId id; 
     private static final int TOTAL_TICKETS = ChMap.tickets().size();
     private static final int DIFFERENT_CARD_COUNT = 9;
-    private static final int NUMBER_OF_PLAYERS = 2;
+    private static final int NUMBER_OF_PLAYERS = PlayerId.COUNT;
     // Group 1
     private final IntegerProperty ticketPercentage; 
     private final IntegerProperty cardPercentage;

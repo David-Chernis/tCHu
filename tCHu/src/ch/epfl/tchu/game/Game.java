@@ -1,5 +1,6 @@
 package ch.epfl.tchu.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,6 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Player.TurnKind;
 import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
-import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
-import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
-
 
 /**
  * Final and non-instanciable class that represents a part of the game.
@@ -36,7 +34,7 @@ public final class Game {
 	 * @param rng (Random): A random variable used to randomize certain aspects of the game.
 	 */
 	public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
-	    Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
+	    Preconditions.checkArgument(players.size() == PlayerId.COUNT && playerNames.size() == PlayerId.COUNT);
 	    //playerInfoMap to more efficiently handle Info objects.
         Map<PlayerId, Info> playerInfoMap = new HashMap<>();
         players.forEach((playerId, player) -> playerInfoMap.put(playerId, new Info(playerNames.get(playerId))));
@@ -54,7 +52,7 @@ public final class Game {
             gameState = gameState.forNextTurn();
         }
         
-        // Plays out two extra turns.
+        // Plays out final turns.
         for(int i = 0; i < players.size(); i++) {
             gameState = playTurn(playerInfoMap, gameState, players, rng);
             updateState(players, gameState);
@@ -78,7 +76,7 @@ public final class Game {
 	private static GameState initializeGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId,Info> playerInfoMap, SortedBag<Ticket> tickets, Random rng) {
 	    gameState = GameState.initial(tickets, rng);
 	    players.forEach((playerId, player) -> player.initPlayers(playerId, playerNames));
-	    receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).willPlayFirst(), players);
+	    receiveInfoForAll(playerInfoMap.get(gameState.currentPlayerId()).willPlayFirst(), players);
 	    
 	    for(PlayerId id: PlayerId.ALL) {
 	        players.get(id).setInitialTicketChoice(gameState.topTickets(Constants.INITIAL_TICKETS_COUNT));
@@ -106,40 +104,59 @@ public final class Game {
 	    players.forEach((playerId, player) -> longestMap.put(playerId, Trail.longest(gameState.playerState(playerId).routes())));
         
 	    // Auxiliary variables to increase efficiency
-	    int bonus1 = 0, bonus2 = 0;
-        int length1 = longestMap.get(PLAYER_1).length(); 
-        int length2 = longestMap.get(PLAYER_2).length();
-        Info playerInfo1 = playerInfoMap.get(PLAYER_1);
-        Info playerInfo2 = playerInfoMap.get(PLAYER_2);
-        Trail trail1 = longestMap.get(PLAYER_1);
-        Trail trail2 = longestMap.get(PLAYER_2);
-        
-        if(length1 > length2) {
-            receiveInfoForBoth(playerInfo1.getsLongestTrailBonus(trail1), players);
-            bonus1 = 10;   
-            
-        } else if(length1 < length2) {
-            receiveInfoForBoth(playerInfo2.getsLongestTrailBonus(trail2), players);
-            bonus2 = 10;
-            
-        } else {
-            receiveInfoForBoth(playerInfo1.getsLongestTrailBonus(trail1) 
-                    + playerInfo2.getsLongestTrailBonus(trail2), players);
-            bonus1 = 10; bonus2 = 10;
-        }
-        
-        int finalPoints1 = gameState.playerState(PLAYER_1).finalPoints() + bonus1;
-        int finalPoints2 = gameState.playerState(PLAYER_2).finalPoints() + bonus2;
-        
-        if(finalPoints1 > finalPoints2) {
-            receiveInfoForBoth(playerInfo1.won(finalPoints1, finalPoints2), players);
-            
-        } else if(finalPoints1 < finalPoints2) {
-            receiveInfoForBoth(playerInfo2.won(finalPoints2, finalPoints1), players);
-        } else {
-            List<String> playerNameList = List.of(playerNames.get(PLAYER_1), playerNames.get(PLAYER_2));
-            receiveInfoForBoth(Info.draw(playerNameList, finalPoints1), players);
-        }
+	    int[] bonus = new int[players.size()];
+	    int[] length = new int[players.size()];
+	    int[] finalPoints = new int[players.size()];
+	    Info[] playerInfo = new Info[players.size()];
+	    Trail[] trail = new Trail[players.size()];
+	    String longestInfo = "";
+	    int maxLength = 0;
+	    for(int i = 0; i < players.size(); i++) {
+	    	bonus[i] = 0;
+	    	length[i] = longestMap.get(PlayerId.ALL.get(i)).length();
+	    	playerInfo[i] = playerInfoMap.get(PlayerId.ALL.get(i));
+	    	trail[i] = longestMap.get(PlayerId.ALL.get(i));
+	    	if(maxLength < length[i]) {
+	    		maxLength = length[i];
+	    	}
+	    }
+	    
+	    for(int i = 0; i < players.size(); i++) {
+	    	if(length[i] == maxLength) {
+	    		bonus[i] = 10;
+	    		longestInfo += playerInfo[i].getsLongestTrailBonus(trail[i]);
+	    	}
+	    }
+	    receiveInfoForAll(longestInfo, players);
+	    
+	    int winningPoints = Integer.MIN_VALUE;
+	    int losingPoints = Integer.MAX_VALUE;
+	    for(int i = 0; i < players.size(); i++) {
+	    	finalPoints[i] = gameState.playerState(PlayerId.ALL.get(i)).finalPoints() + bonus[i];
+	    	if(finalPoints[i] > winningPoints) {
+	    		winningPoints = finalPoints[i];
+	    	}
+	    	if(finalPoints[i] < losingPoints) {
+	    		losingPoints = finalPoints[i];
+	    	}
+	    }
+	    
+	    if(winningPoints == losingPoints) {
+	    	List<String> playerNameList = new ArrayList<>();
+	    	for(int i = 0; i < players.size(); i++) {
+	    		playerNameList.add(playerNames.get((PlayerId.ALL.get(i))));
+	    	}
+	    	receiveInfoForAll(Info.draw(playerNameList, winningPoints), players);
+	    }
+	    else {
+	    	String finalText = "";
+	    	for(int i = 0; i < players.size(); i++) {
+	    		if(winningPoints == finalPoints[i]) {
+	    			finalText += playerInfo[i].won(winningPoints, losingPoints);
+	    		}
+	    	}
+	    	receiveInfoForAll(finalText, players);
+	    }
 	}
 	
 	/**
@@ -155,9 +172,8 @@ public final class Game {
 	    PlayerId currentId = gameState.currentPlayerId();
 	    Info currentInfo =  playerInfoMap.get(currentId);
 	    Player currentPlayer = players.get(currentId);
-	    PlayerState currentPlayerState = gameState.currentPlayerState();
 	    
-        receiveInfoForBoth(currentInfo.canPlay(), players);
+        receiveInfoForAll(currentInfo.canPlay(), players);
         updateState(players, gameState);
         TurnKind chosenTurnKind = currentPlayer.nextTurn();
         
@@ -173,7 +189,7 @@ public final class Game {
         
         //informs the player that the last turn has begun
         if(gameState.lastTurnBegins()) {
-            receiveInfoForBoth(currentInfo.lastTurnBegins(currentPlayerState.carCount()), players);  
+            receiveInfoForAll(currentInfo.lastTurnBegins(gameState.currentPlayerState().carCount()), players);  
         }
         
         return gameState;
@@ -190,10 +206,10 @@ public final class Game {
 	    PlayerId currentId = gameState.currentPlayerId();
 	    Info currentInfo = playerInfoMap.get(currentId);
 	    
-	    receiveInfoForBoth(currentInfo.drewTickets(3), players);
+	    receiveInfoForAll(currentInfo.drewTickets(3), players);
         SortedBag<Ticket> chosenTickets = players.get(currentId).chooseTickets(gameState.topTickets(3));
         gameState = gameState.withChosenAdditionalTickets(gameState.topTickets(3), chosenTickets);
-        receiveInfoForBoth(currentInfo.keptTickets(chosenTickets.size()), players);
+        receiveInfoForAll(currentInfo.keptTickets(chosenTickets.size()), players);
         return gameState;
 	}
 	
@@ -212,11 +228,11 @@ public final class Game {
             }
             int drawSlot = players.get(gameState.currentPlayerId()).drawSlot();
             if(Constants.FACE_UP_CARD_SLOTS.contains(drawSlot)) {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).drewVisibleCard(gameState.cardState().faceUpCard(drawSlot)), players);
+                receiveInfoForAll(playerInfoMap.get(gameState.currentPlayerId()).drewVisibleCard(gameState.cardState().faceUpCard(drawSlot)), players);
                 gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                 gameState = gameState.withDrawnFaceUpCard(drawSlot);
             } else if(drawSlot == Constants.DECK_SLOT) {
-                receiveInfoForBoth(playerInfoMap.get(gameState.currentPlayerId()).drewBlindCard(), players);
+                receiveInfoForAll(playerInfoMap.get(gameState.currentPlayerId()).drewBlindCard(), players);
                 gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                 gameState = gameState.withBlindlyDrawnCard();
             }
@@ -243,17 +259,17 @@ public final class Game {
         
         if(currentRoute.level() == Level.OVERGROUND) {
             if(!initialClaimCards.isEmpty()  && currentPlayerState.canClaimRoute(currentRoute) ) {
-                receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
+                receiveInfoForAll(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
                 gameState = gameState.withClaimedRoute(currentRoute, initialClaimCards);
                 
             } else {
-                receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
+                receiveInfoForAll(currentInfo.didNotClaimRoute(currentRoute), players);
             }
         }
         
         else if(currentRoute.level() == Level.UNDERGROUND) {
             if(!initialClaimCards.isEmpty()  && currentPlayerState.canClaimRoute(currentRoute) ) {
-                receiveInfoForBoth(currentInfo.attemptsTunnelClaim(currentRoute, initialClaimCards), players);
+                receiveInfoForAll(currentInfo.attemptsTunnelClaim(currentRoute, initialClaimCards), players);
                 
                 // Additional Cards Being Drawn
                 SortedBag<Card> drawnCards;
@@ -269,7 +285,7 @@ public final class Game {
                 
                 //Building of Possible Additional Cards + Informing player of drawn Additional Cards
                 int additionalCardCount = currentRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
-                receiveInfoForBoth(currentInfo.drewAdditionalCards(drawnCards, additionalCardCount), players);
+                receiveInfoForAll(currentInfo.drewAdditionalCards(drawnCards, additionalCardCount), players);
                 
                 List<SortedBag<Card>> possibleAdditionalCards = additionalCardCount >= 1 ? 
                         currentPlayerState.possibleAdditionalCards(additionalCardCount, initialClaimCards, drawnCards) 
@@ -279,20 +295,20 @@ public final class Game {
                 if( additionalCardCount >= 1 && !possibleAdditionalCards.isEmpty()){ 
                     additionalCards = players.get(currentId).chooseAdditionalCards(possibleAdditionalCards);
                     if(!additionalCards.isEmpty()) {
-                        receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, additionalCards.union(initialClaimCards)), players);
+                        receiveInfoForAll(currentInfo.claimedRoute(currentRoute, additionalCards.union(initialClaimCards)), players);
                         gameState = gameState.withClaimedRoute(currentRoute, additionalCards.union(initialClaimCards));
                     } else {
-                        receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
+                        receiveInfoForAll(currentInfo.didNotClaimRoute(currentRoute), players);
                     }
                 // Management of the claiming of the route if there is no additional Cost.
                 } else if(additionalCardCount == 0) {
-                    receiveInfoForBoth(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
+                    receiveInfoForAll(currentInfo.claimedRoute(currentRoute, initialClaimCards), players);
                     gameState = gameState.withClaimedRoute(currentRoute, initialClaimCards);
                 } else {
-                    receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
+                    receiveInfoForAll(currentInfo.didNotClaimRoute(currentRoute), players);
                 }
             } else {
-                receiveInfoForBoth(currentInfo.didNotClaimRoute(currentRoute), players);
+                receiveInfoForAll(currentInfo.didNotClaimRoute(currentRoute), players);
             }
         }
         return gameState;
@@ -304,7 +320,7 @@ public final class Game {
      * @param info (String): the info to be sent to both players.
      * @param players (Map<PlayerId, Player>) the map specifying the players to whom the message must be sent.
      */
-    private static void receiveInfoForBoth(String info, Map<PlayerId, Player> players) {
+    private static void receiveInfoForAll(String info, Map<PlayerId, Player> players) {
         players.forEach((playerId, player) -> player.receiveInfo(info));
     }
     
