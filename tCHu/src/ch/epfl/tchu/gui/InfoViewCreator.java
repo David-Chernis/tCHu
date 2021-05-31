@@ -1,5 +1,7 @@
 package ch.epfl.tchu.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import ch.epfl.tchu.game.PlayerId;
@@ -12,6 +14,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static javafx.geometry.Orientation.HORIZONTAL;
 /**
  * Class that allows for the creation of the graphical elements needed to display the infos of the game.
@@ -31,33 +34,31 @@ final class InfoViewCreator {
 	 * @return (VBox): a graphical view of the infos of the players.
 	 */
 	public static VBox createInfoView(PlayerId id, Map<PlayerId, String> playerNames,  ObservableGameState ogs, ObservableList<Text> infos) {
-		//The circles that represents the color of each player
-		Circle cBlue = new Circle(circleRadius);
-		cBlue.getStyleClass().add("filled");
-		Circle cRed = new Circle(circleRadius);
-		cRed.getStyleClass().add("filled");
-		
-		//The text part of the player statistics
-		Text textBlue = new Text();
-		Text textRed = new Text();
-		
-		StringExpression sBlue = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id), ogs.playerTickets(id),
-				ogs.playerCards(id), ogs.playerWagons(id), ogs.playerClaimPoints(id));
-		StringExpression sRed = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(id.next()), ogs.playerTickets(id.next()),
-				ogs.playerCards(id.next()), ogs.playerWagons(id.next()), ogs.playerClaimPoints(id.next()));
-		
-		textBlue.textProperty().bind(sBlue);
-		textRed.textProperty().bind(sRed);
-		
-		//The TextFlow of each player
-		TextFlow textFlowBlue = new TextFlow(cBlue, textBlue);
-		textFlowBlue.getStyleClass().add(id == PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
-		TextFlow textFlowRed = new TextFlow(cRed, textRed);
-		textFlowRed.getStyleClass().add(id.next() == PLAYER_1 ? "PLAYER_1" : "PLAYER_2");
-		
 		//The VBox containing the player statistics
-		VBox playerStats = new VBox(textFlowBlue, textFlowRed);
+		VBox playerStats = new VBox();
 		playerStats.setId("player-stats");
+		
+		for(int i = 0; i < playerNames.size(); i++) {
+			int ordinal = (id.ordinal() + i) % playerNames.size();
+			PlayerId currentId = PlayerId.ALL.get(ordinal);
+			
+			//The circles that represents the color of each player
+			Circle circle = new Circle(circleRadius);
+			circle.getStyleClass().add("filled");
+			
+			//The text part of the player statistics
+			Text text = new Text();
+			StringExpression stringExpression = Bindings.format(StringsFr.PLAYER_STATS, playerNames.get(currentId),
+					ogs.playerTickets(currentId), ogs.playerCards(currentId),
+					ogs.playerWagons(currentId), ogs.playerClaimPoints(currentId));
+			text.textProperty().bind(stringExpression);
+			
+			//The TextFlow of each player
+			TextFlow textFlow = new TextFlow(circle, text);
+			textFlow.getStyleClass().add(currentId == PLAYER_1 ? "PLAYER_1" : (currentId == PLAYER_2 ? "PLAYER_2" : "PLAYER_3"));
+			
+			playerStats.getChildren().add(textFlow);
+		}
 		
 		//The separator that separates the player statistics and the last 5 game infos
 		Separator separator = new Separator();
