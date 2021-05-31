@@ -78,10 +78,10 @@ public final class Game {
 	    players.forEach((playerId, player) -> player.initPlayers(playerId, playerNames));
 	    receiveInfoForAll(playerInfoMap.get(gameState.currentPlayerId()).willPlayFirst(), players);
 	    
-	    for(PlayerId id: PlayerId.ALL) {
-	        players.get(id).setInitialTicketChoice(gameState.topTickets(Constants.INITIAL_TICKETS_COUNT));
+	    for(int i = 0; i < players.size(); i++) {
+	        players.get(PlayerId.ALL.get(i)).setInitialTicketChoice(gameState.topTickets(Constants.INITIAL_TICKETS_COUNT));
 	        gameState = gameState.withoutTopTickets(Constants.INITIAL_TICKETS_COUNT);
-	        players.get(id).updateState(gameState, gameState.playerState(id));
+	        players.get(PlayerId.ALL.get(i)).updateState(gameState, gameState.playerState(PlayerId.ALL.get(i)));
 	    }
         updateState(players, gameState);
         
