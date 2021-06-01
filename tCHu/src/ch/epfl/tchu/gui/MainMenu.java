@@ -23,7 +23,7 @@ public final class MainMenu extends Application{
 		BorderPane mainMenuPane = new BorderPane(buttonBox, mainMenuIntroText, null, null, null);
 		Scene mainMenuScene = new Scene(mainMenuPane);
 		Stage mainMenuStage = primStage;
-		
+		System.out.println("hi");
 		mainMenuStage.setScene(mainMenuScene);
 		mainMenuStage.setTitle("tCHu - Main Menu");
 		mainMenuStage.show();
@@ -40,6 +40,8 @@ public final class MainMenu extends Application{
 			buttonBox.setVisible(false);
 			mainMenuIntroText.setText("Attente de la connexion des joueurs !");
 		});
+		
+		
 	}
 
 	@Override

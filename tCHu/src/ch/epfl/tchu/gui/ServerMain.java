@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import static javafx.application.Platform.runLater;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Constants;
@@ -40,7 +40,7 @@ public class ServerMain extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
     	//Creates main menu
-    	new MainMenu(primaryStage);
+    	
     	if(Constants.THREE_PLAYER) {
     		// Setting up Server
 	        RemotePlayerProxy playerProxy1 = null;
@@ -73,6 +73,7 @@ public class ServerMain extends Application{
 	        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
     	}
     	else {
+
 	        // Setting up Server
 	        RemotePlayerProxy playerProxy = null;
 	        GraphicalPlayerAdapter gpa = new GraphicalPlayerAdapter();

@@ -3,6 +3,7 @@ package ch.epfl.tchu.net;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -146,28 +147,27 @@ public final class Serdes {
     public static final Serde<PublicGameState> publicGameStateSerde = Serde.of(
             (i) -> {
                 String playerIdString = i.lastPlayer() == null ? "" : playerIdSerde.serialize(i.lastPlayer());
-
+                String playerStateString = "";
+                for(PlayerId id: PlayerId.ALL) {
+                    playerStateString += ":" + publicPlayerStateSerde.serialize(i.playerState(id));
+                }
                 return intSerde.serialize(i.ticketsCount()) + 
                         ":" + publicCardStateSerde.serialize(i.cardState()) + 
                         ":" + playerIdSerde.serialize(i.currentPlayerId()) + 
-                        ":" + publicPlayerStateSerde.serialize(i.playerState(PlayerId.PLAYER_1)) +
-                        ":" + publicPlayerStateSerde.serialize(i.playerState(PlayerId.PLAYER_2)) +
+                        playerStateString + 
                         ":" + playerIdString;
-
-
             }
+            
             , 
 
             (i) -> {
                 List<String> tempList = Arrays.asList(i.split(Pattern.quote(":"), -1));
+                Map<PlayerId, PublicPlayerState> playerStates = new HashMap<>();
+                for(PlayerId id: PlayerId.ALL) {
+                    playerStates.put(id, publicPlayerStateSerde.deserialize(tempList.get(3+id.ordinal())));
+                }
 
-                Map<PlayerId, PublicPlayerState> playerStates = Map.of(
-                        PlayerId.PLAYER_1,
-                        publicPlayerStateSerde.deserialize(tempList.get(3)),
-                        PlayerId.PLAYER_2,
-                        publicPlayerStateSerde.deserialize(tempList.get(4)));
-
-                PlayerId lastPlayer = tempList.get(5).equals("") ? null : playerIdSerde.deserialize(tempList.get(5));
+                PlayerId lastPlayer = tempList.get(tempList.size()-1).equals("") ? null : playerIdSerde.deserialize(tempList.get(tempList.size()-1));
 
                 PublicGameState temp = new PublicGameState(
                         intSerde.deserialize(tempList.get(0)).intValue(),
