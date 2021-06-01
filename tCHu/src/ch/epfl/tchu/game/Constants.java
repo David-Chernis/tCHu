@@ -10,7 +10,7 @@ public final class Constants {
     /**
      * boolean determining whether there will be 3 player. 
      */
-    public static boolean THREE_PLAYER = true;
+    public static boolean THREE_PLAYER;
     
     /**
      * Nombre de cartes wagon de chaque couleur.
