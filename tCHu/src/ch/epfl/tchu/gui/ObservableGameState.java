@@ -161,10 +161,13 @@ public final class ObservableGameState {
        for(Route r : ChMap.routes()) {
            if(!(newGameState.claimedRoutes().contains(r))) {
                routes.get(r).set(null);
-           } else if(newPlayerState.routes().contains(r)) {
-               routes.get(r).set(id);
-           } else {
-               routes.get(r).set(id.next());
+           }
+           else {
+               for(PlayerId id: PlayerId.ALL) {
+                   if(publicgs.playerState(id).routes().contains(r)) {
+                       routes.get(r).set(id);
+                   }
+               }
            }
        }
 
@@ -179,6 +182,8 @@ public final class ObservableGameState {
                if(r2.stations().containsAll(r1.stations()) && !(r2.id() == r1.id())) 
                    doubleUnowned = routes.get(r2).get() == null;
            }
+           
+           if(Constants.THREE_PLAYER) doubleUnowned = true;
            
            claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
        }

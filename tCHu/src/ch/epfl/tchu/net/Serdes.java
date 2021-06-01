@@ -150,6 +150,7 @@ public final class Serdes {
                 String playerStateString = "";
                 for(PlayerId id: PlayerId.ALL) {
                     playerStateString += ":" + publicPlayerStateSerde.serialize(i.playerState(id));
+                    
                 }
                 return intSerde.serialize(i.ticketsCount()) + 
                         ":" + publicCardStateSerde.serialize(i.cardState()) + 
