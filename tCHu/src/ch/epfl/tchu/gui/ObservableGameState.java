@@ -179,11 +179,14 @@ public final class ObservableGameState {
            boolean playerCanClaimRoute = newPlayerState.canClaimRoute(r1);
            
            for(Route r2 : routes.keySet()) {
-               if(r2.stations().containsAll(r1.stations()) && !(r2.id() == r1.id())) 
+               boolean doubleCondition = r2.stations().containsAll(r1.stations()) && !(r2.id() == r1.id());
+               
+               if(doubleCondition) {
                    doubleUnowned = routes.get(r2).get() == null;
+               } if(Constants.THREE_PLAYER && doubleCondition) {
+                   doubleUnowned = routes.get(r2).get() != id;
+               } 
            }
-           
-           if(Constants.THREE_PLAYER) doubleUnowned = true;
            
            claimableRoutes.get(r1).set(correctPlayer && routeUnowned && doubleUnowned && playerCanClaimRoute);
        }

@@ -60,6 +60,7 @@ public final class Game {
                 gameState = gameState.forNextTurn();        
             }
         }
+        
         updateState(players, gameState);
         calculatePoints(gameState, players,  playerNames, playerInfoMap);
 	}
