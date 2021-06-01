@@ -95,6 +95,7 @@ final class MapViewCreator {
                 caseGroup.setId(route.id() + "_" + (j+1));
                 
 	            routeGroup.getChildren().add(caseGroup);
+	            
 	        }
 	        
 	        Carte.getChildren().add(routeGroup);

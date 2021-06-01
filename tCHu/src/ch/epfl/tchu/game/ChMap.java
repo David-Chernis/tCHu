@@ -4,6 +4,8 @@ import ch.epfl.tchu.game.Route.Level;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class ChMap {
     private ChMap() { }
@@ -182,8 +184,9 @@ public final class ChMap {
     private static final Ticket atToNeighbors = ticketToNeighbors(AT, 5, 0, 6, 14);
     private static final Ticket itToNeighbors = ticketToNeighbors(IT, 13, 6, 0, 11);
     private static final Ticket frToNeighbors = ticketToNeighbors(FR, 5, 14, 11, 0);
-
-    private static final List<Ticket> ALL_TICKETS = List.of(
+    
+    
+    private static final List<Ticket> TWO_PLAYER_TICKETS = List.of(
             // City-to-city tickets
             new Ticket(BAL, BER, 5),
             new Ticket(BAL, BRI, 10),
@@ -231,6 +234,14 @@ public final class ChMap {
             atToNeighbors, atToNeighbors,
             itToNeighbors, itToNeighbors,
             frToNeighbors, frToNeighbors);
+    
+    private static final List<Ticket> THREE_PLAYER_TICKETS = Stream.concat(
+            TWO_PLAYER_TICKETS.stream(), 
+            List.of(new Ticket(BAL, WAS, 8), new Ticket(KRE, DAV, 7)).stream())
+            .collect(Collectors.toList());
+    
+    
+    private static final List<Ticket> ALL_TICKETS = Constants.THREE_PLAYER ? THREE_PLAYER_TICKETS : TWO_PLAYER_TICKETS;
 
     private static Ticket ticketToNeighbors(List<Station> from, int de, int at, int it, int fr) {
         var trips = new ArrayList<Trip>();

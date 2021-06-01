@@ -8,6 +8,8 @@ import ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -50,6 +52,34 @@ final class DecksViewCreator {
         handPane.setId("hand-pane");
 	    
 		ListView<Ticket> billets = new ListView<>(ogs.playerTickets());
+		billets.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Ticket>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Ticket> observable,
+                    Ticket oldValue, Ticket newValue) {
+                
+                
+            }
+		    
+		});
+		
+		
+		/*addListener(new ChangeListener<MyDataModel>() {
+
+		    @Override
+		    public void changed(ObservableValue<? extends MyDataModel> observable, MyDataModel oldValue, MyDataModel newValue) {
+		        // Your action here
+		        System.out.println("Selected item: " + newValue);
+		    }
+		});
+		*/
+		billets.setOnMouseClicked((e) -> {
+		    Ticket t = billets.getSelectionModel().getSelectedItem();
+	        String[] s = t.text().split("");
+		    
+		    
+		});
+		
 		billets.setId("tickets");
 		
 		//The cards part of the player's hand
