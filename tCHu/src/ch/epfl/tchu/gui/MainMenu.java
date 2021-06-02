@@ -313,8 +313,6 @@ public final class MainMenu extends Application{
             
             String name2 = playerProxy.setPlayerName();
             
-            System.out.println(name1);
-            System.out.println(name2);
             Random rand = new Random();
             
             //Initializaing Player Maps and GraphicalPlayerAdapter through analyzing parameters

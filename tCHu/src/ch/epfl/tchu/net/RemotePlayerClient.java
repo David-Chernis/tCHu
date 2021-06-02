@@ -83,15 +83,12 @@ public final class RemotePlayerClient {
                 if(readLine == null) {
                     break;
                 }
-                List<String> messageList = Arrays.asList(readLine.split(Pattern.quote(" "), -1))   ;
-                System.out.println(messageList.get(0));
+                List<String> messageList = Arrays.asList(readLine.split(Pattern.quote(" "), -1));
                 switch(MessageId.valueOf(messageList.get(0))) {
                 
                 case SET_PLAYER_NAME: 
                     player.setPlayerName();
-                    System.out.println(playerName);
                     writeAndFlush(w, Serdes.stringSerde.serialize(playerName) + "\n");
-                    System.out.println(playerName + "remotePlayerClient sends it back");
                     break;
                     
                 case SET_PLAYER_NUM: 
