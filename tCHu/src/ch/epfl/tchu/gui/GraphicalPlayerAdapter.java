@@ -180,5 +180,6 @@ public final class GraphicalPlayerAdapter implements Player{
         PlayerId.ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PlayerId.PLAYER_1, PlayerId.PLAYER_2);
         PlayerId.COUNT = PlayerId.ALL.size();
         Serdes.ticketSerde = Serde.oneOf(Constants.THREE_PLAYER ? ChMap.THREE_PLAYER_TICKETS : ChMap.TWO_PLAYER_TICKETS);
+        Serdes.ticketBagSerde = Serde.bagOf(Serdes.ticketSerde, ',');
     }
 }

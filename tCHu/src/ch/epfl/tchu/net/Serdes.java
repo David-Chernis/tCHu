@@ -81,7 +81,7 @@ public final class Serdes {
     /**
      * (Serde<SortedBag<Ticket>>): a Serde responsible for (de)serializing sorted bags of Tickets.
      */
-    public static final Serde<SortedBag<Ticket>> ticketBagSerde = Serde.bagOf(ticketSerde, ',');
+    public static Serde<SortedBag<Ticket>> ticketBagSerde = Serde.bagOf(ticketSerde, ',');
     /**
      * (Serde<List<String>>): a Serde responsible for (de)serializing lists of sorted bags of Cards.
      */
