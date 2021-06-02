@@ -54,7 +54,6 @@ public final class MainMenu extends Application{
         
         Scene mainMenuScene = new Scene(mainMenuPane);
         Stage mainMenuStage = new Stage();
-        System.out.println("hi");
         mainMenuStage.setScene(mainMenuScene);
         mainMenuStage.setTitle("tCHu - Main Menu");
         mainMenuStage.show();
@@ -78,7 +77,6 @@ public final class MainMenu extends Application{
                     throw new Error();
                 }
             });
-            
         });
         
         hostGameButton.setOnMouseClicked((e) -> {
@@ -146,7 +144,6 @@ public final class MainMenu extends Application{
     }
     
     private void initializeServer(List<String> names) throws Exception{
-        System.out.println(names);
         
         
         if(Constants.THREE_PLAYER) {

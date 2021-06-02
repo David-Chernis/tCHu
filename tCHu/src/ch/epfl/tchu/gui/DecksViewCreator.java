@@ -63,16 +63,6 @@ final class DecksViewCreator {
 		    
 		});
 		
-		
-		/*addListener(new ChangeListener<MyDataModel>() {
-
-		    @Override
-		    public void changed(ObservableValue<? extends MyDataModel> observable, MyDataModel oldValue, MyDataModel newValue) {
-		        // Your action here
-		        System.out.println("Selected item: " + newValue);
-		    }
-		});
-		*/
 		billets.setOnMouseClicked((e) -> {
 		    Ticket t = billets.getSelectionModel().getSelectedItem();
 	        String[] s = t.text().split("");
