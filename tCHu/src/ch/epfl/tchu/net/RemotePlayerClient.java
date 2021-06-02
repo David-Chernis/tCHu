@@ -84,6 +84,9 @@ public final class RemotePlayerClient {
 
                 switch(MessageId.valueOf(messageList.get(0))) {
 
+                
+                
+                
                 case SET_PLAYER_NUM: 
                     System.out.println(Constants.THREE_PLAYER);
                     player.setPlayerNumber(Serdes.intSerde.deserialize(messageList.get(1)));

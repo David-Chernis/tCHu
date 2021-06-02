@@ -22,13 +22,16 @@ import ch.epfl.tchu.game.Game;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.net.MessageId;
+import ch.epfl.tchu.net.RemotePlayerClient;
 import ch.epfl.tchu.net.RemotePlayerProxy;
 import ch.epfl.tchu.net.Serdes;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -59,6 +62,23 @@ public final class MainMenu extends Application{
         joinGameButton.setOnMouseClicked((e) -> {
             newButtonBox.setVisible(false);
             newIntroText.setText("veuillez saisir l'adresse IP et le port que vous souhaitez rejoindre");
+            TextField address = new TextField("Address");
+            TextField port = new TextField("Port");
+            Button Submit = new Button("Submit");
+            
+            VBox infos = new VBox(address, port, Submit);
+            mainMenuStage.setScene(new Scene(infos));
+            
+            Submit.setOnMouseClicked((event) -> {
+                List<String> arguments = List.of(address.textProperty().get(), port.textProperty().get());
+                
+                try {
+                    initializeClient(arguments);
+                } catch (Exception e1) {
+                    throw new Error();
+                }
+            });
+            
         });
         
         hostGameButton.setOnMouseClicked((e) -> {
@@ -86,6 +106,24 @@ public final class MainMenu extends Application{
             mainMenuStage.setScene(new Scene(newPane));
             
         });
+    }
+    
+    private void initializeClient(List<String> param) throws Exception{
+
+        // analysis of parameters in order to instantiate variables necessary to the creation of RemotePlayerClient 
+        String address = param.isEmpty() 
+                ? "localhost" 
+                : param.get(0);
+        int port = param.isEmpty() 
+                ? 5108 
+                : Integer.parseInt(param.get(1));
+        GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
+        
+        // Creation of the Client.
+        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port);
+        
+        // Running the thread.
+        new Thread(() -> client.run()).start();
     }
     
     private void initializeMenu(boolean isThreePlayer, Button button, HBox buttonBox, Text introText, Stage stage) {
