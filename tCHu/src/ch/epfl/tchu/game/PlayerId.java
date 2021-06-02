@@ -13,12 +13,12 @@ public enum PlayerId {
 	/**
 	 * (List<PlayerID>): list of all the different types of PlayerID.
 	 */
-    public static final List<PlayerId> ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PLAYER_1, PLAYER_2);
+    public static List<PlayerId> ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PLAYER_1, PLAYER_2);
     
     /**
      * (int): number of types of PlayerID.
      */
-    public static final int COUNT = ALL.size();
+    public static int COUNT = ALL.size();
     
     /**
      * Returns the identity of the player who follows the one to whom this method is applied.

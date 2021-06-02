@@ -44,7 +44,7 @@ public final class Serdes {
     /**
      * (Serde<PlayerId>): a Serde responsible for (de)serializing PlayerId enumerates.
      */
-    public static final Serde<PlayerId> playerIdSerde = Serde.oneOf(PlayerId.ALL);
+    public static final Serde<PlayerId> playerIdSerde = Serde.oneOf(List.of(PlayerId.values()));
     /**
      * (Serde<TurnKind>): a Serde responsible for (de)serializing TurnKind enumerates.
      */

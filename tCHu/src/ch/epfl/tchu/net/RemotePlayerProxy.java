@@ -52,6 +52,8 @@ public final class RemotePlayerProxy implements Player{
     public void setPlayerNumber(int playerNum) {
         // TODO Auto-generated method stub
         Constants.THREE_PLAYER = playerNum == 1 ? true : false;
+        PlayerId.ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PlayerId.PLAYER_1, PlayerId.PLAYER_2);
+        PlayerId.COUNT = PlayerId.ALL.size();
         String toBeSent = MessageId.SET_PLAYER_NUM.name() + " " + Serdes.intSerde.serialize(playerNum);
         
         this.sendThroughSocket(writer, toBeSent);
