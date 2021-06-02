@@ -20,6 +20,7 @@ public interface Player {
         public static final List<TurnKind> ALL = List.of(TurnKind.values());
     }
     
+    String setPlayerName();
     
     void setPlayerNumber(int playerNum);
     /**

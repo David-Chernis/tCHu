@@ -50,6 +50,16 @@ public final class RemotePlayerProxy implements Player{
     }
     
     @Override
+    public String setPlayerName() {
+        String toBeSent = MessageId.SET_PLAYER_NAME.name();
+        this.sendThroughSocket(writer, toBeSent);
+        System.out.println("right before receiving message");
+        String toBeReceived = Serdes.stringSerde.deserialize(this.receiveThroughSocket(reader));
+        System.out.println("remotePlayerProxy receives: " + toBeReceived);
+        return toBeReceived;
+    }
+    
+    @Override
     public void setPlayerNumber(int playerNum) {
         // TODO Auto-generated method stub
         Constants.THREE_PLAYER = playerNum == 1 ? true : false;
@@ -148,10 +158,14 @@ public final class RemotePlayerProxy implements Player{
      */
     private String receiveThroughSocket(BufferedReader reader) {
         try{     
+            System.out.println("before reading Line");
             return reader.readLine();
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
+        }
+        finally {
+            System.out.println("I was here after reading Line");
         }
     }
 
@@ -168,6 +182,8 @@ public final class RemotePlayerProxy implements Player{
             throw new UncheckedIOException(e);
         }
     }
+
+   
 
     
 }

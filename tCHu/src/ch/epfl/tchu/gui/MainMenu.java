@@ -4,6 +4,7 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_3;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
@@ -23,8 +24,12 @@ import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -32,6 +37,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public final class MainMenu extends Application{
+    String name = "";
     
     public static void main(String[] args) {
         launch(args);
@@ -39,6 +45,9 @@ public final class MainMenu extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        
+        
+        
         
         Text titleText = new Text("tCHu - Main Menu");
         titleText.setLayoutX(70.0);
@@ -84,6 +93,13 @@ public final class MainMenu extends Application{
         mainMenuStage.show();
         
         joinGameButton.setOnMouseClicked((e) -> {
+            TextField nameField = new TextField();
+            nameField.setLayoutX(120.0);
+            nameField.setLayoutY(80.0);
+            Text nameText = new Text("Votre Nom");
+            nameText.setLayoutX(40.0);
+            nameText.setLayoutY(100.0);
+            nameText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 13));
             mainMenuPane.setVisible(false);
             Text joinIntroText = new Text("Veuillez saisir l'adresse IP et le port que vous souhaitez rejoindre");
             joinIntroText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
@@ -95,22 +111,22 @@ public final class MainMenu extends Application{
             joinIntroText.setLayoutY(50.0);
             TextField address = new TextField();
             address.setLayoutX(120.0);
-            address.setLayoutY(80.0);
+            address.setLayoutY(120.0);
             addressText.setLayoutX(40.0);
-            addressText.setLayoutY(100.0);
+            addressText.setLayoutY(140.0);
             TextField port = new TextField();
             port.setLayoutX(120.0);
-            port.setLayoutY(120.0);
+            port.setLayoutY(160.0);
             portText.setLayoutX(40.0);
-            portText.setLayoutY(140.0);
+            portText.setLayoutY(180.0);
             Button Submit = new Button("Rejoindre");
             Submit.setLayoutX(40.0);
-            Submit.setLayoutY(170.0);
+            Submit.setLayoutY(210.0);
             
             Button back = new Button("Retourner");
-            AnchorPane newMenuPane = new AnchorPane(back, addressText, portText, joinIntroText, address, port, Submit);
+            AnchorPane newMenuPane = new AnchorPane(back, addressText, portText, joinIntroText, address, port, Submit, nameField, nameText);
             newMenuPane.setMinWidth(700);
-            newMenuPane.setMinHeight(200);
+            newMenuPane.setMinHeight(280);
             
             
             mainMenuStage.setScene(new Scene(newMenuPane));
@@ -123,7 +139,7 @@ public final class MainMenu extends Application{
             });
             
             Submit.setOnMouseClicked((event) -> {
-                List<String> arguments = List.of(address.textProperty().get(), port.textProperty().get());
+                List<String> arguments = List.of(address.textProperty().get(), port.textProperty().get(), nameField.textProperty().get());
                 
                 try {
                     initializeClient(arguments);
@@ -134,6 +150,14 @@ public final class MainMenu extends Application{
         });
         
         hostGameButton.setOnMouseClicked((e) -> {
+            TextField nameField = new TextField();
+            nameField.setLayoutX(130.0);
+            nameField.setLayoutY(80.0);
+            Text nameText = new Text("Votre Nom");
+            nameText.setLayoutX(50.0);
+            nameText.setLayoutY(100.0);
+            nameText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 13));
+            
             mainMenuPane.setVisible(false);
             Text hostIntroText = new Text("Choissisez le nombre des joueurs qui vont jouer !");
             hostIntroText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
@@ -144,12 +168,12 @@ public final class MainMenu extends Application{
             
             Button twoPlayerButton = new Button("2 Joueurs");
             twoPlayerButton.setLayoutX(50.0);
-            twoPlayerButton.setLayoutY(80.0);
+            twoPlayerButton.setLayoutY(120.0);
             Button threePlayerButton = new Button("3 Joueurs");
             threePlayerButton.setLayoutX(50.0);
-            threePlayerButton.setLayoutY(120.0);
+            threePlayerButton.setLayoutY(160.0);
             
-            AnchorPane newPane = new AnchorPane(hostBack, twoPlayerButton, threePlayerButton, hostIntroText);
+            AnchorPane newPane = new AnchorPane(hostBack, twoPlayerButton, threePlayerButton, hostIntroText, nameText, nameField);
             newPane.setPrefHeight(200);
             newPane.setPrefWidth(550);
             
@@ -164,12 +188,12 @@ public final class MainMenu extends Application{
             twoPlayerButton.setOnMouseClicked((event) -> {
                 Constants.THREE_PLAYER = false;
                 newPane.setVisible(false);
-                initializeMenu(false, twoPlayerButton, newScene, mainMenuStage, newPane);
+                initializeMenu(false, twoPlayerButton, newScene, mainMenuStage, newPane, nameField.textProperty().get());
             });
             threePlayerButton.setOnMouseClicked((event) -> {
                 Constants.THREE_PLAYER = true;
                 newPane.setVisible(false);
-                initializeMenu(true, threePlayerButton, newScene, mainMenuStage, newPane);
+                initializeMenu(true, threePlayerButton, newScene, mainMenuStage, newPane, nameField.textProperty().get());
             });
             mainMenuStage.setScene(newScene);
             
@@ -192,13 +216,13 @@ public final class MainMenu extends Application{
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
         
         // Creation of the Client.
-        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port);
+        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port, param.get(2));
         
         // Running the thread.
         new Thread(() -> client.run()).start();
     }
     
-    private void initializeMenu(boolean isThreePlayer, Button button, Scene oldScene, Stage stage, AnchorPane oldPane) {
+    private void initializeMenu(boolean isThreePlayer, Button button, Scene oldScene, Stage stage, AnchorPane oldPane, String name) {
         
         Text introText = new Text("Cliquez sur le bouton pour démarrer le serveur");
         introText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
@@ -207,7 +231,7 @@ public final class MainMenu extends Application{
         
         startServerButton.setOnMouseClicked((e) -> {
             try {
-                initializeServer( getParameters().getRaw());
+                initializeServer( name);
             } catch (Exception e1) {
                 throw new Error();
             }
@@ -227,10 +251,9 @@ public final class MainMenu extends Application{
         });
         
         stage.setScene(new Scene(anotherOne));
-        
     }
     
-    private void initializeServer(List<String> names) throws Exception{
+    private void initializeServer(String name1) throws Exception{
         
         
         if(Constants.THREE_PLAYER) {
@@ -249,17 +272,22 @@ public final class MainMenu extends Application{
                 playerProxy2 = new RemotePlayerProxy(s2);
                 
                 
+                
             } catch(IOException e) {
                 throw new UncheckedIOException(e);
             }
+            
+            String name2 = playerProxy1.setPlayerName();
+            String name3 = playerProxy2.setPlayerName();
+            
             
             Random rand = new Random();
             
             //Initializaing Player Maps and GraphicalPlayerAdapter through analyzing parameters
             Map<PlayerId, String> playerNames = Map.of( 
-                    PLAYER_1, names.isEmpty() ? "Ada" : names.get(0),  
-                    PLAYER_2, names.isEmpty() ? "Charles" : names.get(1),
-                    PLAYER_3, names.isEmpty() ? "Michel" : names.get(2)); 
+                    PLAYER_1, name1.isEmpty() ? "Ada" : name1,  
+                    PLAYER_2, name2.isEmpty() ? "Charles" : name2,
+                    PLAYER_3, name3.isEmpty() ? "Michel" : name3); 
             Map<PlayerId, Player> players = Map.of( 
                     PLAYER_1, gpa,
                     PLAYER_2, playerProxy1,
@@ -283,12 +311,16 @@ public final class MainMenu extends Application{
                 throw new UncheckedIOException(e);
             }
             
+            String name2 = playerProxy.setPlayerName();
+            
+            System.out.println(name1);
+            System.out.println(name2);
             Random rand = new Random();
             
             //Initializaing Player Maps and GraphicalPlayerAdapter through analyzing parameters
             Map<PlayerId, String> playerNames = Map.of( 
-                    PLAYER_1, names.isEmpty() ? "Ada" : names.get(0),  
-                    PLAYER_2, names.isEmpty() ? "Charles" : names.get(1)); 
+                    PLAYER_1, name1.isEmpty() ? "Ada" : name1,  
+                    PLAYER_2, name2.isEmpty() ? "Charles" : name2); 
             Map<PlayerId, Player> players = Map.of( 
                     PLAYER_1, gpa,
                     PLAYER_2, playerProxy);

@@ -169,5 +169,11 @@ public class GameTest1 {
             // TODO Auto-generated method stub
             
         }
+
+        @Override
+        public String setPlayerName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 }

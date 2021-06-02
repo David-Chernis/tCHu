@@ -50,7 +50,7 @@ public final class GraphicalPlayerAdapter implements Player{
         routeQ = new ArrayBlockingQueue<>(QUEUE_SIZE);
         cardBagQ = new ArrayBlockingQueue<>(QUEUE_SIZE);
     }
-
+    
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         runLater(() -> graphicalPlayer = new GraphicalPlayer(ownId, playerNames));
@@ -182,4 +182,13 @@ public final class GraphicalPlayerAdapter implements Player{
         Serdes.ticketSerde = Serde.oneOf(Constants.THREE_PLAYER ? ChMap.THREE_PLAYER_TICKETS : ChMap.TWO_PLAYER_TICKETS);
         Serdes.ticketBagSerde = Serde.bagOf(Serdes.ticketSerde, ',');
     }
+
+    @Override
+    public String setPlayerName() {
+        // TODO Auto-generated method stub
+        return ".";
+    }
+
+       
+
 }

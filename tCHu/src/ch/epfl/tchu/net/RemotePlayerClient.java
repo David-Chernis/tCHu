@@ -47,6 +47,8 @@ public final class RemotePlayerClient {
      * (int): the port to be used.
      */
     private final int port;
+    
+    private String playerName;
 
     /**
      * Default RemotePlayerClient constructor. Initializes an instance by using a player, a
@@ -55,10 +57,11 @@ public final class RemotePlayerClient {
      * @param name (String): the name of the socket used for communication between itself and the proxy.
      * @param port (int): the port to be used.
      */
-    public RemotePlayerClient(Player player, String name, int port) {
+    public RemotePlayerClient(Player player, String name, int port, String playerName) {
         this.player = player;
         this.name = name;
         this.port = port;
+        this.playerName = playerName;
     }
 
     /**
@@ -81,12 +84,16 @@ public final class RemotePlayerClient {
                     break;
                 }
                 List<String> messageList = Arrays.asList(readLine.split(Pattern.quote(" "), -1))   ;
-
+                System.out.println(messageList.get(0));
                 switch(MessageId.valueOf(messageList.get(0))) {
-
                 
-                
-                
+                case SET_PLAYER_NAME: 
+                    player.setPlayerName();
+                    System.out.println(playerName);
+                    writeAndFlush(w, Serdes.stringSerde.serialize(playerName) + "\n");
+                    System.out.println(playerName + "remotePlayerClient sends it back");
+                    break;
+                    
                 case SET_PLAYER_NUM: 
                     
                     player.setPlayerNumber(Serdes.intSerde.deserialize(messageList.get(1)));

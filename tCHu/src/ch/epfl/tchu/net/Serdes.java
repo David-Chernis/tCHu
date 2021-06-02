@@ -39,7 +39,9 @@ public final class Serdes {
      */
     public static final Serde<String> stringSerde = Serde.of(
             (i) -> Base64.getEncoder().encodeToString(i.getBytes(StandardCharsets.UTF_8)) ,
-            (i) -> new String (Base64.getDecoder().decode(i.getBytes(StandardCharsets.UTF_8))));
+            (i) -> new String (Base64.getDecoder().decode(i.getBytes(StandardCharsets.UTF_8)))
+            
+            );
 
     /**
      * (Serde<PlayerId>): a Serde responsible for (de)serializing PlayerId enumerates.

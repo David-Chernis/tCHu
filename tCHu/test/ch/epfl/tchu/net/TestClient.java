@@ -16,7 +16,7 @@ public final class TestClient {
 
     public static void main(String[] args) {
         System.out.println("Starting client!");
-        RemotePlayerClient playerClient = new RemotePlayerClient(new TestPlayer(), "localhost", 5108);
+        RemotePlayerClient playerClient = new RemotePlayerClient(new TestPlayer(), "localhost", 5108, "");
         playerClient.run();
         System.out.println("Client done!");
     }
@@ -94,6 +94,13 @@ public final class TestClient {
         public void setPlayerNumber(int playerNum) {
             // TODO Auto-generated method stub
             
+        }
+
+
+        @Override
+        public String setPlayerName() {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         // … autres méthodes de Player

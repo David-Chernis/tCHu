@@ -448,6 +448,12 @@ class GameTest {
             // TODO Auto-generated method stub
             
         }
+
+        @Override
+        public String setPlayerName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     // Simplified Swiss map (only single routes)

@@ -37,7 +37,7 @@ public final class ClientMain extends Application{
         GraphicalPlayerAdapter playerAdapter = new GraphicalPlayerAdapter();
         
         // Creation of the Client.
-        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port);
+        RemotePlayerClient client = new RemotePlayerClient(playerAdapter, address, port, "");
         
         // Running the thread.
         new Thread(() -> client.run()).start();
