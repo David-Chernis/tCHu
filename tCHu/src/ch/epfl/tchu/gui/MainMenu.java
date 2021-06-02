@@ -118,8 +118,6 @@ public final class MainMenu extends Application{
             Submit.setLayoutY(170.0);
             
             Button back = new Button("Retourner");
-            
-            
             AnchorPane newMenuPane = new AnchorPane(back, addressText, portText, joinIntroText, address, port, Submit);
             newMenuPane.setMinWidth(700);
             newMenuPane.setMinHeight(200);
