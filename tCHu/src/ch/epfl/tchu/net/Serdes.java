@@ -60,7 +60,7 @@ public final class Serdes {
     /**
      * (Serde<Ticket>): a Serde responsible for (de)serializing Ticket instances.
      */
-    public static final Serde<Ticket> ticketSerde = Serde.oneOf(ChMap.tickets());
+    public static Serde<Ticket> ticketSerde = Serde.oneOf(ChMap.tickets());
 
     /**
      * (Serde<List<String>>): a Serde responsible for (de)serializing lists of Strings.

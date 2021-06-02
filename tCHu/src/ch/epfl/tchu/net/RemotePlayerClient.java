@@ -16,6 +16,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.Player.TurnKind;
@@ -89,6 +90,7 @@ public final class RemotePlayerClient {
                     Constants.THREE_PLAYER = Serdes.intSerde.deserialize(messageList.get(1)) == 1 ? true : false;
                     PlayerId.ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PlayerId.PLAYER_1, PlayerId.PLAYER_2);
                     PlayerId.COUNT = PlayerId.ALL.size();
+                    Serdes.ticketSerde = Serde.oneOf(Constants.THREE_PLAYER ? ChMap.THREE_PLAYER_TICKETS : ChMap.TWO_PLAYER_TICKETS);
                     System.out.println(Constants.THREE_PLAYER);
                     break;
                     

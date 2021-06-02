@@ -9,6 +9,7 @@ import static javafx.application.Platform.runLater;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
@@ -16,6 +17,8 @@ import ch.epfl.tchu.game.PlayerState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Ticket;
+import ch.epfl.tchu.net.Serde;
+import ch.epfl.tchu.net.Serdes;
 
 /**
  * Class that adapts an instance of GraphicalPlayer into a variable of type Player. Also makes
@@ -176,5 +179,6 @@ public final class GraphicalPlayerAdapter implements Player{
         Constants.THREE_PLAYER = playerNum == 1 ? true : false;
         PlayerId.ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PlayerId.PLAYER_1, PlayerId.PLAYER_2);
         PlayerId.COUNT = PlayerId.ALL.size();
+        Serdes.ticketSerde = Serde.oneOf(Constants.THREE_PLAYER ? ChMap.THREE_PLAYER_TICKETS : ChMap.TWO_PLAYER_TICKETS);
     }
 }

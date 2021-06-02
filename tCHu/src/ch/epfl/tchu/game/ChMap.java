@@ -186,7 +186,7 @@ public final class ChMap {
     private static final Ticket frToNeighbors = ticketToNeighbors(FR, 5, 14, 11, 0);
     
     
-    private static final List<Ticket> TWO_PLAYER_TICKETS = List.of(
+    public static final List<Ticket> TWO_PLAYER_TICKETS = List.of(
             // City-to-city tickets
             new Ticket(BAL, BER, 5),
             new Ticket(BAL, BRI, 10),
@@ -235,7 +235,7 @@ public final class ChMap {
             itToNeighbors, itToNeighbors,
             frToNeighbors, frToNeighbors);
     
-    private static final List<Ticket> THREE_PLAYER_TICKETS = Stream.concat(
+    public static final List<Ticket> THREE_PLAYER_TICKETS = Stream.concat(
             TWO_PLAYER_TICKETS.stream(), 
             List.of(new Ticket(BAL, WAS, 8), new Ticket(KRE, DAV, 7)).stream())
             .collect(Collectors.toList());

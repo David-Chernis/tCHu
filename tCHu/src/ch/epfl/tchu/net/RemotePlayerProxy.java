@@ -9,6 +9,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
@@ -54,6 +55,7 @@ public final class RemotePlayerProxy implements Player{
         Constants.THREE_PLAYER = playerNum == 1 ? true : false;
         PlayerId.ALL = Constants.THREE_PLAYER ? List.of(PlayerId.values()) : List.of(PlayerId.PLAYER_1, PlayerId.PLAYER_2);
         PlayerId.COUNT = PlayerId.ALL.size();
+        Serdes.ticketSerde = Serde.oneOf(Constants.THREE_PLAYER ? ChMap.THREE_PLAYER_TICKETS : ChMap.TWO_PLAYER_TICKETS);
         String toBeSent = MessageId.SET_PLAYER_NUM.name() + " " + Serdes.intSerde.serialize(playerNum);
         
         this.sendThroughSocket(writer, toBeSent);
