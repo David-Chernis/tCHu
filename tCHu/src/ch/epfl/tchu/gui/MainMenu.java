@@ -3,11 +3,11 @@ package ch.epfl.tchu.gui;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_3;
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,19 +21,24 @@ import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Game;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
-import ch.epfl.tchu.net.MessageId;
 import ch.epfl.tchu.net.RemotePlayerClient;
 import ch.epfl.tchu.net.RemotePlayerProxy;
-import ch.epfl.tchu.net.Serdes;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public final class MainMenu extends Application{
@@ -44,13 +49,43 @@ public final class MainMenu extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        
+        Text titleText = new Text("tCHu - Main Menu");
+        titleText.setLayoutX(70.0);
+        titleText.setLayoutY(50.0);
+        titleText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 26)); 
+        
         Text newIntroText = new Text("choisissez si vous souhaitez héberger un serveur ou en rejoindre un");
+        newIntroText.setLayoutX(70.0);
+        newIntroText.setLayoutY(79.0);
+        newIntroText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14)); 
         
         Button joinGameButton = new Button("Rejoins une partie");
+        joinGameButton.setLayoutX(70.0);
+        joinGameButton.setLayoutY(120.0); 
+        joinGameButton.prefHeight(30.0); 
+        joinGameButton.prefWidth(128.0);
+        joinGameButton.setMnemonicParsing(false);
+        
         Button hostGameButton = new Button("héberger un jeu");
-        HBox newButtonBox = new HBox(joinGameButton, hostGameButton);
-
-        BorderPane mainMenuPane = new BorderPane(newButtonBox, newIntroText, null, null, null);
+        hostGameButton.setLayoutX(70.0);
+        hostGameButton.setLayoutY(175.0); 
+        hostGameButton.prefHeight(30.0); 
+        hostGameButton.prefWidth(128.0);
+        hostGameButton.setMnemonicParsing(false);
+        
+        Button quitGameButton = new Button("Quitter");
+        quitGameButton.setLayoutX(70.0);
+        quitGameButton.setLayoutY(230.0); 
+        quitGameButton.prefHeight(30.0); 
+        quitGameButton.prefWidth(128.0);
+        quitGameButton.setMnemonicParsing(false);
+        
+        AnchorPane mainMenuPane = new AnchorPane(joinGameButton, hostGameButton, quitGameButton, newIntroText, titleText);
+        mainMenuPane.setPrefHeight(285.0);
+        mainMenuPane.setPrefWidth(700.0);
+        
+        
         
         Scene mainMenuScene = new Scene(mainMenuPane);
         Stage mainMenuStage = new Stage();
@@ -59,14 +94,45 @@ public final class MainMenu extends Application{
         mainMenuStage.show();
         
         joinGameButton.setOnMouseClicked((e) -> {
-            newButtonBox.setVisible(false);
-            newIntroText.setText("veuillez saisir l'adresse IP et le port que vous souhaitez rejoindre");
-            TextField address = new TextField("Address");
-            TextField port = new TextField("Port");
-            Button Submit = new Button("Submit");
+            mainMenuPane.setVisible(false);
+            Text joinIntroText = new Text("Veuillez saisir l'adresse IP et le port que vous souhaitez rejoindre");
+            joinIntroText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
+            Text addressText = new Text("Address");
+            Text portText = new Text("Port");
+            addressText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 13));
+            portText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 13));
+            joinIntroText.setLayoutX(40.0);
+            joinIntroText.setLayoutY(50.0);
+            TextField address = new TextField();
+            address.setLayoutX(120.0);
+            address.setLayoutY(80.0);
+            addressText.setLayoutX(40.0);
+            addressText.setLayoutY(100.0);
+            TextField port = new TextField();
+            port.setLayoutX(120.0);
+            port.setLayoutY(120.0);
+            portText.setLayoutX(40.0);
+            portText.setLayoutY(140.0);
+            Button Submit = new Button("Rejoindre");
+            Submit.setLayoutX(40.0);
+            Submit.setLayoutY(170.0);
             
-            VBox infos = new VBox(address, port, Submit);
-            mainMenuStage.setScene(new Scene(infos));
+            Button back = new Button("Retourner");
+            
+            
+            AnchorPane newMenuPane = new AnchorPane(back, addressText, portText, joinIntroText, address, port, Submit);
+            newMenuPane.setMinWidth(700);
+            newMenuPane.setMinHeight(200);
+            
+            
+            mainMenuStage.setScene(new Scene(newMenuPane));
+            
+            back.setOnMouseClicked((event) -> {
+                mainMenuStage.setScene(mainMenuScene);
+                mainMenuPane.setVisible(true);
+                newMenuPane.setVisible(false);
+                
+            });
             
             Submit.setOnMouseClicked((event) -> {
                 List<String> arguments = List.of(address.textProperty().get(), port.textProperty().get());
@@ -80,29 +146,49 @@ public final class MainMenu extends Application{
         });
         
         hostGameButton.setOnMouseClicked((e) -> {
-            newButtonBox.setVisible(false);
-            newIntroText.setText("Choissisez le nombre des joueurs qui vont jouer !");
+            mainMenuPane.setVisible(false);
+            Text hostIntroText = new Text("Choissisez le nombre des joueurs qui vont jouer !");
+            hostIntroText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
+            hostIntroText.setLayoutX(50.0);
+            hostIntroText.setLayoutY(60.0);
+            
+            Button hostBack = new Button("Retourner");
             
             Button twoPlayerButton = new Button("2 Joueurs");
+            twoPlayerButton.setLayoutX(50.0);
+            twoPlayerButton.setLayoutY(80.0);
             Button threePlayerButton = new Button("3 Joueurs");
-            HBox buttonBox = new HBox(twoPlayerButton, threePlayerButton);
+            threePlayerButton.setLayoutX(50.0);
+            threePlayerButton.setLayoutY(120.0);
             
-            BorderPane newPane = new BorderPane(buttonBox, newIntroText, null, null, null);
+            AnchorPane newPane = new AnchorPane(hostBack, twoPlayerButton, threePlayerButton, hostIntroText);
+            newPane.setPrefHeight(200);
+            newPane.setPrefWidth(550);
+            
+            Scene newScene = new Scene(newPane);
+            
+            hostBack.setOnMouseClicked((event) -> {
+                mainMenuStage.setScene(mainMenuScene);
+                mainMenuPane.setVisible(true);
+                newPane.setVisible(false);
+            });
             
             twoPlayerButton.setOnMouseClicked((event) -> {
                 Constants.THREE_PLAYER = false;
-                twoPlayerButton.disableProperty().set(false);
                 newPane.setVisible(false);
-                initializeMenu(false, twoPlayerButton, buttonBox, newIntroText, mainMenuStage);
+                initializeMenu(false, twoPlayerButton, newScene, mainMenuStage, newPane);
             });
             threePlayerButton.setOnMouseClicked((event) -> {
                 Constants.THREE_PLAYER = true;
-                threePlayerButton.disableProperty().set(false);
                 newPane.setVisible(false);
-                initializeMenu(true, threePlayerButton, buttonBox, newIntroText, mainMenuStage);
+                initializeMenu(true, threePlayerButton, newScene, mainMenuStage, newPane);
             });
-            mainMenuStage.setScene(new Scene(newPane));
+            mainMenuStage.setScene(newScene);
             
+        });
+        
+        quitGameButton.setOnMouseClicked((e) -> {
+            mainMenuStage.hide();
         });
     }
     
@@ -124,13 +210,12 @@ public final class MainMenu extends Application{
         new Thread(() -> client.run()).start();
     }
     
-    private void initializeMenu(boolean isThreePlayer, Button button, HBox buttonBox, Text introText, Stage stage) {
+    private void initializeMenu(boolean isThreePlayer, Button button, Scene oldScene, Stage stage, AnchorPane oldPane) {
         
-        button.disableProperty().set(true);
-        buttonBox.setVisible(false);
-        introText.setText("Attente de la connexion des joueurs !");
+        Text introText = new Text("Cliquez sur le bouton pour démarrer le serveur");
+        introText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 16));
         
-        Button startServerButton = new Button("Start Server");
+        Button startServerButton = new Button("Démarrer le serveur");
         
         startServerButton.setOnMouseClicked((e) -> {
             try {
@@ -139,7 +224,21 @@ public final class MainMenu extends Application{
                 throw new Error();
             }
         });
-        stage.setScene(new Scene(startServerButton));
+        Button anotherBackButton = new Button("Retourner");
+        AnchorPane anotherOne = new AnchorPane(anotherBackButton, startServerButton, introText);
+        introText.setLayoutX(50.0);
+        introText.setLayoutY(60.0);
+        anotherOne.setPrefWidth(500);
+        anotherOne.setPrefHeight(140);
+        startServerButton.setLayoutY(80.0);
+        startServerButton.setLayoutX(50.0);
+        
+        anotherBackButton.setOnMouseClicked((e) -> {
+            stage.setScene(oldScene);
+            oldPane.setVisible(true);
+        });
+        
+        stage.setScene(new Scene(anotherOne));
         
     }
     
