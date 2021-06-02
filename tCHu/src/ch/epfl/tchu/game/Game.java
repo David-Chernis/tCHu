@@ -38,7 +38,7 @@ public final class Game {
 	    //playerInfoMap to more efficiently handle Info objects.
         Map<PlayerId, Info> playerInfoMap = new HashMap<>();
         players.forEach((playerId, player) -> playerInfoMap.put(playerId, new Info(playerNames.get(playerId))));
-        players.forEach((playerId, player) -> player.setPlayerNumber(playerNum));
+        players.forEach((playerId, player) -> player.setPlayerNumber(playerNum)); 
 	    
         GameState gameState = initializeGame(players,  playerNames, playerInfoMap, tickets, rng);
         
