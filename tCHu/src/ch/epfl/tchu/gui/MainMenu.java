@@ -98,7 +98,7 @@ public final class MainMenu extends Application{
         
         startServerButton.setOnMouseClicked((e) -> {
             try {
-                initializeServer(List.of("Ada", "Charles", "Michel"));
+                initializeServer( getParameters().getRaw());
             } catch (Exception e1) {
                 throw new Error();
             }
@@ -108,7 +108,8 @@ public final class MainMenu extends Application{
     }
     
     private void initializeServer(List<String> names) throws Exception{
-        System.out.println(Constants.THREE_PLAYER);
+        System.out.println(names);
+        
         
         if(Constants.THREE_PLAYER) {
             // Setting up Server
@@ -121,19 +122,11 @@ public final class MainMenu extends Application{
                 Socket s1 = server.accept();
                 Socket s2 = server.accept();
                 
-                BufferedWriter w1 =
-                        new BufferedWriter(
-                                new OutputStreamWriter(s1.getOutputStream(), US_ASCII) );
                 
-                BufferedWriter w2 =
-                        new BufferedWriter(
-                                new OutputStreamWriter(s2.getOutputStream(), US_ASCII) );
-                w1.write(MessageId.PLAYER_NUMBER.name() + " " + Serdes.intSerde.serialize(1) + " " + "\n");
-                w2.write(MessageId.PLAYER_NUMBER.name() + " " + Serdes.intSerde.serialize(1) + " " + "\n");
-                
-                System.out.println(MessageId.PLAYER_NUMBER.name() + " " + Serdes.intSerde.serialize(1) + " " + "\n");
                 playerProxy1 = new RemotePlayerProxy(s1);
                 playerProxy2 = new RemotePlayerProxy(s2);
+                
+                
             } catch(IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -150,7 +143,7 @@ public final class MainMenu extends Application{
                     PLAYER_2, playerProxy1,
                     PLAYER_3, playerProxy2);
             
-            new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
+            new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand, 1)).start();
         }
         else {
 
@@ -162,11 +155,8 @@ public final class MainMenu extends Application{
                 ServerSocket server = new ServerSocket(5108);
                 Socket s = server.accept();
                 
-                BufferedWriter w =
-                        new BufferedWriter(
-                                new OutputStreamWriter(s.getOutputStream(), US_ASCII) );
-                w.write(MessageId.PLAYER_NUMBER.name() + " " + Serdes.intSerde.serialize(0));
                 playerProxy = new RemotePlayerProxy(s);
+                
             } catch(IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -181,7 +171,7 @@ public final class MainMenu extends Application{
                     PLAYER_1, gpa,
                     PLAYER_2, playerProxy);
             
-            new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
+            new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand, 0)).start();
         }
     }
 

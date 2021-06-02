@@ -89,6 +89,13 @@ public final class TestClient {
             return null;
         }
 
+
+        @Override
+        public void setPlayerNumber(int playerNum) {
+            // TODO Auto-generated method stub
+            
+        }
+
         // … autres méthodes de Player
     }
 }

@@ -9,6 +9,7 @@ import static javafx.application.Platform.runLater;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.PlayerState;
@@ -168,5 +169,10 @@ public final class GraphicalPlayerAdapter implements Player{
         } catch (InterruptedException e) {
             throw new Error();
         }
+    }
+
+    @Override
+    public void setPlayerNumber(int playerNum) {
+        Constants.THREE_PLAYER = playerNum == 1 ? true : false;
     }
 }

@@ -33,11 +33,12 @@ public final class Game {
 	 * @param tickets (SortedBag<Ticket>): The tickets available for this game.
 	 * @param rng (Random): A random variable used to randomize certain aspects of the game.
 	 */
-	public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
+	public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng, int playerNum){
 	    Preconditions.checkArgument(players.size() == PlayerId.COUNT && playerNames.size() == PlayerId.COUNT);
 	    //playerInfoMap to more efficiently handle Info objects.
         Map<PlayerId, Info> playerInfoMap = new HashMap<>();
         players.forEach((playerId, player) -> playerInfoMap.put(playerId, new Info(playerNames.get(playerId))));
+        players.forEach((playerId, player) -> player.setPlayerNumber(playerNum));
 	    
         GameState gameState = initializeGame(players,  playerNames, playerInfoMap, tickets, rng);
         
@@ -60,7 +61,6 @@ public final class Game {
                 gameState = gameState.forNextTurn();        
             }
         }
-        
         updateState(players, gameState);
         calculatePoints(gameState, players,  playerNames, playerInfoMap);
 	}

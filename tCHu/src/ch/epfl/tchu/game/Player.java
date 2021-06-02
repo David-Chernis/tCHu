@@ -20,6 +20,8 @@ public interface Player {
         public static final List<TurnKind> ALL = List.of(TurnKind.values());
     }
     
+    
+    void setPlayerNumber(int playerNum);
     /**
      * Method which is called at the start of the game to communicate to the player his own ownId identity, 
      * as well as the names of the different players, his own included, which can be found in playerNames.

@@ -9,6 +9,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.PlayerState;
@@ -46,9 +47,19 @@ public final class RemotePlayerProxy implements Player{
         }
 
     }
+    
+    @Override
+    public void setPlayerNumber(int playerNum) {
+        // TODO Auto-generated method stub
+        Constants.THREE_PLAYER = playerNum == 1 ? true : false;
+        String toBeSent = MessageId.SET_PLAYER_NUM.name() + " " + Serdes.intSerde.serialize(playerNum);
+        
+        this.sendThroughSocket(writer, toBeSent);
+    }
 
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        System.out.println(Constants.THREE_PLAYER);
         List<String> namesList = new ArrayList<String>();
         for(int i = 0; i < playerNames.size(); i++) {
             namesList.add(playerNames.get(PlayerId.ALL.get(i)));
@@ -154,4 +165,6 @@ public final class RemotePlayerProxy implements Player{
             throw new UncheckedIOException(e);
         }
     }
+
+    
 }

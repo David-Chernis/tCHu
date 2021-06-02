@@ -25,7 +25,7 @@ public class GameTest1 {
         Player player2 = new TestPlayer(seed, ChMap.routes());
         Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
         Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "player1", PlayerId.PLAYER_2, "player2");
-        Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rng);
+        Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rng, 0);
     }
     
     private static final class TestPlayer implements Player {
@@ -162,6 +162,12 @@ public class GameTest1 {
                 return SortedBag.of();
             }
             return options.get(rng.nextInt(options.size()));
+        }
+
+        @Override
+        public void setPlayerNumber(int playerNum) {
+            // TODO Auto-generated method stub
+            
         }
     }
 }

@@ -80,20 +80,21 @@ public final class RemotePlayerClient {
                     break;
                 }
                 List<String> messageList = Arrays.asList(readLine.split(Pattern.quote(" "), -1))   ;
-                System.out.println(messageList);
+
                 switch(MessageId.valueOf(messageList.get(0))) {
-                
-                case PLAYER_NUMBER: 
-                    int isThreePlayer = Serdes.intSerde.deserialize(messageList.get(1));
-                    Constants.THREE_PLAYER = isThreePlayer == 1 ? true : false;
+
+                case SET_PLAYER_NUM: 
+                    System.out.println(Constants.THREE_PLAYER);
+                    player.setPlayerNumber(Serdes.intSerde.deserialize(messageList.get(1)));
+                    System.out.println(Constants.THREE_PLAYER);
                     break;
+                    
                 case INIT_PLAYERS:
+                    System.out.println(Constants.THREE_PLAYER);
                     List<String> namesList = Serdes.stringListSerde.deserialize(messageList.get(2));
                     Map<PlayerId, String> namesMap = new HashMap<>();
                     for(int i = 0; i < namesList.size(); i++) {
-                        namesMap.put(PlayerId.ALL.get(i), 
-                                
-                                namesList.get(i));
+                        namesMap.put(PlayerId.ALL.get(i), namesList.get(i));
                     }
                     
                     player.initPlayers(Serdes.playerIdSerde.deserialize(messageList.get(1)), namesMap);

@@ -39,7 +39,7 @@ class GameTest {
         var playerNames = Map.of(PlayerId.PLAYER_1, "1", PlayerId.PLAYER_2, "2");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Game.play(Map.of(), playerNames, SortedBag.of(), new Random(2021));
+            Game.play(Map.of(), playerNames, SortedBag.of(), new Random(2021), 0);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -47,7 +47,7 @@ class GameTest {
                     Map.of(PlayerId.PLAYER_1, new TestPlayer(0, List.of())),
                     playerNames,
                     SortedBag.of(),
-                    new Random(2021));
+                    new Random(2021), 0);
         });
     }
 
@@ -58,7 +58,7 @@ class GameTest {
                 PlayerId.PLAYER_2, (Player) new TestPlayer(0, List.of()));
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Game.play(players, Map.of(), SortedBag.of(), new Random(2021));
+            Game.play(players, Map.of(), SortedBag.of(), new Random(2021), 0);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -66,7 +66,7 @@ class GameTest {
                     players,
                     Map.of(PlayerId.PLAYER_1, "1"),
                     SortedBag.of(),
-                    new Random(2021));
+                    new Random(2021), 0);
         });
     }
 
@@ -266,7 +266,7 @@ class GameTest {
         var playerNames = Map.of(
                 PlayerId.PLAYER_1, "Ada",
                 PlayerId.PLAYER_2, "Charles");
-        Game.play(players, playerNames, SortedBag.of(tickets), rng);
+        Game.play(players, playerNames, SortedBag.of(tickets), rng, 0);
         return List.of(p1, p2);
     }
 
@@ -441,6 +441,12 @@ class GameTest {
             return rng.nextInt(ABANDON_TUNNEL_ODDS) == 0
                     ? SortedBag.of()
                     : options.get(rng.nextInt(options.size()));
+        }
+
+        @Override
+        public void setPlayerNumber(int playerNum) {
+            // TODO Auto-generated method stub
+            
         }
     }
 

@@ -79,7 +79,7 @@ public class ServerMain extends Application{
 	                PLAYER_2, playerProxy1,
 	                PLAYER_3, playerProxy2);
 	        
-	        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
+	        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand, 1)).start();
     	}
     	else {
 
@@ -106,7 +106,7 @@ public class ServerMain extends Application{
 	                PLAYER_1, gpa,
 	                PLAYER_2, playerProxy);
 	        
-	        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand)).start();
+	        new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), rand, 0)).start();
     	}
     }
 }
